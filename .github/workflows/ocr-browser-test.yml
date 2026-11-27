@@ -4,6 +4,7 @@ on:
     branches: [offline-scanner]
     paths:
       - 'index.html'
+      - 'card-vision.js'
       - 'sw.js'
       - 'assets/**'
       - 'tests/**'
