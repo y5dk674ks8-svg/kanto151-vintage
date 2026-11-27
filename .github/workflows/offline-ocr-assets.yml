@@ -40,4 +40,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/
           git diff --cached --quiet || git commit -m "Vendor offline OCR runtime and English model"
+          git pull --rebase origin offline-scanner
           git push
