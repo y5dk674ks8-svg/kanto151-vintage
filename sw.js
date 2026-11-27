@@ -1,1 +1,46 @@
-const CACHE='kanto151-v2-14';const CORE=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core.wasm.js','./assets/tesseract-core/tesseract-core-simd.wasm.js','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tesseract-core/tesseract-core-simd-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(async c=>{await c.addAll(['./','./index.html','./manifest.webmanifest','./offline.js']);try{await c.addAll(CORE)}catch(err){console.warn('OCR assets not yet available in this deployment',err)}})))});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('kanto151-')&&k!==CACHE).map(k=>caches.delete(k))))))});self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===location.origin)e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const copy=res.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return res}).catch(()=>caches.match('./index.html'))))});
+const CACHE='kanto151-v2-15';
+const APP=['./','./index.html','./manifest.webmanifest','./offline.js'];
+const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core.wasm.js','./assets/tessdata/eng.traineddata.gz'];
+self.addEventListener('install',event=>{
+ self.skipWaiting();
+ event.waitUntil((async()=>{
+  const cache=await caches.open(CACHE);
+  await cache.addAll(APP);
+  await Promise.all(OCR.map(async url=>{try{await cache.add(url)}catch(error){console.warn('OCR asset not cached:',url,error)}}));
+ })());
+});
+self.addEventListener('activate',event=>{
+ event.waitUntil((async()=>{
+  const keys=await caches.keys();
+  await Promise.all(keys.filter(key=>key.startsWith('kanto151-')&&key!==CACHE).map(key=>caches.delete(key)));
+  await self.clients.claim();
+ })());
+});
+self.addEventListener('fetch',event=>{
+ const request=event.request;
+ const url=new URL(request.url);
+ if(request.method!=='GET'||url.origin!==self.location.origin)return;
+ if(request.mode==='navigate'||request.destination==='document'){
+  event.respondWith((async()=>{
+   const cache=await caches.open(CACHE);
+   try{
+    const fresh=await fetch(request,{cache:'no-store'});
+    if(fresh.ok)await cache.put('./index.html',fresh.clone());
+    return fresh;
+   }catch(error){
+    return (await cache.match(request))||(await cache.match('./index.html'))||Response.error();
+   }
+  })());
+  return;
+ }
+ event.respondWith((async()=>{
+  const cache=await caches.open(CACHE);
+  const cached=await cache.match(request);
+  if(cached)return cached;
+  try{
+   const response=await fetch(request);
+   if(response.ok)await cache.put(request,response.clone());
+   return response;
+  }catch(error){return cached||Response.error()}
+ })());
+});
