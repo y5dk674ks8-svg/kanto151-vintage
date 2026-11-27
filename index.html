@@ -148,19 +148,35 @@ async function findScannedCandidates(dex,cardNo){
 }
 function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||1);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
 async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
-async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Tekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
+async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Kaarttekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
 try{
  if(!window.Tesseract){await new Promise((ok,no)=>{let sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
- let result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Tekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
- ocrText=result.data.text||'';let low=ocrText.toLowerCase();
- let hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
- let number=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*\d{1,3}\b/);scanNumberGuess=number?number[1]:null;
+ const full=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
+ ocrText=full.data.text||'';
+ let number=null;
+ const pair=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/);
+ if(pair&&Number(pair[1])>0)number=pair[1];
+ // Read the bottom edge separately: card numbers are printed at the lower-right corner.
+ const bitmap=await createImageBitmap(file);
+ const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+ const sx=Math.floor(bitmap.width*.06), sy=Math.floor(bitmap.height*.73), sw=Math.floor(bitmap.width*.88), sh=Math.floor(bitmap.height*.20);
+ canvas.width=sw*3;canvas.height=sh*3;
+ ctx.drawImage(bitmap,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
+ const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+ for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]*.299+pixels.data[i+1]*.587+pixels.data[i+2]*.114);const c=Math.max(0,Math.min(255,(v-115)*2.1+128));pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=c}
+ ctx.putImageData(pixels,0,0);
+ const bottom=await Tesseract.recognize(canvas,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaartnummer uitlezen '+Math.round((m.progress||0)*100)+'%'},tessedit_char_whitelist:'0123456789/|'});
+ const bottomText=bottom.data.text||'';
+ const bottomPair=bottomText.match(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/);
+ if(bottomPair&&Number(bottomPair[1])>0)number=bottomPair[1];
+ scanNumberGuess=number;
+ const low=ocrText.toLowerCase();
+ const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
  scanDexGuess=hits.length?hits[0].i+1:null;
- document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">'+esc(ocrText.slice(0,350))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer (uit OCR)</label><input id="scannumber" value="'+esc(scanNumberGuess||'')+'" placeholder="Bijvoorbeeld 4 bij 4/102"><p class="muted">De foto blijft op dit apparaat. De app vergelijkt de uitgelezen naam en het kaartnummer met de openbare vintage catalogus. De foto wordt niet naar een AI-dienst gestuurd.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
- document.getElementById('scanstatus').textContent=hits.length?'Tekst uitgelezen. Controleer Pokémon en kaartnummer en start de gratis match.':'Geen Pokémonnaam herkend. Kies de Pokémon en vul eventueel het kaartnummer in.';
+ document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">'+esc(ocrText.slice(0,250))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">De scanner leest het nummer apart uit de onderrand van de kaart. Je hoeft geen slash of totaal aantal in te voeren.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
+ document.getElementById('scanstatus').textContent=scanNumberGuess?'Pokémon en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Pokémon herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
  }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>'}
 }
-function runFreeMatch(){const dex=Number(document.getElementById('scandex').value);const num=document.getElementById('scannumber').value.trim().match(/\d{1,3}/);findScannedCandidates(dex,num?num[0]:null)}
 function setManualDex(n){document.getElementById('scandex').value=n}
 function continueScanToCatalog(){let n=Number(document.getElementById('scandex').value);let name=NAMES[n-1];show('catalog');document.getElementById('setquery').value='';document.getElementById('setstatus').textContent='Je bevestigde Pokémon is '+name+'. Kies de juiste taal en vintage set. Filter daarna de kaarten op de Pokémon-naam.';document.getElementById('setquery').focus();}
 document.getElementById('camera').addEventListener('change',e=>scanPhoto(e.target.files[0]));document.getElementById('upload').addEventListener('change',e=>scanPhoto(e.target.files[0]));
