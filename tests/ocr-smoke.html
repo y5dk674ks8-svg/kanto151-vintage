@@ -11,8 +11,14 @@
   const c=document.createElement('canvas');c.width=1000;c.height=360;
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
   x.fillStyle='#111';x.font='bold 76px Arial';x.fillText('BULBASAUR',40,120);x.fillText('67/130',40,240);
-  const img=new Image();img.src=c.toDataURL('image/png');await img.decode();
-  say('Image decode OK: '+img.naturalWidth+'x'+img.naturalHeight);
+  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',0.9));
+  const file=new File([blob],'test-card.jpg',{type:'image/jpeg'});
+  const objectUrl=URL.createObjectURL(file);
+  const img=new Image();img.decoding='async';
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Object URL image decode failed'));img.src=objectUrl;});
+  say('iOS-style File → object URL → Image decode OK: '+img.naturalWidth+'x'+img.naturalHeight);
+  const scaled=document.createElement('canvas');scaled.width=img.naturalWidth;scaled.height=img.naturalHeight;
+  scaled.getContext('2d').drawImage(img,0,0);
   const worker=await Tesseract.createWorker('eng',1,{
    workerPath:new URL('../assets/worker.min.js',location.href).href,
    corePath:new URL('../assets/tesseract-core',location.href).href,
@@ -22,9 +28,9 @@
    errorHandler:e=>say('Worker error: '+(e?.message||e))
   });
   say('Worker ready');
-  const result=await worker.recognize(img);
+  const result=await worker.recognize(scaled);
   say('RECOGNIZED: '+JSON.stringify(result.data.text));
-  await worker.terminate();
+  await worker.terminate();URL.revokeObjectURL(objectUrl);
   if(!/BULBASAUR/i.test(result.data.text)||!/67\s*\/\s*130/.test(result.data.text))throw new Error('OCR text did not match expected fixture');
   say('PASS');
  }catch(e){say('FAIL: '+(e?.stack||e));document.body.dataset.result='fail';return}
