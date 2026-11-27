@@ -15,7 +15,7 @@
   p.fillStyle='#d9e3c4';p.fillRect(42,160,536,490);p.fillStyle='#315c3b';p.fillRect(90,220,430,360);
   p.fillStyle='#273b23';p.font='bold 40px Arial';p.fillText('Leech Seed',80,710);p.font='bold 30px Arial';p.fillText('67/130',460,835);
   ctx.save();ctx.translate(600,800);ctx.rotate(-.12);ctx.transform(1,.02,-.03,1,0,0);ctx.drawImage(card,-310,-435);ctx.restore();
-  say('Synthetic card rendered with large margins, rotation and perspective skew.');
+  say('Synthetic card rendered with large margins, rotation and perspective skew. Test marker: card-detect-v2.');
   const result=await KantoCardVision.detect(c);
   if(!result.found)throw new Error(result.reason||'Card not detected');
   document.getElementById('output').width=result.canvas.width;document.getElementById('output').height=result.canvas.height;
