@@ -22,7 +22,7 @@
   const worker=await Tesseract.createWorker('eng',1,{
    workerPath:new URL('../assets/worker.min.js',location.href).href,
    // Use the same portable core as the iPhone scanner test.
-   corePath:new URL('../assets/tesseract-core/tesseract-core.wasm.js',location.href).href,
+   corePath:new URL('../assets/tesseract-core/tesseract-core-lstm.wasm.js',location.href).href,
    langPath:new URL('../assets/tessdata',location.href).href,
    gzip:true,cacheMethod:'write',workerBlobURL:false,
    logger:m=>say('Tesseract: '+m.status+' '+(m.progress==null?'':Math.round(m.progress*100)+'%')),
