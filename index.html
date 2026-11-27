@@ -133,14 +133,20 @@ async function findScannedCandidates(dex,cardNo){
     }
    });
   });
-  if(cardNo){const exact=matches.filter(x=>x.numberMatch);if(exact.length)matches=exact}
+  if(cardNo)matches=matches.filter(x=>x.numberMatch);
+  else matches=[];
   matches.sort((a,b)=>(a.releaseDate||'').localeCompare(b.releaseDate||''));
-  document.getElementById('scanstatus').textContent=matches.length?'Kandidaten gevonden. Controleer de set en kaart.':'Geen zekere overeenkomst gevonden; gebruik de catalogus om handmatig te zoeken.';
   const box=document.getElementById('scanresult');
-  if(!matches.length){box.innerHTML='<div class="panel"><p>Ik kon de kaart niet betrouwbaar koppelen aan een set. De herkende Pokémon is wel geselecteerd.</p><button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button></div>';return}
-  box.innerHTML='<div class="panel"><b>Mogelijke kaart(en)</b><p class="muted">'+matches.length+' overeenkomst(en)'+(cardNo?' · kaartnummer '+esc(cardNo):' · geen kaartnummer herkend')+'. Kies de afbeelding die overeenkomt met jouw kaart.</p>'+matches.slice(0,30).map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+(matches.length>30?'<p class="muted">Eerste 30 resultaten getoond. Verfijn met het kaartnummer.</p>':'')+'</div>';
- }catch(e){document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open catalogus</button>'}
+  if(!matches.length){
+   document.getElementById('scanstatus').textContent=cardNo?'Geen exacte kaartnummer-match. Controleer het nummer.':'Kaartnummer niet herkend; vul het kaartnummer in om verkeerde kaarten te voorkomen.';
+   box.innerHTML='<div class="panel"><b>We hebben nog geen betrouwbare match</b><p class="muted">Ik toon bewust niet alle kaarten met dezelfde Pokémonnaam. Vul het nummer onderaan de kaart in (bijvoorbeeld 67 bij 67/130). Dan filter ik op dat nummer en voorkom ik dat Erika’s Bulbasaur tussen de resultaten staat.</p><label>Kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 67" value="'+esc(cardNo||'')+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
+   return;
+  }
+  document.getElementById('scanstatus').textContent=matches.length+' kaart(en) met exact kaartnummer gevonden.';
+  box.innerHTML='<div class="panel"><b>Kaartnummer-match</b><p class="muted">'+matches.length+' overeenkomst(en) voor '+esc(NAMES[dex-1])+' · nummer '+esc(cardNo)+'. Controleer de setafbeelding.</p>'+matches.slice(0,20).map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
+ }catch(e){document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>'}
 }
+function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||1);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
 async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
 async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Tekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
 try{
