@@ -296,13 +296,11 @@ async function scanPhoto(file){
    if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
    scanNumberGuess=number;
    const low=ocrText.toLowerCase();
-   // Do not mistake the evolution source ("Evolves from Charmeleon")
-   // for the Pokémon printed as the card's title (for example Charizard).
-   const namePattern=NAMES.slice().sort((a,b)=>b.length-a.length)
-    .map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\   const low=ocrText.toLowerCase();
-   const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
-   scanDexGuess=hits.length?hits[0].i+1:null;')).join('|');
-   const withoutEvolutionSource=low.replace(new RegExp('\\bevolves\\s+from\\s+('+namePattern+')\\b','gi'),'evolves from');
+   // Ignore a Pokémon mentioned only as the evolution source, e.g. "Evolves from Charmeleon".
+   let withoutEvolutionSource=low;
+   NAMES.forEach(n=>{
+    withoutEvolutionSource=withoutEvolutionSource.split('evolves from '+n.toLowerCase()).join('evolves from');
+   });
    const hits=NAMES.map((n,i)=>({n,i,pos:withoutEvolutionSource.indexOf(n.toLowerCase())}))
     .filter(x=>x.pos>=0).sort((a,b)=>a.pos-b.pos);
    scanDexGuess=hits.length?hits[0].i+1:null;
