@@ -19,20 +19,19 @@ jobs:
       - name: Download pinned Tesseract.js runtime
         run: |
           mkdir -p assets/tesseract-core assets/tessdata
-          npm pack tesseract.js@5.1.1
+          npm pack tesseract.js@7.0.0
           mkdir -p /tmp/tesseract
-          tar -xzf tesseract.js-5.1.1.tgz -C /tmp/tesseract
+          tar -xzf tesseract.js-7.0.0.tgz -C /tmp/tesseract
           cp /tmp/tesseract/package/dist/tesseract.min.js assets/tesseract.min.js
           cp /tmp/tesseract/package/dist/worker.min.js assets/worker.min.js
       - name: Download WebAssembly core
         run: |
-          npm pack tesseract.js-core@5.0.0
+          npm pack tesseract.js-core@7.0.0
           mkdir -p /tmp/tesseract-core
-          tar -xzf tesseract.js-core-5.0.0.tgz -C /tmp/tesseract-core
-          cp /tmp/tesseract-core/package/tesseract-core.wasm.js assets/tesseract-core/
-          cp /tmp/tesseract-core/package/tesseract-core-simd.wasm.js assets/tesseract-core/
-          cp /tmp/tesseract-core/package/tesseract-core-lstm.wasm.js assets/tesseract-core/
-          cp /tmp/tesseract-core/package/tesseract-core-simd-lstm.wasm.js assets/tesseract-core/
+          tar -xzf tesseract.js-core-7.0.0.tgz -C /tmp/tesseract-core
+          cp /tmp/tesseract-core/package/*.js assets/tesseract-core/
+          cp /tmp/tesseract-core/package/*.wasm assets/tesseract-core/ 2>/dev/null || true
+          ls -lh assets/tesseract-core/
       - name: Download English OCR model
         run: curl -fL https://tessdata.projectnaptha.com/4.0.0/eng.traineddata.gz -o assets/tessdata/eng.traineddata.gz
       - name: Commit local OCR runtime
