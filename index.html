@@ -296,7 +296,15 @@ async function scanPhoto(file){
    if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
    scanNumberGuess=number;
    const low=ocrText.toLowerCase();
+   // Do not mistake the evolution source ("Evolves from Charmeleon")
+   // for the Pokémon printed as the card's title (for example Charizard).
+   const namePattern=NAMES.slice().sort((a,b)=>b.length-a.length)
+    .map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\   const low=ocrText.toLowerCase();
    const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
+   scanDexGuess=hits.length?hits[0].i+1:null;')).join('|');
+   const withoutEvolutionSource=low.replace(new RegExp('\\bevolves\\s+from\\s+('+namePattern+')\\b','gi'),'evolves from');
+   const hits=NAMES.map((n,i)=>({n,i,pos:withoutEvolutionSource.indexOf(n.toLowerCase())}))
+    .filter(x=>x.pos>=0).sort((a,b)=>a.pos-b.pos);
    scanDexGuess=hits.length?hits[0].i+1:null;
    const normalizedPreview=cardDetected?'<div class="panel"><b>Gevonden kaarthoeken</b><p class="muted">Groene lijn = gekozen contour. Rode punten = hoekvolgorde. Verhouding: '+Number(detectionDebug?.ratio||0).toFixed(3)+' · rechthoekigheid: '+Number(detectionDebug?.rectangularity||0).toFixed(2)+'</p><img alt="Gevonden kaarthoeken op de originele foto" src="'+detectionDebug.image+'" style="display:block;width:100%;height:auto;border-radius:10px;margin:8px auto"><b>Kaart rechtgezet</b><img alt="Automatisch rechtgezette Pokémonkaart" src="'+cardCanvas.toDataURL('image/jpeg',.88)+'" style="display:block;width:100%;max-width:420px;height:auto;border-radius:10px;margin:8px auto"></div>':'';
    document.getElementById('scanresult').innerHTML=normalizedPreview+'<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex"><option value="" '+(scanDexGuess===null?'selected':'')+'>Niet automatisch herkend — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Controleer de herkenning voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
