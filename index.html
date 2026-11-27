@@ -52,7 +52,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <div class="sectiontitle">Kaart scannen</div>
 <div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. De gratis OCR leest Pokémonnaam en kaartnummer uit en vergelijkt die met vintage kaartgegevens. Jij kiest de juiste kaartafbeelding; de drukvariant wordt daarna bevestigd.</p>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
-<div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div class="actions"><button class="btn light" onclick="testOcrEngine()">Test OCR-engine</button></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
+<div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
 <div class="notice">De foto wordt lokaal op je iPhone verwerkt. OCR-engine en Engels taalbestand worden vanuit de app geladen; kaartgegevens worden lokaal gecachet. Geen betaalde API of herkenningsserver.</div>
 </section>
 <section id="inventory" class="hidden">
@@ -235,10 +235,21 @@ async function testOcrEngine(){
  }catch(e){status.textContent='OCR-diagnose mislukt: '+e.message;result.innerHTML='<div class="notice">Technische fout: '+esc(e.stack||e.message)+'</div>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
 async function scanPhoto(file){
- if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';document.getElementById('scanresult').innerHTML='';
+ if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto laden…';document.getElementById('scanresult').innerHTML='';
  try{
+  const photo=new Image();
+  photo.src=u;
+  if(typeof photo.decode==='function')await photo.decode();
+  else await new Promise((resolve,reject)=>{photo.onload=resolve;photo.onerror=()=>reject(Error('De gekozen foto kon niet worden geladen.'))});
+  if(!photo.naturalWidth||!photo.naturalHeight)throw Error('De gekozen foto heeft geen geldige afmetingen.');
+  const canvas=document.createElement('canvas');
+  canvas.width=photo.naturalWidth;canvas.height=photo.naturalHeight;
+  const photoContext=canvas.getContext('2d',{willReadFrequently:true});
+  if(!photoContext)throw Error('De foto kan niet op het canvas worden voorbereid.');
+  photoContext.drawImage(photo,0,0,canvas.width,canvas.height);
+  document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';
   const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
-   let cardCanvas=canvas,cardDetected=false;
+  let cardCanvas=canvas,cardDetected=false;
    try{
     document.getElementById('scanstatus').textContent='Kaartcontour zoeken en kaart rechtzetten…';
     const detected=await scanTimeout(KantoCardVision.detect(canvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
