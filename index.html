@@ -256,24 +256,35 @@ async function scanPhoto(file){
     if(detected.found){cardCanvas=detected.canvas;cardDetected=true;document.getElementById('scanstatus').textContent='Kaart gevonden en rechtgezet. OCR voorbereiden…'}
     else{document.getElementById('scanstatus').textContent='Kaartcontour niet zeker gevonden. Ruime foto-uitsneden als reserve gebruiken…'}
    }catch(detectError){console.warn('Kaartdetectie niet beschikbaar; ruime OCR-reserve wordt gebruikt:',detectError);document.getElementById('scanstatus').textContent='Kaartdetectie niet beschikbaar. Ruime OCR-reserve wordt gebruikt…'}
-   const nameCrop=cardDetected?makeOcrRegion(cardCanvas,.06,.035,.94,.19,3):makeOcrRegion(canvas,.08,.10,.92,.40,2);
-   const numberCrops=cardDetected?[makeOcrRegion(cardCanvas,.72,.91,.995,.995,5)]:[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
-   const nameResult=await recognizeRegion(worker,nameCrop,'Pokémonnaam herkennen',45000);
-  ocrText=nameResult.data.text||'';
-  const numberTexts=[];
-  for(let i=0;i<numberCrops.length;i++){
-   const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · uitsnede '+(i+1)+'/'+numberCrops.length,45000);
-   numberTexts.push(r.data.text||'');
-   if(numberTexts[i].match(/\b\d{1,3}\s*[\/|]\s*\d{1,3}\b/))break;
-  }
-  const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
-  let number=null;
-  const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/g)].map(m=>Number(m[1])).filter(n=>n>0&&n<=250);
-  if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
-  else{const nums=[...new Set((numberText.match(/\b\d{1,3}\b/g)||[]).map(Number).filter(n=>n>0&&n<=250))];if(nums.length===1)number=String(nums[0])}
-  scanNumberGuess=number;const low=ocrText.toLowerCase();const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);scanDexGuess=hits.length?hits[0].i+1:null;
-  document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Naam en kaartnummer uit aparte gebieden gelezen. Controleer beide voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
-  document.getElementById('scanstatus').textContent=scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Naam herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
+   const nameCrops=cardDetected
+    ?[makeOcrRegion(cardCanvas,.20,.095,.69,.17,6),makeOcrRegion(cardCanvas,.10,.075,.90,.205,4)]
+    :[makeOcrRegion(canvas,.08,.10,.92,.40,2)];
+   const nameTexts=[];
+   for(let i=0;i<nameCrops.length;i++){
+    const r=await recognizeRegion(worker,nameCrops[i],'Pokémonnaam herkennen · uitsnede '+(i+1)+'/'+nameCrops.length,45000);
+    nameTexts.push(r.data.text||'');
+    if(NAMES.some(n=>(r.data.text||'').toLowerCase().includes(n.toLowerCase())))break;
+   }
+   ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
+   const numberCrops=cardDetected
+    ?[makeOcrRegion(cardCanvas,.86,.94,.998,.99,9),makeOcrRegion(cardCanvas,.76,.925,.998,.997,7)]
+    :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
+   const numberTexts=[];
+   for(let i=0;i<numberCrops.length;i++){
+    const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · uitsnede '+(i+1)+'/'+numberCrops.length,45000);
+    numberTexts.push(r.data.text||'');
+    if(numberTexts[i].match(/\b\d{1,3}\s*[\/|]\s*\d{1,3}\b/))break;
+   }
+   const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
+   let number=null;
+   const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/g)].map(m=>Number(m[1])).filter(n=>n>0&&n<=250);
+   if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
+   scanNumberGuess=number;
+   const low=ocrText.toLowerCase();
+   const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
+   scanDexGuess=hits.length?hits[0].i+1:null;
+   document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex"><option value="" '+(scanDexGuess===null?'selected':'')+'>Niet automatisch herkend — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Controleer de herkenning voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
+   scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Naam herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
  }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
 function setManualDex(n){document.getElementById('scandex').value=n}
