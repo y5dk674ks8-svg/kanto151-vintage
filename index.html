@@ -50,10 +50,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 <section id="scanner" class="hidden">
 <div class="sectiontitle">Kaart scannen</div>
-<div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige kaart recht en scherp vast. OCR helpt bij het uitlezen van de kaartnaam, maar bepaalt niet zelfstandig de set of exacte druk.</p>
+<div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. De gratis OCR leest Pokémonnaam en kaartnummer uit en vergelijkt die met vintage kaartgegevens. Jij kiest de juiste kaartafbeelding; de drukvariant wordt daarna bevestigd.</p>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
 <div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
-<div class="notice">De foto wordt alleen lokaal in deze sessie verwerkt. OCR gebruikt Tesseract.js via internet. Je collectiegegevens blijven op je iPhone.</div>
+<div class="notice">De foto wordt alleen in je browser verwerkt en niet naar een herkenningsserver verstuurd. Tesseract.js wordt gratis geladen; kaartgegevens worden opgehaald bij TCGdex. Je collectie blijft op je iPhone.</div>
 </section>
 <section id="inventory" class="hidden">
 <div class="sectiontitle">Mijn kaarten</div><p class="muted">Elke kaart is een afzonderlijke registratie. Dubbelen tellen mee in je kaartenaantal, maar niet dubbel in je 151-voortgang.</p><div class="panel" id="inventorylist">Nog geen kaarten geregistreerd.</div>
