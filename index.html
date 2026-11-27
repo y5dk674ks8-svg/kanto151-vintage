@@ -136,7 +136,9 @@ async function getOfflineOcrWorker(){
  document.getElementById('scanstatus').textContent='OCR-engine starten…';
  offlineOcrWorker=await Tesseract.createWorker('eng',1,{
   workerPath:new URL('./assets/worker.min.js',document.baseURI).href,
-  corePath:new URL('./assets/tesseract-core',document.baseURI).href,
+  // Force the portable non-SIMD core for iOS Safari diagnostics. Some iOS/WebKit
+  // combinations have selected the SIMD build but failed during recognition.
+  corePath:new URL('./assets/tesseract-core/tesseract-core.wasm.js',document.baseURI).href,
   langPath:new URL('./assets/tessdata',document.baseURI).href,
   cacheMethod:'write',
   gzip:true,
