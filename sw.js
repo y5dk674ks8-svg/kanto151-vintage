@@ -1,6 +1,6 @@
-const CACHE='kanto151-v2-15';
+const CACHE='kanto151-v2-16';
 const APP=['./','./index.html','./manifest.webmanifest','./offline.js'];
-const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core.wasm.js','./assets/tessdata/eng.traineddata.gz'];
+const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];
 self.addEventListener('install',event=>{
  self.skipWaiting();
  event.waitUntil((async()=>{
