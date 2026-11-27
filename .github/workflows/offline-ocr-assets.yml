@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/offline-ocr-assets.yml'
       - 'index.html'
+      - 'card-vision.js'
       - 'sw.js'
   workflow_dispatch:
 permissions:
