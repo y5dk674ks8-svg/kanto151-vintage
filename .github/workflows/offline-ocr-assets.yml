@@ -16,6 +16,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: offline-scanner
+      - name: Download pinned OpenCV.js runtime
+        run: |
+          npm pack @techstark/opencv-js@5.0.0-release.1
+          mkdir -p /tmp/opencv
+          tar -xzf techstark-opencv-js-5.0.0-release.1.tgz -C /tmp/opencv
+          cp /tmp/opencv/package/dist/opencv.js assets/opencv.js
+          ls -lh assets/opencv.js
       - name: Download pinned Tesseract.js runtime
         run: |
           mkdir -p assets/tesseract-core assets/tessdata
