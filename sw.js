@@ -1,6 +1,6 @@
-const CACHE='kanto151-v2-18';
+const CACHE='kanto151-v2-19';
 const APP=['./','./index.html','./manifest.webmanifest','./offline.js'];
-const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core.wasm.js','./assets/tesseract-core/tesseract-core-simd.wasm.js','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tesseract-core/tesseract-core-simd-lstm.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];
+const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/index.js','./assets/tesseract-core/tesseract-core-lstm.js','./assets/tesseract-core/tesseract-core-lstm.wasm','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tesseract-core/tesseract-core-simd-lstm.js','./assets/tesseract-core/tesseract-core-simd-lstm.wasm','./assets/tesseract-core/tesseract-core-simd-lstm.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];
 self.addEventListener('install',event=>{
  self.skipWaiting();
  event.waitUntil((async()=>{
