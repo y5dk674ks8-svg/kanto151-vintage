@@ -8,9 +8,11 @@
  const say=s=>{status.textContent=s;log.textContent+=s+'\n';};
  try{
   say('Tesseract global: '+!!window.Tesseract);
-  const c=document.createElement('canvas');c.width=1000;c.height=360;
+  const c=document.createElement('canvas');c.width=800;c.height=1200;
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
-  x.fillStyle='#111';x.font='bold 76px Arial';x.fillText('BULBASAUR',40,120);x.fillText('67/130',40,240);
+  x.fillStyle='#111';x.font='bold 76px Arial';x.fillText('BULBASAUR',90,450);x.fillText('67/130',250,1000);
+  const crop=(x0,y0,x1,y1,up)=>{const sx=Math.floor(c.width*x0),sy=Math.floor(c.height*y0),sw=Math.floor(c.width*(x1-x0)),sh=Math.floor(c.height*(y1-y0));const out=document.createElement('canvas');out.width=sw*up;out.height=sh*up;out.getContext('2d').drawImage(c,sx,sy,sw,sh,0,0,out.width,out.height);return out;};
+  const nameCrop=crop(.12,.18,.88,.53,2),numberCrop=crop(.12,.68,.88,.91,3);
   const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',0.9));
   const file=new File([blob],'test-card.jpg',{type:'image/jpeg'});
   const objectUrl=URL.createObjectURL(file);
@@ -29,10 +31,12 @@
    errorHandler:e=>say('Worker error: '+(e?.message||e))
   });
   say('Worker ready');
-  const result=await worker.recognize(scaled);
-  say('RECOGNIZED: '+JSON.stringify(result.data.text));
+  const nameResult=await worker.recognize(nameCrop);
+  say('NAME RECOGNIZED: '+JSON.stringify(nameResult.data.text));
+  const numberResult=await worker.recognize(numberCrop);
+  say('NUMBER RECOGNIZED: '+JSON.stringify(numberResult.data.text));
   await worker.terminate();URL.revokeObjectURL(objectUrl);
-  if(!/BULBASAUR/i.test(result.data.text)||!/67\s*\/\s*130/.test(result.data.text))throw new Error('OCR text did not match expected fixture');
+  if(!/BULBASAUR/i.test(nameResult.data.text)||!/67\s*\/\s*130/.test(numberResult.data.text))throw new Error('OCR crop text did not match expected fixture');
   say('PASS');
  }catch(e){say('FAIL: '+(e?.stack||e));document.body.dataset.result='fail';return}
  document.body.dataset.result='pass';
