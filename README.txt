@@ -20,3 +20,12 @@ Installatie:
 1. Publiceer de inhoud van deze map op een HTTPS-host.
 2. Open de URL in Safari op iPhone.
 3. Deel -> Zet op beginscherm.
+
+
+OFFLINE SCANNER BRANCH (in ontwikkeling)
+- Offline catalogusdownload toegevoegd via offline.js.
+- Set- en kaartmetadata worden per taal lokaal opgeslagen in IndexedDB.
+- De catalogus-API leest eerst uit de lokale cache en gebruikt internet alleen voor ontbrekende records.
+- Download vanuit Meer > Offline kaartcatalogus terwijl je internet hebt; laat de pagina open.
+- Dit is nog geen volledig offline scanner: kaartafbeeldingen en de OCR-engine worden in volgende stappen lokaal beschikbaar gemaakt.
+- De hoofdbranch/main is niet aangepast.
