@@ -29,3 +29,9 @@ OFFLINE SCANNER BRANCH (in ontwikkeling)
 - Download vanuit Meer > Offline kaartcatalogus terwijl je internet hebt; laat de pagina open.
 - Dit is nog geen volledig offline scanner: kaartafbeeldingen en de OCR-engine worden in volgende stappen lokaal beschikbaar gemaakt.
 - De hoofdbranch/main is niet aangepast.
+
+- Scanner gebruikt nu een lokaal gehoste Tesseract.js-runtime (assets worden via GitHub Actions opgebouwd) met Engels OCR-model.
+- OCR leest volledige kaarttekst en probeert het kaartnummer apart uit meerdere onderrand-pixels/crops te halen.
+- Kaartmatch combineert herkende Pokémonnaam en exact kaartnummer met de lokaal gecachete vintage kaartcatalogus.
+- Drukvariant-herkenning (1st Edition / Shadowless / Unlimited / holo) is nog niet automatisch gevalideerd; gebruiker moet deze voorlopig controleren.
+- OCR-runtime is pas volledig offline nadat de asset-workflow is geslaagd en de app de OCR-bestanden minstens één keer heeft geladen.
