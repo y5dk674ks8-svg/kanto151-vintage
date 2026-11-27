@@ -20,7 +20,10 @@
   if(!result.found)throw new Error(result.reason||'Card not detected');
   document.getElementById('output').width=result.canvas.width;document.getElementById('output').height=result.canvas.height;
   document.getElementById('output').getContext('2d').drawImage(result.canvas,0,0);
-  say('CARD DETECTED; normalized '+result.canvas.width+'x'+result.canvas.height+'; confidence '+result.confidence.toFixed(2));
+  if(result.canvas.width!==744||result.canvas.height!==1039)throw new Error('Unexpected normalized dimensions');
+  if(result.ratio<.62||result.ratio>.82)throw new Error('Invalid card aspect ratio: '+result.ratio);
+  if(result.rectangularity<.48)throw new Error('Contour is not sufficiently rectangular: '+result.rectangularity);
+  say('CARD DETECTED; normalized '+result.canvas.width+'x'+result.canvas.height+'; ratio '+result.ratio.toFixed(3)+'; rectangularity '+result.rectangularity.toFixed(2));
   document.body.dataset.result='pass';
  }catch(e){say('FAIL: '+(e.stack||e));document.body.dataset.result='fail'}
 })();
