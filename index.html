@@ -186,11 +186,23 @@ try{
  const worker=await getOfflineOcrWorker();
  document.getElementById('scanstatus').textContent='OCR gestart. Foto voorbereiden…';
  const progress=m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%';else if(m.status)document.getElementById('scanstatus').textContent='OCR: '+m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'')};
- const bitmap=await createImageBitmap(file);
- const scale=Math.min(1,1800/Math.max(bitmap.width,bitmap.height));
- const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
- canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
- ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+ // iOS Safari kan blijven hangen op createImageBitmap(File). Gebruik de
+ // klassieke Image -> Canvas route; die werkt ook met foto's uit de iPhone-bibliotheek.
+ document.getElementById('scanstatus').textContent='Foto openen voor OCR…';
+ const sourceImage=new Image();
+ sourceImage.decoding='async';
+ await new Promise((resolve,reject)=>{
+  sourceImage.onload=resolve;
+  sourceImage.onerror=()=>reject(new Error('De foto kan niet worden geopend. Kies een JPEG/PNG-foto en probeer opnieuw.'));
+  sourceImage.src=u;
+ });
+ const sourceWidth=sourceImage.naturalWidth, sourceHeight=sourceImage.naturalHeight;
+ if(!sourceWidth||!sourceHeight)throw new Error('De foto heeft geen leesbare afbeeldingsafmetingen.');
+ const scale=Math.min(1,1800/Math.max(sourceWidth,sourceHeight));
+ const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+ canvas.width=Math.round(sourceWidth*scale);canvas.height=Math.round(sourceHeight*scale);
+ ctx.drawImage(sourceImage,0,0,canvas.width,canvas.height);
+ document.getElementById('scanstatus').textContent='Foto voorbereid ('+canvas.width+' × '+canvas.height+'). OCR start…';
  const full=await worker.recognize(canvas,{}, {logger:progress});
  ocrText=full.data.text||'';
  let number=null;
