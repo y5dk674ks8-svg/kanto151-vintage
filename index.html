@@ -136,8 +136,8 @@ async function getOfflineOcrWorker(){
  document.getElementById('scanstatus').textContent='OCR-engine starten…';
  offlineOcrWorker=await Tesseract.createWorker('eng',1,{
   workerPath:'./assets/worker.min.js',
-  corePath:'./assets/tesseract-core/tesseract-core.wasm.js',
-  langPath:'./assets/tessdata/',
+  corePath:'./assets/tesseract-core',
+  langPath:'./assets/tessdata',
   cacheMethod:'write',
   gzip:true,
   logger:m=>{const el=document.getElementById('scanstatus');if(!el)return;if(m.status==='loading language traineddata')el.textContent='OCR-taalbestand laden '+Math.round((m.progress||0)*100)+'%';else if(m.status)el.textContent='OCR voorbereiden: '+m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'');}
