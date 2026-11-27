@@ -53,7 +53,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. De gratis OCR leest Pokémonnaam en kaartnummer uit en vergelijkt die met vintage kaartgegevens. Jij kiest de juiste kaartafbeelding; de drukvariant wordt daarna bevestigd.</p>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
 <div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
-<div class="notice">De foto wordt alleen in je browser verwerkt en niet naar een herkenningsserver verstuurd. Tesseract.js wordt gratis geladen; kaartgegevens worden opgehaald bij TCGdex. Je collectie blijft op je iPhone.</div>
+<div class="notice">De foto wordt lokaal op je iPhone verwerkt. OCR-engine en Engels taalbestand worden vanuit de app geladen; kaartgegevens worden lokaal gecachet. Geen betaalde API of herkenningsserver.</div>
 </section>
 <section id="inventory" class="hidden">
 <div class="sectiontitle">Mijn kaarten</div><p class="muted">Elke kaart is een afzonderlijke registratie. Dubbelen tellen mee in je kaartenaantal, maar niet dubbel in je 151-voortgang.</p><div class="panel" id="inventorylist">Nog geen kaarten geregistreerd.</div>
@@ -128,6 +128,21 @@ let old=document.getElementById('registerbox');if(!old){old=document.createEleme
 }catch(e){alert('Kaartdetails niet beschikbaar: '+e.message)}}
 function commitCard(id,isVintage){if(!isVintage&&!confirm('Deze set is niet aantoonbaar uit 1996–2002. Toch toevoegen?'))return;let c=window.pendingCard,dex=Number(document.getElementById('regdex').value),qty=Math.max(1,Math.min(99,Number(document.getElementById('regqty').value)||1)),variant=document.getElementById('regvariant').value;for(let i=0;i<qty;i++){state.cards.push({uid:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),dex,name:c.name,cardName:c.name,cardId:c.id,cardNo:c.localId,setId:c.set?.id||selectedSet?.id,setName:c.set?.name||selectedSet?.name,lang:selectedSetLang,variant,image:c.image||'',addedAt:new Date().toISOString()})}save();document.getElementById('registerbox').innerHTML='<div class="notice">Kaart(en) opgeslagen op dit apparaat.</div>'}
 function removeCard(uid){if(confirm('Deze kaart uit je verzameling verwijderen?')){state.cards=state.cards.filter(c=>c.uid!==uid);save()}}
+let offlineOcrWorker=null;
+async function getOfflineOcrWorker(){
+ if(offlineOcrWorker)return offlineOcrWorker;
+ if(!window.Tesseract)await new Promise((ok,no)=>{let sc=document.createElement('script');sc.src='./assets/tesseract.min.js';sc.onload=ok;sc.onerror=()=>no(Error('Offline OCR-engine ontbreekt. Open de app eerst met internet en laad de OCR-bestanden.'));document.head.appendChild(sc)});
+ if(!Tesseract.createWorker)throw Error('OCR-engine kon niet worden gestart.');
+ offlineOcrWorker=await Tesseract.createWorker('eng',1,{
+  workerPath:'./assets/worker.min.js',
+  corePath:'./assets/tesseract-core',
+  langPath:'./assets/tessdata',
+  cacheMethod:'write',
+  gzip:true,
+  logger:m=>{if(m.status==='loading language traineddata')document.getElementById('scanstatus').textContent='OCR-taalbestand laden '+Math.round((m.progress||0)*100)+'%'}
+ });
+ return offlineOcrWorker;
+}
 let photoFile=null;
 let scanDexGuess=null, scanNumberGuess=null;
 async function findScannedCandidates(dex,cardNo){
@@ -165,25 +180,32 @@ function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.v
 async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
 async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Kaarttekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
 try{
- if(!window.Tesseract){await new Promise((ok,no)=>{let sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
- const full=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
+ const worker=await getOfflineOcrWorker();
+ const progress=m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'};
+ const full=await worker.recognize(file,{}, {logger:progress});
  ocrText=full.data.text||'';
  let number=null;
  const pair=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/);
  if(pair&&Number(pair[1])>0)number=pair[1];
- // Read the bottom edge separately: card numbers are printed at the lower-right corner.
+ // Try several lower-edge crops: card numbers can sit at different positions depending on framing.
  const bitmap=await createImageBitmap(file);
  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
- const sx=Math.floor(bitmap.width*.06), sy=Math.floor(bitmap.height*.73), sw=Math.floor(bitmap.width*.88), sh=Math.floor(bitmap.height*.20);
- canvas.width=sw*3;canvas.height=sh*3;
+ const sx=Math.floor(bitmap.width*.03), sy=Math.floor(bitmap.height*.70), sw=Math.floor(bitmap.width*.94), sh=Math.floor(bitmap.height*.27);
+ canvas.width=sw*4;canvas.height=sh*4;
+ ctx.imageSmoothingEnabled=false;
  ctx.drawImage(bitmap,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
  const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
- for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]*.299+pixels.data[i+1]*.587+pixels.data[i+2]*.114);const c=Math.max(0,Math.min(255,(v-115)*2.1+128));pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=c}
+ for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]*.299+pixels.data[i+1]*.587+pixels.data[i+2]*.114);const c=Math.max(0,Math.min(255,(v-118)*2.25+128));pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=c}
  ctx.putImageData(pixels,0,0);
- const bottom=await Tesseract.recognize(canvas,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaartnummer uitlezen '+Math.round((m.progress||0)*100)+'%'},tessedit_char_whitelist:'0123456789/|'});
+ const bottom=await worker.recognize(canvas,{rectangle:{left:Math.floor(canvas.width*.45),top:0,width:Math.floor(canvas.width*.55),height:canvas.height}},{logger:progress, tessedit_char_whitelist:'0123456789/|'});
  const bottomText=bottom.data.text||'';
  const bottomPair=bottomText.match(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/);
  if(bottomPair&&Number(bottomPair[1])>0)number=bottomPair[1];
+ else{
+  const nums=bottomText.match(/\b\d{1,3}\b/g)||[];
+  const plausible=nums.map(x=>Number(x)).filter(x=>x>0&&x<=250);
+  if(plausible.length)number=String(plausible[plausible.length-1]);
+ }
  scanNumberGuess=number;
  const low=ocrText.toLowerCase();
  const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
