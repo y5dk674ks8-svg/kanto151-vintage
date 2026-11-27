@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.27-09"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.27-10"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -67,12 +67,12 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
 <script>
-// KANTO_BUILD_20261127_09
-const KANTO_BUILD='2026.11.27-09';
+// KANTO_BUILD_20261127_10
+const KANTO_BUILD='2026.11.27-10';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
- if(p.get('refresh')!=='kanto151-20261127-09')return;
+ if(p.get('refresh')!=='kanto151-20261127-10')return;
  const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:99999;background:#fff;color:#172554;display:grid;place-items:center;font:700 18px sans-serif;padding:30px;text-align:center';el.textContent='Kanto 151 wordt volledig vernieuwd…';document.body.appendChild(el);
  try{
   if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}
@@ -245,13 +245,25 @@ async function scanPhoto(file){
   document.getElementById('scanstatus').textContent='Foto voorbereid ('+canvas.width+' × '+canvas.height+'). Kaartnaam en kaartnummer apart uitlezen…';
   // Avoid OCR on the entire photograph: isolate the upper title area and lower collector-number area.
   const nameCrop=makeOcrRegion(canvas,.12,.18,.88,.53,2);
-  const numberCrop=makeOcrRegion(canvas,.62,.80,.96,.94,5);
+  // The collector number can shift when the card is framed smaller, tilted, or surrounded by margins.
+  // Start with a deliberately generous lower-card band, then run a broad lower-right fallback.
+  const numberCrops=[
+   makeOcrRegion(canvas,.04,.70,.99,.99,2),
+   makeOcrRegion(canvas,.34,.76,.99,.99,3)
+  ];
   const nameResult=await recognizeRegion(worker,nameCrop,'Pokémonnaam herkennen',45000);
   ocrText=nameResult.data.text||'';
-  const numberResult=await recognizeRegion(worker,numberCrop,'Kaartnummer herkennen',45000);
-  const numberText=numberResult.data.text||'';
-  let number=null;const pair=numberText.match(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/);
-  if(pair&&Number(pair[1])>0&&Number(pair[1])<=250)number=String(Number(pair[1]));else{const nums=(numberText.match(/\b\d{1,3}\b/g)||[]).map(x=>Number(x)).filter(x=>x>0&&x<=250);if(nums.length===1)number=String(nums[0])}
+  const numberTexts=[];
+  for(let i=0;i<numberCrops.length;i++){
+   const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · uitsnede '+(i+1)+'/'+numberCrops.length,45000);
+   numberTexts.push(r.data.text||'');
+   if(numberTexts[i].match(/\b\d{1,3}\s*[\/|]\s*\d{1,3}\b/))break;
+  }
+  const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
+  let number=null;
+  const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/g)].map(m=>Number(m[1])).filter(n=>n>0&&n<=250);
+  if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
+  else{const nums=[...new Set((numberText.match(/\b\d{1,3}\b/g)||[]).map(Number).filter(n=>n>0&&n<=250))];if(nums.length===1)number=String(nums[0])}
   scanNumberGuess=number;const low=ocrText.toLowerCase();const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);scanDexGuess=hits.length?hits[0].i+1:null;
   document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Naam en kaartnummer worden uit aparte uitsneden gelezen. Controleer beide voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
   document.getElementById('scanstatus').textContent=scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Naam herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
