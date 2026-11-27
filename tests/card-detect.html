@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><title>Card detection test</title>
+<style>body{font:16px system-ui;padding:20px}canvas{max-width:100%;border:1px solid #aaa}pre{white-space:pre-wrap}</style>
+<h1>Offline card detection test</h1><p id="status">Running…</p><canvas id="input" width="1200" height="1600"></canvas><h2>Normalized card</h2><canvas id="output" width="744" height="1039"></canvas><pre id="log"></pre>
+<script src="../card-vision.js"></script>
+<script>
+(async()=>{
+ const status=document.getElementById('status'),log=document.getElementById('log'),say=s=>{status.textContent=s;log.textContent+=s+'\n'};
+ try{
+  const c=document.getElementById('input'),ctx=c.getContext('2d');
+  ctx.fillStyle='#8b6040';ctx.fillRect(0,0,c.width,c.height);
+  for(let y=0;y<c.height;y+=65){ctx.strokeStyle='rgba(45,25,12,.18)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y+18);ctx.stroke()}
+  const card=document.createElement('canvas');card.width=620;card.height=870;const p=card.getContext('2d');
+  p.fillStyle='#e8bd39';p.fillRect(0,0,620,870);p.strokeStyle='#b38b28';p.lineWidth=8;p.strokeRect(8,8,604,854);
+  p.fillStyle='#d9e3c4';p.fillRect(42,38,536,100);p.fillStyle='#24351d';p.font='bold 54px Arial';p.fillText('Bulbasaur',62,105);
+  p.fillStyle='#d9e3c4';p.fillRect(42,160,536,490);p.fillStyle='#315c3b';p.fillRect(90,220,430,360);
+  p.fillStyle='#273b23';p.font='bold 40px Arial';p.fillText('Leech Seed',80,710);p.font='bold 30px Arial';p.fillText('67/130',460,835);
+  ctx.save();ctx.translate(600,800);ctx.rotate(-.12);ctx.transform(1,.02,-.03,1,0,0);ctx.drawImage(card,-310,-435);ctx.restore();
+  say('Synthetic card rendered with large margins, rotation and perspective skew.');
+  const result=await KantoCardVision.detect(c);
+  if(!result.found)throw new Error(result.reason||'Card not detected');
+  document.getElementById('output').width=result.canvas.width;document.getElementById('output').height=result.canvas.height;
+  document.getElementById('output').getContext('2d').drawImage(result.canvas,0,0);
+  say('CARD DETECTED; normalized '+result.canvas.width+'x'+result.canvas.height+'; confidence '+result.confidence.toFixed(2));
+  document.body.dataset.result='pass';
+ }catch(e){say('FAIL: '+(e.stack||e));document.body.dataset.result='fail'}
+})();
+</script>
