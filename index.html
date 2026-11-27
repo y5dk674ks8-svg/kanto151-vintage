@@ -202,7 +202,7 @@ async function findScannedCandidates(dex,cardNo,totalNo){
 function runFreeMatch(){
  const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||0);
  const raw=(document.getElementById('scannumber')?.value||'').trim();
- const match=raw.match(/^0*(\\d{1,3})(?:\\s*[\\/]\\s*(\\d{1,3}))?$/);
+ const match=raw.match(/^0*(\d{1,3})(?:\s*[\/]\s*(\d{1,3}))?$/);
  if(!Number.isInteger(dex)||dex<1||dex>151){document.getElementById('scanstatus').textContent='Kies eerst een Pokémonnaam.';return}
  if(!match||Number(match[1])<1||Number(match[1])>250|| (match[2]&&Number(match[2])<1)){document.getElementById('scanstatus').textContent='Vul het volledige kaartnummer in, bijvoorbeeld 4/102.';document.getElementById('scannumber')?.focus();return}
  scanDexGuess=dex;scanNumberGuess=String(Number(match[1]));scanTotalGuess=match[2]?String(Number(match[2])):null;
@@ -211,7 +211,7 @@ function runFreeMatch(){
 function retryScanMatch(){
  const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||1);
  const raw=(document.getElementById('retrycardnumber')?.value||'').trim();
- const n=raw.match(/^0*(\\d{1,3})(?:\\s*[\\/]\\s*(\\d{1,3}))?$/);
+ const n=raw.match(/^0*(\d{1,3})(?:\s*[\/]\s*(\d{1,3}))?$/);
  if(!n){document.getElementById('scanstatus').textContent='Vul het volledige kaartnummer in, bijvoorbeeld 4/102.';return}
  findScannedCandidates(dex,String(Number(n[1])),n[2]?String(Number(n[2])):null)
 }
@@ -299,9 +299,9 @@ async function scanPhoto(file){
     numberTexts.push(r.data.text||'');
     if(numberTexts[i].match(/\b\d{1,3}\s*[\/|]\s*\d{1,3}\b/))break;
    }
-   const numberText=numberTexts.join('\\n--- tweede uitsnede ---\\n');
+   const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
    let number=null,totalNumber=null;
-   const pairs=[...numberText.matchAll(/\\b(\\d{1,3})\\s*[\\/|]\\s*(\\d{1,3})\\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
+   const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
    if(pairs.length){const unique=[...new Map(pairs.map(x=>[x.num+'/'+x.total,x])).values()];if(unique.length===1){number=String(unique[0].num);totalNumber=String(unique[0].total)}}
    scanNumberGuess=number;scanTotalGuess=totalNumber;
    const low=ocrText.toLowerCase();
