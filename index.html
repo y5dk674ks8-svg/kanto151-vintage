@@ -90,7 +90,7 @@ function quickSearch(q){document.getElementById('setquery').value=q;searchSets()
 async function searchSets(){let lang=document.getElementById('lang').value,q=document.getElementById('setquery').value.trim();if(!q){document.getElementById('setstatus').textContent='Vul een setnaam in, bijvoorbeeld Base, Jungle, Fossil, Team Rocket, Gym of Neo.';return}
 document.getElementById('setstatus').textContent='Sets zoeken…';document.getElementById('setresults').innerHTML='';document.getElementById('setdetail').innerHTML='';
 try{let data=await api(`https://api.tcgdex.net/v2/${lang}/sets?name=${encodeURIComponent(q)}`);
-let vintageOnly=document.getElementById('vintageonly').checked;
+let vintageOnly=true;
 if(vintageOnly)data=data.filter(s=>{let y=Number((s.releaseDate||'').slice(0,4));return y>=1996&&y<=2002});
 data.sort((a,b)=>(a.releaseDate||'').localeCompare(b.releaseDate||''));
 if(!data.length){document.getElementById('setstatus').textContent=vintageOnly?'Geen vintage set gevonden. Probeer een andere zoekterm of controleer de taal.':'Geen sets gevonden. Probeer een andere zoekterm.';return}
