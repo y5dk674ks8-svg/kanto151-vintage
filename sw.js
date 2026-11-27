@@ -1,4 +1,4 @@
-const CACHE='kanto151-v2-17';
+const CACHE='kanto151-v2-18';
 const APP=['./','./index.html','./manifest.webmanifest','./offline.js'];
 const OCR=['./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/tesseract-core.wasm.js','./assets/tesseract-core/tesseract-core-simd.wasm.js','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tesseract-core/tesseract-core-simd-lstm.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];
 self.addEventListener('install',event=>{
