@@ -87,14 +87,14 @@ ja:["拡張パック","ポケモンジャングル","化石の秘密","ロケッ
 };
 function renderQuickSets(){let lang=document.getElementById('lang')?.value||'en';let el=document.getElementById('quicksets');if(!el)return;el.innerHTML=(QUICK_SETS[lang]||QUICK_SETS.en).map(q=>`<button class="btn light" style="padding:8px 10px" onclick="quickSearch('${q.replace(/'/g,"\\\\'")}')">${esc(q)}</button>`).join('')}
 function quickSearch(q){document.getElementById('setquery').value=q;searchSets()}
-async function searchSets(){let lang=document.getElementById('lang').value,q=document.getElementById('setquery').value.trim();if(!q){document.getElementById('setstatus').textContent='Vul een setnaam in, bijvoorbeeld Base, Jungle, Fossil, Team Rocket, Gym of Neo.';return}
-document.getElementById('setstatus').textContent='Sets zoeken…';document.getElementById('setresults').innerHTML='';document.getElementById('setdetail').innerHTML='';
-try{let data=await api(`https://api.tcgdex.net/v2/${lang}/sets?name=${encodeURIComponent(q)}`);
-let vintageOnly=true;
-if(vintageOnly)data=data.filter(s=>{let y=Number((s.releaseDate||'').slice(0,4));return y>=1996&&y<=2002});
+async function searchSets(){let lang=document.getElementById('lang').value,q=document.getElementById('setquery').value.trim().toLowerCase();if(!q){document.getElementById('setstatus').textContent='Vul een setnaam in, bijvoorbeeld Base, Jungle, Fossil, Team Rocket, Gym of Neo.';return}
+document.getElementById('setstatus').textContent='Alle sets ophalen en doorzoeken…';document.getElementById('setresults').innerHTML='';document.getElementById('setdetail').innerHTML='';
+try{
+let data=await api(`https://api.tcgdex.net/v2/${lang}/sets`);
+data=data.filter(s=>{let y=Number((s.releaseDate||'').slice(0,4));return y>=1996&&y<=2002&&(s.name||'').toLowerCase().includes(q)});
 data.sort((a,b)=>(a.releaseDate||'').localeCompare(b.releaseDate||''));
-if(!data.length){document.getElementById('setstatus').textContent=vintageOnly?'Geen vintage set gevonden. Probeer een andere zoekterm of controleer de taal.':'Geen sets gevonden. Probeer een andere zoekterm.';return}
-document.getElementById('setstatus').textContent=data.length+' set(s) gevonden. De datum is zichtbaar zodat je kunt controleren of het om de juiste vintage uitgave gaat.';
+if(!data.length){document.getElementById('setstatus').textContent='Geen vintage sets gevonden voor “'+q+'”. Probeer bijvoorbeeld Base Set, Jungle, Fossil of Team Rocket.';return}
+document.getElementById('setstatus').textContent=data.length+' vintage set(s) gevonden.';
 document.getElementById('setresults').innerHTML=data.map(s=>`<div class="cardentry"><div style="flex:1"><b>${esc(s.name)}</b><small>${esc(s.id)} · ${esc(s.releaseDate||'datum onbekend')} · ${s.cardCount?.total??'?'} kaarten</small></div><button class="btn" onclick="openSet('${esc(s.id)}','${lang}')">Bekijk</button></div>`).join('');
 }catch(e){document.getElementById('setstatus').textContent='Catalogus niet bereikbaar: '+e.message+'. Controleer je internetverbinding.'}}
 async function openSet(id,lang){selectedSetLang=lang;document.getElementById('setdetail').innerHTML='<div class="panel">Setgegevens ophalen…</div>';try{let s=await api(`https://api.tcgdex.net/v2/${lang}/sets/${encodeURIComponent(id)}`);selectedSet=s;let date=s.releaseDate||'';let year=date?Number(date.slice(0,4)):null;let vintage=year&&year>=1996&&year<=2002;let cards=s.cards||[];document.getElementById('setdetail').innerHTML=`<div class="panel"><h2>${esc(s.name)}</h2><div class="muted">${esc(s.id)} · Releasedatum: ${esc(date||'niet vermeld')} · ${cards.length} kaarten in catalogus</div>${vintage?'<span class="badge">Binnen 1996–2002</span>':`<div class="notice">Let op: deze set valt niet aantoonbaar binnen 1996–2002. We registreren hem niet als vintage zonder jouw bewuste keuze.</div>`}<div class="row" style="margin-top:10px"><input id="cardfilter" placeholder="Filter op Pokémon / kaartnaam…" oninput="filterSetCards()"><select id="onlypokemon" onchange="filterSetCards()"><option value="all">Alle kaarten</option><option value="pokemon">Alleen Pokémon</option></select></div><div class="cardgrid" id="setcards" style="margin-top:10px"></div></div>`;window.currentSetCards=cards;filterSetCards();}catch(e){document.getElementById('setdetail').innerHTML='<div class="notice">Set kon niet worden geladen: '+esc(e.message)+'</div>'}}
