@@ -10,7 +10,7 @@
   say('Tesseract global: '+!!window.Tesseract);
   const c=document.createElement('canvas');c.width=800;c.height=1200;
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
-  x.fillStyle='#111';x.font='bold 76px Arial';x.fillText('BULBASAUR',90,450);x.fillText('67/130',650,1100);
+  x.fillStyle='#111';x.font='bold 76px Arial';x.fillText('BULBASAUR',90,450);x.fillText('67/130',400,1100);
   const crop=(x0,y0,x1,y1,up)=>{const sx=Math.floor(c.width*x0),sy=Math.floor(c.height*y0),sw=Math.floor(c.width*(x1-x0)),sh=Math.floor(c.height*(y1-y0));const out=document.createElement('canvas');out.width=sw*up;out.height=sh*up;out.getContext('2d').drawImage(c,sx,sy,sw,sh,0,0,out.width,out.height);return out;};
   const nameCrop=crop(.12,.18,.88,.53,2),numberCrop=crop(.04,.70,.99,.99,2);
   const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',0.9));
