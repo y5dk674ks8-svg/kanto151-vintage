@@ -135,12 +135,14 @@ async function getOfflineOcrWorker(){
  if(!Tesseract.createWorker)throw Error('OCR-engine kon niet worden gestart.');
  document.getElementById('scanstatus').textContent='OCR-engine starten…';
  offlineOcrWorker=await Tesseract.createWorker('eng',1,{
-  workerPath:'./assets/worker.min.js',
-  corePath:'./assets/tesseract-core',
-  langPath:'./assets/tessdata',
-  cacheMethod:'write',
+  workerPath:new URL('./assets/worker.min.js',document.baseURI).href,
+  corePath:new URL('./assets/tesseract-core',document.baseURI).href,
+  langPath:new URL('./assets/tessdata',document.baseURI).href,
+  cacheMethod:'refresh',
   gzip:true,
-  logger:m=>{const el=document.getElementById('scanstatus');if(!el)return;if(m.status==='loading language traineddata')el.textContent='OCR-taalbestand laden '+Math.round((m.progress||0)*100)+'%';else if(m.status)el.textContent='OCR voorbereiden: '+m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'');}
+  workerBlobURL:false,
+  errorHandler:err=>{const el=document.getElementById('scanstatus');if(el)el.textContent='OCR-workerfout: '+(err?.message||String(err));},
+  logger:m=>{const el=document.getElementById('scanstatus');if(!el)return;el.textContent='OCR '+(m.status||'bezig')+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'');}
  });
  return offlineOcrWorker;
 }
