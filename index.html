@@ -138,7 +138,7 @@ async function getOfflineOcrWorker(){
   workerPath:new URL('./assets/worker.min.js',document.baseURI).href,
   corePath:new URL('./assets/tesseract-core',document.baseURI).href,
   langPath:new URL('./assets/tessdata',document.baseURI).href,
-  cacheMethod:'refresh',
+  cacheMethod:'write',
   gzip:true,
   workerBlobURL:false,
   errorHandler:err=>{const el=document.getElementById('scanstatus');if(el)el.textContent='OCR-workerfout: '+(err?.message||String(err));},
