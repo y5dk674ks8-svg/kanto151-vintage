@@ -52,7 +52,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <div class="sectiontitle">Kaart scannen</div>
 <div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. De gratis OCR leest Pokémonnaam en kaartnummer uit en vergelijkt die met vintage kaartgegevens. Jij kiest de juiste kaartafbeelding; de drukvariant wordt daarna bevestigd.</p>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
-<div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
+<div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div class="actions"><button class="btn light" onclick="testOcrEngine()">Test OCR-engine</button></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
 <div class="notice">De foto wordt lokaal op je iPhone verwerkt. OCR-engine en Engels taalbestand worden vanuit de app geladen; kaartgegevens worden lokaal gecachet. Geen betaalde API of herkenningsserver.</div>
 </section>
 <section id="inventory" class="hidden">
@@ -181,21 +181,37 @@ async function findScannedCandidates(dex,cardNo){
 }
 function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||1);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
 async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
-async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Kaarttekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
+function scanTimeout(promise,ms,label){let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label)),ms)})]).finally(()=>clearTimeout(timer))}
+async function testOcrEngine(){
+ const status=document.getElementById('scanstatus'),result=document.getElementById('scanresult');
+ result.innerHTML='';status.textContent='OCR-diagnose: worker initialiseren…';
+ try{
+  const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
+  const c=document.createElement('canvas');c.width=1100;c.height=380;
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+  x.fillStyle='#111';x.font='bold 88px Arial';x.fillText('BULBASAUR',45,135);x.fillText('67/130',45,280);
+  status.textContent='OCR-diagnose: testtekst herkennen…';
+  const r=await scanTimeout(worker.recognize(c,{}, {logger:m=>{if(m.status)status.textContent='OCR-diagnose: '+m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'')}}),90000,'OCR-herkenning duurde langer dan 90 seconden.');
+  const recognized=r.data.text||'';
+  result.innerHTML='<div class="panel"><b>OCR-testresultaat</b><p class="muted" style="white-space:pre-wrap">'+esc(recognized)+'</p></div>';
+  status.textContent=/BULBASAUR/i.test(recognized)&&/67\s*\/\s*130/.test(recognized)?'OCR-diagnose geslaagd op dit toestel.':'OCR-engine draait, maar herkent de testtekst niet goed.';
+ }catch(e){status.textContent='OCR-diagnose mislukt: '+e.message;result.innerHTML='<div class="notice">Technische fout: '+esc(e.stack||e.message)+'</div>'}
+}
+async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';document.getElementById('scanresult').innerHTML='';
 try{
- const worker=await getOfflineOcrWorker();
- document.getElementById('scanstatus').textContent='OCR gestart. Foto voorbereiden…';
+ const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
+ document.getElementById('scanstatus').textContent='OCR-worker klaar. Foto voorbereiden…';
  const progress=m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%';else if(m.status)document.getElementById('scanstatus').textContent='OCR: '+m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'')};
  // iOS Safari kan blijven hangen op createImageBitmap(File). Gebruik de
  // klassieke Image -> Canvas route; die werkt ook met foto's uit de iPhone-bibliotheek.
  document.getElementById('scanstatus').textContent='Foto openen voor OCR…';
  const sourceImage=new Image();
  sourceImage.decoding='async';
- await new Promise((resolve,reject)=>{
+ await scanTimeout(new Promise((resolve,reject)=>{
   sourceImage.onload=resolve;
   sourceImage.onerror=()=>reject(new Error('De foto kan niet worden geopend. Kies een JPEG/PNG-foto en probeer opnieuw.'));
   sourceImage.src=u;
- });
+ }),20000,'Foto openen duurt langer dan 20 seconden. Probeer de foto opnieuw te kiezen.');
  const sourceWidth=sourceImage.naturalWidth, sourceHeight=sourceImage.naturalHeight;
  if(!sourceWidth||!sourceHeight)throw new Error('De foto heeft geen leesbare afbeeldingsafmetingen.');
  const scale=Math.min(1,1800/Math.max(sourceWidth,sourceHeight));
@@ -203,7 +219,7 @@ try{
  canvas.width=Math.round(sourceWidth*scale);canvas.height=Math.round(sourceHeight*scale);
  ctx.drawImage(sourceImage,0,0,canvas.width,canvas.height);
  document.getElementById('scanstatus').textContent='Foto voorbereid ('+canvas.width+' × '+canvas.height+'). OCR start…';
- const full=await worker.recognize(canvas,{}, {logger:progress});
+ const full=await scanTimeout(worker.recognize(canvas,{}, {logger:progress}),120000,'OCR op de volledige foto duurde langer dan 120 seconden.');
  ocrText=full.data.text||'';
  let number=null;
  const pair=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/);
@@ -217,7 +233,7 @@ try{
  const pixels=cropCtx.getImageData(0,0,crop.width,crop.height);
  for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]*.299+pixels.data[i+1]*.587+pixels.data[i+2]*.114);const c=Math.max(0,Math.min(255,(v-118)*2.25+128));pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=c}
  cropCtx.putImageData(pixels,0,0);
- const bottom=await worker.recognize(crop,{rectangle:{left:Math.floor(crop.width*.45),top:0,width:Math.floor(crop.width*.55),height:crop.height}},{logger:progress, tessedit_char_whitelist:'0123456789/|'});
+ const bottom=await scanTimeout(worker.recognize(crop,{rectangle:{left:Math.floor(crop.width*.45),top:0,width:Math.floor(crop.width*.55),height:crop.height}},{logger:progress, tessedit_char_whitelist:'0123456789/|'}),90000,'OCR op het kaartnummer duurde langer dan 90 seconden.');
  const bottomText=bottom.data.text||'';
  const bottomPair=bottomText.match(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/);
  if(bottomPair&&Number(bottomPair[1])>0)number=bottomPair[1];
