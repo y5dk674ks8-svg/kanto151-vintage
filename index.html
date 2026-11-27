@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.27-10"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.27-11"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -66,13 +66,14 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
+<script src="./card-vision.js"></script>
 <script>
-// KANTO_BUILD_20261127_10
-const KANTO_BUILD='2026.11.27-10';
+// KANTO_BUILD_20261127_11
+const KANTO_BUILD='2026.11.27-11';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
- if(p.get('refresh')!=='kanto151-20261127-10')return;
+ if(p.get('refresh')!=='kanto151-20261127-11')return;
  const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:99999;background:#fff;color:#172554;display:grid;place-items:center;font:700 18px sans-serif;padding:30px;text-align:center';el.textContent='Kanto 151 wordt volledig vernieuwd…';document.body.appendChild(el);
  try{
   if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}
@@ -237,21 +238,16 @@ async function scanPhoto(file){
  if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';document.getElementById('scanresult').innerHTML='';
  try{
   const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
-  document.getElementById('scanstatus').textContent='OCR-worker klaar. Foto voorbereiden…';
-  const sourceImage=new Image();sourceImage.decoding='async';
-  await scanTimeout(new Promise((resolve,reject)=>{sourceImage.onload=resolve;sourceImage.onerror=()=>reject(new Error('De foto kan niet worden geopend. Kies een JPEG/PNG-foto en probeer opnieuw.'));sourceImage.src=u}),20000,'Foto openen duurt langer dan 20 seconden.');
-  const sourceWidth=sourceImage.naturalWidth,sourceHeight=sourceImage.naturalHeight;if(!sourceWidth||!sourceHeight)throw Error('De foto heeft geen leesbare afbeeldingsafmetingen.');
-  const scale=Math.min(1,1400/Math.max(sourceWidth,sourceHeight)),canvas=document.createElement('canvas');canvas.width=Math.round(sourceWidth*scale);canvas.height=Math.round(sourceHeight*scale);canvas.getContext('2d',{willReadFrequently:true}).drawImage(sourceImage,0,0,canvas.width,canvas.height);
-  document.getElementById('scanstatus').textContent='Foto voorbereid ('+canvas.width+' × '+canvas.height+'). Kaartnaam en kaartnummer apart uitlezen…';
-  // Avoid OCR on the entire photograph: isolate the upper title area and lower collector-number area.
-  const nameCrop=makeOcrRegion(canvas,.12,.18,.88,.53,2);
-  // The collector number can shift when the card is framed smaller, tilted, or surrounded by margins.
-  // Start with a deliberately generous lower-card band, then run a broad lower-right fallback.
-  const numberCrops=[
-   makeOcrRegion(canvas,.04,.70,.99,.99,2),
-   makeOcrRegion(canvas,.34,.76,.99,.99,3)
-  ];
-  const nameResult=await recognizeRegion(worker,nameCrop,'Pokémonnaam herkennen',45000);
+   let cardCanvas=canvas,cardDetected=false;
+   try{
+    document.getElementById('scanstatus').textContent='Kaartcontour zoeken en kaart rechtzetten…';
+    const detected=await scanTimeout(KantoCardVision.detect(canvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
+    if(detected.found){cardCanvas=detected.canvas;cardDetected=true;document.getElementById('scanstatus').textContent='Kaart gevonden en rechtgezet. OCR voorbereiden…'}
+    else{document.getElementById('scanstatus').textContent='Kaartcontour niet zeker gevonden. Ruime foto-uitsneden als reserve gebruiken…'}
+   }catch(detectError){console.warn('Kaartdetectie niet beschikbaar; ruime OCR-reserve wordt gebruikt:',detectError);document.getElementById('scanstatus').textContent='Kaartdetectie niet beschikbaar. Ruime OCR-reserve wordt gebruikt…'}
+   const nameCrop=cardDetected?makeOcrRegion(cardCanvas,.06,.035,.94,.19,3):makeOcrRegion(canvas,.08,.10,.92,.40,2);
+   const numberCrops=cardDetected?[makeOcrRegion(cardCanvas,.72,.91,.995,.995,5)]:[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
+   const nameResult=await recognizeRegion(worker,nameCrop,'Pokémonnaam herkennen',45000);
   ocrText=nameResult.data.text||'';
   const numberTexts=[];
   for(let i=0;i<numberCrops.length;i++){
@@ -265,7 +261,7 @@ async function scanPhoto(file){
   if(pairs.length){const unique=[...new Set(pairs)];if(unique.length===1)number=String(unique[0])}
   else{const nums=[...new Set((numberText.match(/\b\d{1,3}\b/g)||[]).map(Number).filter(n=>n>0&&n<=250))];if(nums.length===1)number=String(nums[0])}
   scanNumberGuess=number;const low=ocrText.toLowerCase();const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);scanDexGuess=hits.length?hits[0].i+1:null;
-  document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Naam en kaartnummer worden uit aparte uitsneden gelezen. Controleer beide voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
+  document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex">'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Naam en kaartnummer uit aparte gebieden gelezen. Controleer beide voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
   document.getElementById('scanstatus').textContent=scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Naam herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
  }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
