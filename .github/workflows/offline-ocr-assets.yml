@@ -33,7 +33,6 @@ jobs:
           cp /tmp/tesseract-core/package/tesseract-core-simd.wasm.js assets/tesseract-core/
           cp /tmp/tesseract-core/package/tesseract-core-lstm.wasm.js assets/tesseract-core/
           cp /tmp/tesseract-core/package/tesseract-core-simd-lstm.wasm.js assets/tesseract-core/
-          cp /tmp/tesseract-core/package/tesseract-core.wasm assets/tesseract-core/
       - name: Download English OCR model
         run: curl -fL https://tessdata.projectnaptha.com/4.0.0/eng.traineddata.gz -o assets/tessdata/eng.traineddata.gz
       - name: Commit local OCR runtime
