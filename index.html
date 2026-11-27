@@ -80,7 +80,22 @@ function renderDex(){let q=(document.getElementById('search')?.value||'').toLowe
 function renderInventory(){let el=document.getElementById('inventorylist');if(!state.cards.length){el.textContent='Nog geen kaarten geregistreerd.';return}el.innerHTML=state.cards.slice().reverse().map((c,ri)=>`<div class="cardentry">${c.image?`<img src="${c.image}/low.webp" onerror="this.style.display='none'">`:''}<div style="flex:1"><b>#${String(c.dex).padStart(3,'0')} ${NAMES[c.dex-1]||c.name}</b><small>${esc(c.cardName||'Kaart')} · ${esc(c.setName||'Set onbekend')} · ${esc(c.lang==='ja'?'Japans':'Engels')} · ${esc(c.cardNo||'')}</small><small>${esc(c.variant||'Variant niet opgegeven')}</small></div><button class="btn warn" onclick="removeCard('${c.uid}')">Verwijder</button></div>`).join('')}
 function renderAll(){let own=ownedIds(),n=own.size;document.getElementById('count').textContent=n;document.getElementById('owned').textContent=n;document.getElementById('missing').textContent=151-n;document.getElementById('totalcards').textContent=state.cards.length;document.getElementById('pct').textContent=Math.round(n/151*100)+'%';document.getElementById('progress').style.width=(n/151*100)+'%';let miss=NAMES.map((_,i)=>i).filter(i=>!own.has(i+1)).slice(0,8);document.getElementById('missingPreview').innerHTML=miss.map(dexCard).join('')||'<p>Alle 151 verzameld 🎉</p>';let recent=state.cards.slice(-3).reverse();document.getElementById('recent').innerHTML=recent.length?recent.map(c=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${NAMES[c.dex-1]||c.name}</b><div class="muted">${esc(c.setName||'Set onbekend')} · ${esc(c.lang==='ja'?'Japans':'Engels')}</div></div>`).join(''):'Nog geen kaarten toegevoegd.';renderDex();renderInventory()}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function api(url){let r=await fetch(url);if(!r.ok)throw new Error('TCGdex antwoordde met '+r.status);return r.json()}
+async function api(url){
+ if(window.KantoOffline){const saved=await KantoOffline.get(url);if(saved!==null)return saved;}
+ let r=await fetch(url);if(!r.ok)throw new Error('TCGdex antwoordde met '+r.status);
+ let data=await r.json();if(window.KantoOffline)KantoOffline.put(url,data).catch(()=>{});return data;
+}
+async function downloadOfflineCatalog(){
+ const btn=document.getElementById('offlineDownload'),status=document.getElementById('offlineStatus');
+ btn.disabled=true;btn.textContent='Bezig met downloaden…';status.textContent='Catalogus en kaartgegevens ophalen. Laat deze pagina open en houd internet beschikbaar.';
+ try{
+  const result=await KantoOffline.downloadCatalog(p=>{
+   status.textContent='Kaartgegevens opslaan: '+p.done+' / '+p.total+' · '+p.set+' ('+p.lang.toUpperCase()+')';
+  });
+  status.textContent='Klaar: '+result.sets+' vintage sets en '+result.cards+' kaartrecords lokaal opgeslagen. Totaal gecachete API-records: '+result.totalCached+'.';
+ }catch(e){status.textContent='Download niet volledig afgerond: '+e.message+'. Je kunt opnieuw proberen; reeds opgeslagen gegevens blijven bewaard.';}
+ finally{btn.disabled=false;btn.textContent='Download catalogus';}
+}
 const QUICK_SETS={
 en:["Base Set","Jungle","Fossil","Base Set 2","Team Rocket","Gym Heroes","Gym Challenge","Neo Genesis","Neo Discovery","Neo Revelation","Neo Destiny","Legendary Collection","Expedition","Aquapolis","Skyridge","Southern Islands"],
 ja:["拡張パック","ポケモンジャングル","化石の秘密","ロケット団","リーダーズスタジアム","闇からの挑戦","金、銀、新世界へ","遺跡をこえて","めざめる伝説","闇、そして光へ","ポケモンカード★VS","ポケモンカード★web","基本拡張パック","地図にない町","海からの風","裂けた大地","神秘なる山"]
