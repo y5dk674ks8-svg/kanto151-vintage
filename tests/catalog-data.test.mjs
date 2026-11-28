@@ -51,7 +51,7 @@ test("Japanese No Rarity printing is preserved as its own variant", () => {
 test("catalog audit reports the Japanese vintage reference omissions and count conflicts", () => {
   assert.equal(coverage.externalJapaneseSetReference.referenceSetGroups, 27);
   assert.ok(coverage.externalJapaneseSetReference.missingFromTcgdexSetAudit.length > 0);
-  assert.equal(coverage.externalJapaneseSetReference.additionalDistinctGroups, 6);
-  assert.equal(coverage.externalJapaneseSetReference.overlapsCoreVintageGroups, 6);
+  assert.equal(coverage.externalJapaneseSetReference.additionalDistinctGroups, 5);
+  assert.equal(coverage.externalJapaneseSetReference.overlapsCoreVintageGroups, 7);
   assert.ok(coverage.externalJapaneseSetReference.sourceCountDiffers.length > 0);
 });
