@@ -67,10 +67,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
 <script src="./card-vision.js?v=20261128-58"></script>
-<script src="./visual-match.js?v=20261128-59"></script>
+<script src="./visual-match.js?v=20261128-60"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-59';
+const KANTO_BUILD='2026.11.28-60';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -276,14 +276,18 @@ async function findVisualCatalogCandidates(cardCanvas){
    }
   }
   const seen=new Set(),candidates=[];
+  const original151=new Set(NAMES);
   for(const set of sets){
    for(const card of (set.cards||[])){
+    // Search only the original Kanto 151 in the first reliable visual pass.
+    // Japanese localized names need a Pokédex-ID mapping; do not mix unfiltered Japanese cards into this shortlist.
+    if(set.lang!=='en'||!original151.has(card.name))continue;
     const key=set.lang+':'+card.id;if(seen.has(key))continue;seen.add(key);
     if(!card.image)continue;
     candidates.push({setId:set.id,setName:set.name,releaseDate:set.releaseDate,cardId:card.id,cardName:card.name,localId:card.localId,image:card.image,lang:set.lang});
    }
   }
-  scanDiagAdd('Vintage catalogus geladen',sets.length+' sets · '+candidates.length+' kaartafbeeldingen · Engels en Japans · 1996–2002');
+  scanDiagAdd('Vintage catalogus geladen',sets.length+' sets · '+candidates.length+' Engelse kaartafbeeldingen van de oorspronkelijke 151 · 1996–2002');
   if(!candidates.length)throw Error('Geen vintage kaartafbeeldingen gevonden in TCGdex.');
   status.textContent='Illustraties vergelijken: 0 / '+candidates.length+' (eerste vergelijking kan langer duren)';
   const ranked=await KantoVisualMatch.rank(cardCanvas,candidates,(done,total)=>{
@@ -292,7 +296,7 @@ async function findVisualCatalogCandidates(cardCanvas){
   const top=ranked.matches.slice(0,30);
   scanDiagAdd('Visuele vergelijking afgerond',ranked.compared+' afbeeldingen vergeleken · '+ranked.failed+' niet beschikbaar · '+top.length+' beste kandidaten getoond'+(top[0]?' · hoogste overeenkomst '+Math.round(top[0].visualScore*100)+'%':''));
   status.textContent='Vergelijking klaar: '+ranked.compared+' kaartafbeeldingen vergeleken. Controleer de beste visuele matches.';
-  box.innerHTML='<div class="panel"><b>Visuele kaartmatches</b><p class="muted">'+ranked.compared+' kaartafbeeldingen vergeleken uit '+sets.length+' vintage sets. De percentages zijn gelijkenisscores, geen gegarandeerde kansen. Controleer de afbeelding en setgegevens.</p>'+top.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.lang.toUpperCase())+' · '+esc(x.releaseDate||'')+'</small><small>Visuele overeenkomst: '+Math.round((x.visualScore||0)*100)+'%</small><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\',\''+x.lang+'\')">Kies deze kaart</button></div></div>').join('')+'</div>'+renderScanDiagnostics();
+  box.innerHTML='<div class="panel"><b>Visuele kaartmatches</b><p class="muted">'+ranked.compared+' kaartafbeeldingen vergeleken uit '+sets.length+' vintage sets. De percentages zijn gelijkenisscores, geen gegarandeerde kansen. Controleer de afbeelding en setgegevens.</p>'+top.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.lang.toUpperCase())+' · '+esc(x.releaseDate||'')+'</small><small>Beeldscore: '+Math.round((x.visualScore||0)*100)+'/100 · relatief</small><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\',\''+x.lang+'\')">Kies deze kaart</button></div></div>').join('')+'</div>'+renderScanDiagnostics();
  }catch(e){
   scanDiagAdd('Visuele matching mislukt',e.message+'\n'+(e.stack||''));
   status.textContent='Visuele matching kon niet worden uitgevoerd: '+e.message;
