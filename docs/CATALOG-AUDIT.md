@@ -13,6 +13,13 @@ Build a reproducible inventory of English and Japanese Pokémon TCG cards from 1
 - TCGdex language catalogs have different coverage levels; the API is a seed source, not proof of historical completeness.
 - Card-level variant data is source evidence, not manual verification of physical cards.
 
+### Canonical Pokémon name reference
+
+- `catalog/pokemon-name-reference.json` stores English and Japanese species names for Kanto dex IDs 001–151 from [PokeAPI's pokemon_species_names.csv](https://github.com/PokeAPI/pokeapi/blob/master/data/v2/csv/pokemon_species_names.csv), pinned to the source commit recorded in the file.
+- The Japanese spellings are cross-checkable against [Bulbapedia's list of Japanese Pokémon names](https://bulbapedia.bulbagarden.net/wiki/List_of_Japanese_Pok%C3%A9mon_names), which describes them as the official Japanese spellings.
+- These are species-name aliases, not card-specific names. They let OCR match a species even where a card name contains a prefix (Rocket, Dark, Light, owner name) or the TCGdex Japanese card-name field is mistranslated.
+- The original TCGdex card name is preserved unchanged. Name-alias gaps are reported for review rather than silently rewriting source data.
+
 ### Independent Japanese discovery references
 
 - [Vintage Japanese Pokémon Cards](https://japanesepokemoncards.net/vintage): lists 27 vintage groups and 1,777 cards for 1996–2002. Its FAQ says trophy cards and most one-off promos are outside its list.
@@ -40,6 +47,10 @@ The latest TCGdex snapshot has:
 - Japanese: 786 Kanto records; 786 without an image URL.
 
 A missing TCGdex image URL does not prove that no image exists elsewhere. Japanese image sources require provenance and reuse-rights review before any mirroring or redistribution. Never silently substitute an English image for a Japanese printing.
+
+## Japanese name-data quality
+
+A spot check found Japanese TCGdex card-name fields that do not contain the canonical species name associated with the source dex ID. For example, the current `ja:neo1-001` seed record is named `奇妙な`, while dex ID 43 is Gloom / `クサイハナ`. This is treated as a source-name quality gap, not silently corrected. The scanner therefore ranks against both the original card name and the canonical species aliases.
 
 ## Variant handling
 
