@@ -96,6 +96,7 @@ for (const language of LANGUAGES) {
   let setCardCount = 0;
   let kantoCardCount = 0;
   let missingImageCount = 0;
+  let nonKantoPokemonCount = 0;
   const selectedSetSummaries = [];
 
   for (const set of inScope) {
@@ -117,9 +118,7 @@ for (const language of LANGUAGES) {
         ? [...new Set(card.dexId.filter(id => Number.isInteger(id) && id >= 1 && id <= 151))]
         : [];
       if (!dexIds.length) {
-        if (card.category === "Pokemon") {
-          gaps.push({ language, type: "pokemon-card-without-kanto-dex-id-or-out-of-scope", setId: set.id, cardId: card.id, cardName: card.name });
-        }
+        if (card.category === "Pokemon") nonKantoPokemonCount++;
         continue;
       }
 
@@ -135,7 +134,7 @@ for (const language of LANGUAGES) {
       const detailedVariants = card.variants_detailed ?? (Array.isArray(variants) ? variants : null);
       const variantArray = Array.isArray(variants) ? variants : (Array.isArray(detailedVariants) ? detailedVariants : []);
       const hasFirstEdition = Array.isArray(variants)
-        ? variants.some(v => Array.isArray(v.stamp) && v.stamp.includes("1st-edition"))
+        ? variants.some(v => Array.isArray(v.stamp) && v.stamp.some(stamp => /1st[ -]?edition/i.test(stamp)))
         : variants?.firstEdition === true;
       const hasHolo = Array.isArray(variants)
         ? variants.some(v => v.type === "holo")
@@ -184,7 +183,20 @@ for (const language of LANGUAGES) {
           sha256: null,
           available: Boolean(imageBase)
         },
-        printings: [{
+        printings: variantArray.length ? variantArray.map((v, index) => ({
+          printingId: `${language}:${card.id}:${v.variantId ?? index + 1}`,
+          variant: {
+            edition: (Array.isArray(v.stamp) && v.stamp.some(stamp => /1st[ -]?edition/i.test(stamp))) || (!Array.isArray(variants) && variants?.firstEdition === true) ? "1st Edition" : (v.subtype === "unlimited" ? "Unlimited" : null),
+            shadowless: v.subtype === "shadowless" ? true : null,
+            finish: v.type === "holo" ? "holo" : v.type === "reverse" ? "reverse" : v.type === "normal" ? "normal" : (hasHolo ? "holo" : hasNormal ? "normal" : null),
+            promoStamp: Array.isArray(v.stamp) ? v.stamp.filter(stamp => !/1st[ -]?edition/i.test(stamp)).join("; ") || null : null,
+            other: v.subtype && !["shadowless", "unlimited"].includes(v.subtype) ? v.subtype : null
+          },
+          sourceVariants: variants,
+          sourceDetailedVariants: v,
+          verificationStatus: "unverified",
+          evidence: [{ kind: "source-record", description: "Imported from TCGdex detailed variant data; physical printing identity has not yet been manually verified.", url: `${BASE}/${language}/cards/${encodeURIComponent(card.id)}` }]
+        })) : [{
           printingId: `${language}:${card.id}:source`,
           variant: {
             edition: variants?.firstEdition === true ? "1st Edition" : variants?.firstEdition === false ? "not-marked-first-edition" : null,
@@ -226,6 +238,7 @@ for (const language of LANGUAGES) {
     sourceCardsInDateScopeSets: setCardCount,
     kantoCardRecords: kantoCardCount,
     kantoRecordsMissingImage: missingImageCount,
+    nonKantoPokemonRecordsInDateScopeSets: nonKantoPokemonCount,
     selectedSets: selectedSetSummaries,
     uniqueKantoDexIds: [...new Set(normalized.filter(card => card.language === language).flatMap(card => card.pokemonDexIds))].sort((a, b) => a - b)
   };
@@ -244,6 +257,10 @@ coverage.totalNormalizedRecords = normalized.length;
 coverage.uniqueKantoDexIds = [...new Set(normalized.flatMap(card => card.pokemonDexIds))].sort((a, b) => a - b);
 coverage.missingKantoDexIds = Array.from({ length: 151 }, (_, i) => i + 1).filter(id => !coverage.uniqueKantoDexIds.includes(id));
 coverage.gapCount = gaps.length;
+coverage.gapTypes = gaps.reduce((counts, gap) => {
+  counts[gap.type] = (counts[gap.type] || 0) + 1;
+  return counts;
+}, {});
 
 await fs.writeFile(path.join(OUT, "cards.json"), JSON.stringify(normalized, null, 2));
 await fs.writeFile(path.join(OUT, "audit", "coverage.json"), JSON.stringify(coverage, null, 2));
