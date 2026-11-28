@@ -61,9 +61,9 @@
       if(area<imageArea*.055||area>imageArea*.90||rect.width<src.cols*.34||rect.height<src.rows*.38){
        contour.delete();continue;
       }
-      // Ignore the photo/background boundary; it often forms a convincing but false quadrilateral.
+      // Reject every contour touching the photo boundary. A clipped background/table edge can create a larger, convincing false card quadrilateral.
       const touches=(rect.x<2)+(rect.y<2)+(rect.x+rect.width>src.cols-2)+(rect.y+rect.height>src.rows-2);
-      if(touches>=3){contour.delete();continue}
+      if(touches>=1){contour.delete();continue}
       const perimeter=cv.arcLength(contour,true);
       let accepted=null;
       for(const eps of pass.eps){
