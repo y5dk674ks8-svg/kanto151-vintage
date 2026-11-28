@@ -5,7 +5,7 @@
   if(window.cv&&window.cv.Mat)return Promise.resolve(window.cv);
   if(cvPromise)return cvPromise;
   cvPromise=new Promise((resolve,reject)=>{
-   const script=document.createElement('script');script.src=new URL('./assets/opencv.js',visionScriptUrl).href;script.async=true;
+   const script=document.createElement('script');script.src=new URL('../assets/opencv.js',visionScriptUrl).href;script.async=true;
    const fail=setTimeout(()=>reject(new Error('OpenCV initialisatie duurde langer dan 30 seconden.')),30000);
    script.onload=()=>{
     const c=window.cv;
