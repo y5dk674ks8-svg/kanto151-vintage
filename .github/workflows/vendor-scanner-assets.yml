@@ -8,7 +8,6 @@ on:
       - ".github/workflows/vendor-scanner-assets.yml"
       - "src/card-vision.js"
       - "src/ocr-adapter.mjs"
-      - "src/recognition-pipeline.mjs"
 
 concurrency:
   group: repo-writer-${{ github.ref }}
