@@ -288,7 +288,9 @@ const referenceCountDiffers = referenceGroups.filter(set => {
 coverage.externalJapaneseSetReference = {
   sources: japaneseReference.sources,
   referenceSetGroups: referenceGroups.length,
-  additionalPromotionalAndDeckGroups: japaneseReference.additionalPromotionalAndDeckGroups.length,
+  supplementaryPromotionalAndDeckReferences: japaneseReference.additionalPromotionalAndDeckGroups.length,
+  additionalDistinctGroups: japaneseReference.additionalPromotionalAndDeckGroups.filter(group => !group.overlapsCoreVintageGroup).length,
+  overlapsCoreVintageGroups: japaneseReference.additionalPromotionalAndDeckGroups.filter(group => group.overlapsCoreVintageGroup).length,
   presentInTcgdexSetAudit: referenceGroups.length - referenceMissing.length,
   missingFromTcgdexSetAudit: referenceMissing.map(set => ({
     name: set.englishName, japaneseName: set.japaneseName, year: set.year,
