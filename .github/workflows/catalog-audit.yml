@@ -7,15 +7,17 @@ on:
     paths:
       - "tools/catalog-audit.mjs"
       - "src/catalog-loader.mjs"
+      - "src/recognition-pipeline.mjs"
       - "tests/catalog-loader.test.mjs"
+      - "tests/recognition-pipeline.test.mjs"
       - "tests/catalog-data.test.mjs"
       - "tests/app-shell.test.mjs"
       - "index.html"
       - ".github/workflows/catalog-audit.yml"
 
 concurrency:
-  group: catalog-audit-${{ github.ref }}
-  cancel-in-progress: true
+  group: repo-writer-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -32,6 +34,8 @@ jobs:
           node-version: 20
       - name: Test catalog loader and candidate ranking
         run: node --test tests/catalog-loader.test.mjs
+      - name: Test recognition pipeline
+        run: node --test tests/recognition-pipeline.test.mjs
       - name: Test scanner app shell
         run: node --test tests/app-shell.test.mjs
       - name: Run multilingual catalog audit
