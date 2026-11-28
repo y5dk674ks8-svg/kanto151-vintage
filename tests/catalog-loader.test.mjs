@@ -37,6 +37,20 @@ test("ranks matching dex id and collector number above weaker candidates", () =>
   assert.ok(ranked[0].evidence.includes("Pokédexnummer komt overeen"));
 });
 
+test("matches canonical Japanese species names even when source card names are mistranslated", () => {
+  const records = [{
+    recordId: "ja:neo1-001",
+    pokemonDexIds: [43],
+    pokemonNames: [{ dexId: 43, en: "Gloom", ja: "クサイハナ" }],
+    collectorNumber: { raw: "1" },
+    cardIdentity: { name: "奇妙な" },
+    set: { name: "Neo Genesis", setId: "neo1" }
+  }];
+  const ranked = rankCatalogCandidates(records, { name: "クサイハナ" });
+  assert.equal(ranked[0].record.recordId, "ja:neo1-001");
+  assert.ok(ranked[0].evidence.some(item => item.includes("Canonieke Pokémonnaam")));
+});
+
 test("loads each set once and searches a local language catalog", async () => {
   const payloads = {
     "./catalog/index.json": { languages: { en: [{ setId: "base1", path: "cards/en/base1.json" }] } },
