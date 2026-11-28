@@ -51,3 +51,15 @@ test("service worker caches same-origin scanner assets and catalog files", () =>
   assert.match(serviceWorker, /url\.origin !== self\.location\.origin/);
   assert.match(serviceWorker, /Offline: dit onderdeel is nog niet lokaal opgeslagen/);
 });
+
+test("scanner registration resolves candidates from the local catalog without a network lookup", () => {
+  assert.match(script, /async function chooseCard\(id,localCard=null\)/);
+  assert.match(script, /const records=await window\.kanto151Catalog\.loadSet\(lang,setId\)/);
+  assert.match(script, /await chooseCard\(cardId,localCard\)/);
+});
+
+test("registration preserves source printing identity and variant metadata", () => {
+  assert.match(script, /printingId:selectedVariant\?\.id/);
+  assert.match(script, /variantData:selectedVariant\?\.data/);
+  assert.match(script, /window\.pendingCardVariants=sourceVariants\.map/);
+});
