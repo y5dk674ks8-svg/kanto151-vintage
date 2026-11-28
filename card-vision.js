@@ -62,7 +62,8 @@
     const ratio=((top+bottom)/2)/((left+right)/2);
     const minSide=Math.min(top,bottom,left,right),maxSide=Math.max(top,bottom,left,right);
     const rectangularity=area/(Math.max(1,cv.boundingRect(contour).width*cv.boundingRect(contour).height));
-    if(ratio<.62||ratio>.82||minSide<Math.min(src.cols,src.rows)*.12||rectangularity<.48){
+    // Allow a wider ratio range: a rotated/perspective card among neighboring cards can exceed .82.
+    if(ratio<.58||ratio>.94||minSide<Math.min(src.cols,src.rows)*.10||rectangularity<.35){
      approx.delete();contour.delete();continue;
     }
     const score=area*(1-Math.abs(ratio-.714))*rectangularity;
