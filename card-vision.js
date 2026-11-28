@@ -108,7 +108,14 @@
    transform=cv.getPerspectiveTransform(srcPts,dstPts);warped=new cv.Mat();
    cv.warpPerspective(src,warped,transform,new cv.Size(W,H),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
    const output=document.createElement('canvas');output.width=W;output.height=H;cv.imshow(output,warped);
-   return {found:true,canvas:output,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:'multi-pass-contour-ratio-validated'};
+   // Keep the normal 744x1039 image for name OCR, but rectify a second copy directly from the full-resolution processing canvas for the tiny footer number.
+   const fullSrc=cv.imread(sourceCanvas),fullPts=cv.matFromArray(4,1,cv.CV_32FC2,points.flatMap(p=>[p.x/scale,p.y/scale]));
+   const numberW=W*2,numberH=H*2,numberDst=cv.matFromArray(4,1,cv.CV_32FC2,[0,0,numberW-1,0,numberW-1,numberH-1,0,numberH-1]);
+   const numberTransform=cv.getPerspectiveTransform(fullPts,numberDst),numberWarp=new cv.Mat();
+   cv.warpPerspective(fullSrc,numberWarp,numberTransform,new cv.Size(numberW,numberH),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
+   const numberOutput=document.createElement('canvas');numberOutput.width=numberW;numberOutput.height=numberH;cv.imshow(numberOutput,numberWarp);
+   [fullSrc,fullPts,numberDst,numberTransform,numberWarp].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
+   return {found:true,canvas:output,numberCanvas:numberOutput,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:'multi-pass-contour-ratio-validated'};
   }finally{
    [src,gray,srcPts,dstPts,transform,warped].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
   }
