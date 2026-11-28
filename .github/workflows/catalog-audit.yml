@@ -56,8 +56,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm -f catalog/cards.json || true
+          if [ -f catalog/cards.json ]; then git rm -f catalog/cards.json; fi
           git add catalog/cards/ catalog/index.json catalog/audit/
           git diff --cached --quiet || git commit -m "Generate English and Japanese Kanto catalog audit"
-          git pull --rebase origin catalog-first-rebuild
-          git push origin catalog-first-rebuild
+          for attempt in 1 2 3; do
+            git fetch origin catalog-first-rebuild
+            git rebase origin/catalog-first-rebuild
+            if git push origin catalog-first-rebuild; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 2; fi
+          done
+          exit 1
