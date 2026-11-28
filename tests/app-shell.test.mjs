@@ -7,6 +7,9 @@ const html = fs.readFileSync("index.html", "utf8");
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 assert.ok(scriptMatch, "index.html must contain the application script");
 const script = scriptMatch[1];
+const pipeline = fs.readFileSync("src/recognition-pipeline.mjs", "utf8");
+const ocr = fs.readFileSync("src/ocr-adapter.mjs", "utf8");
+const vision = fs.readFileSync("src/card-vision.js", "utf8");
 
 test("application script parses without syntax errors", () => {
   assert.doesNotThrow(() => new vm.Script(script, { filename: "index.html inline script" }));
@@ -14,8 +17,8 @@ test("application script parses without syntax errors", () => {
 
 test("scanner has an explicit search action and does not silently choose Bulbasaur", () => {
   assert.match(script, /function runFreeMatch\(/);
-  assert.match(script, /Selecteer of bevestig de Pokémon/);
-  assert.match(script, /Selecteer eerst de juiste Pokémon/);
+  assert.match(script, /Bevestig de Pokémon/);
+  assert.match(script, /Selecteer de Pokémon of vul een kaartnummer in/);
 });
 
 test("scanner searches the local catalog in both supported languages", () => {
@@ -24,7 +27,20 @@ test("scanner searches the local catalog in both supported languages", () => {
   assert.match(script, /import\('\.\/src\/catalog-loader\.mjs'\)/);
 });
 
-test("scanner can request Japanese OCR and passes language to card selection", () => {
-  assert.match(script, /scanLanguage==='ja'\?'jpn'/);
+test("scanner uses local OpenCV and the bilingual recognition pipeline", () => {
+  assert.match(html, /<script src="\.\/src\/card-vision\.js"><\/script>/);
+  assert.match(script, /import\('\.\/src\/recognition-pipeline\.mjs'\)/);
+  assert.match(pipeline, /language === "auto" \? \["en", "ja"\]/);
+  assert.match(vision, /\.\.\/assets\/opencv\.js/);
+});
+
+test("OCR assets are loaded locally and no OCR CDN is used", () => {
+  assert.match(ocr, /\.\.\/assets\/tesseract\.min\.js/);
+  assert.match(ocr, /\.\.\/assets\/tessdata\//);
+  assert.doesNotMatch(html, /cdn\.jsdelivr\.net\/npm\/tesseract/);
+});
+
+test("candidate choice retains the language and set/card identifiers", () => {
   assert.match(script, /scanChooseCard\(setId,cardId,lang='en'\)/);
+  assert.match(script, /scanChooseCard\(\\'/);
 });
