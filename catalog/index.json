@@ -1,0 +1,248 @@
+{
+  "generatedAt": "2026-11-28T14:55:48.391Z",
+  "schema": "../card-record.schema.json",
+  "languages": {
+    "en": [
+      {
+        "setId": "miscp",
+        "setName": "Miscellaneous Promos",
+        "releaseDate": "1996-01-01",
+        "recordCount": 1,
+        "path": "cards/en/miscp.json"
+      },
+      {
+        "setId": "base1",
+        "setName": "Base Set",
+        "releaseDate": "1999-01-09",
+        "recordCount": 69,
+        "path": "cards/en/base1.json"
+      },
+      {
+        "setId": "base2",
+        "setName": "Jungle",
+        "releaseDate": "1999-06-16",
+        "recordCount": 63,
+        "path": "cards/en/base2.json"
+      },
+      {
+        "setId": "basep",
+        "setName": "Wizards Black Star Promos",
+        "releaseDate": "1999-07-01",
+        "recordCount": 35,
+        "path": "cards/en/basep.json"
+      },
+      {
+        "setId": "base3",
+        "setName": "Fossil",
+        "releaseDate": "1999-10-10",
+        "recordCount": 57,
+        "path": "cards/en/base3.json"
+      },
+      {
+        "setId": "base4",
+        "setName": "Base Set 2",
+        "releaseDate": "2000-02-24",
+        "recordCount": 100,
+        "path": "cards/en/base4.json"
+      },
+      {
+        "setId": "base5",
+        "setName": "Team Rocket",
+        "releaseDate": "2000-04-24",
+        "recordCount": 68,
+        "path": "cards/en/base5.json"
+      },
+      {
+        "setId": "gym1",
+        "setName": "Gym Heroes",
+        "releaseDate": "2000-08-14",
+        "recordCount": 91,
+        "path": "cards/en/gym1.json"
+      },
+      {
+        "setId": "gym2",
+        "setName": "Gym Challenge",
+        "releaseDate": "2000-10-16",
+        "recordCount": 95,
+        "path": "cards/en/gym2.json"
+      },
+      {
+        "setId": "neo1",
+        "setName": "Neo Genesis",
+        "releaseDate": "2000-12-16",
+        "recordCount": 10,
+        "path": "cards/en/neo1.json"
+      },
+      {
+        "setId": "neo2",
+        "setName": "Neo Discovery",
+        "releaseDate": "2001-06-01",
+        "recordCount": 19,
+        "path": "cards/en/neo2.json"
+      },
+      {
+        "setId": "si1",
+        "setName": "Southern Islands",
+        "releaseDate": "2001-07-31",
+        "recordCount": 14,
+        "path": "cards/en/si1.json"
+      },
+      {
+        "setId": "neo3",
+        "setName": "Neo Revelation",
+        "releaseDate": "2001-09-21",
+        "recordCount": 17,
+        "path": "cards/en/neo3.json"
+      },
+      {
+        "setId": "neo4",
+        "setName": "Neo Destiny",
+        "releaseDate": "2002-02-28",
+        "recordCount": 39,
+        "path": "cards/en/neo4.json"
+      },
+      {
+        "setId": "lc",
+        "setName": "Legendary Collection",
+        "releaseDate": "2002-05-24",
+        "recordCount": 99,
+        "path": "cards/en/lc.json"
+      },
+      {
+        "setId": "ecard1",
+        "setName": "Expedition Base Set",
+        "releaseDate": "2002-09-15",
+        "recordCount": 99,
+        "path": "cards/en/ecard1.json"
+      },
+      {
+        "setId": "bog",
+        "setName": "Best of game",
+        "releaseDate": "2002-12-01",
+        "recordCount": 6,
+        "path": "cards/en/bog.json"
+      }
+    ],
+    "ja": [
+      {
+        "setId": "PMCG1",
+        "setName": "拡張パック",
+        "releaseDate": "1996-10-20",
+        "recordCount": 70,
+        "path": "cards/ja/PMCG1.json"
+      },
+      {
+        "setId": "PMCG2",
+        "setName": "ポケモンジャングル",
+        "releaseDate": "1997-03-05",
+        "recordCount": 47,
+        "path": "cards/ja/PMCG2.json"
+      },
+      {
+        "setId": "PMCG3",
+        "setName": "化石の秘密",
+        "releaseDate": "1997-06-21",
+        "recordCount": 43,
+        "path": "cards/ja/PMCG3.json"
+      },
+      {
+        "setId": "PMCG4",
+        "setName": "ロケット団",
+        "releaseDate": "1997-11-21",
+        "recordCount": 53,
+        "path": "cards/ja/PMCG4.json"
+      },
+      {
+        "setId": "PMCG5",
+        "setName": "リーダーズスタジアム",
+        "releaseDate": "1998-10-24",
+        "recordCount": 66,
+        "path": "cards/ja/PMCG5.json"
+      },
+      {
+        "setId": "PMCG6",
+        "setName": "闇からの挑戦",
+        "releaseDate": "1999-06-25",
+        "recordCount": 75,
+        "path": "cards/ja/PMCG6.json"
+      },
+      {
+        "setId": "neo1",
+        "setName": "金、銀、新世界へ...",
+        "releaseDate": "2000-02-04",
+        "recordCount": 10,
+        "path": "cards/ja/neo1.json"
+      },
+      {
+        "setId": "neo2",
+        "setName": "遺跡をこえて...",
+        "releaseDate": "2000-07-07",
+        "recordCount": 17,
+        "path": "cards/ja/neo2.json"
+      },
+      {
+        "setId": "neo3",
+        "setName": "めざめる伝説",
+        "releaseDate": "2000-11-23",
+        "recordCount": 17,
+        "path": "cards/ja/neo3.json"
+      },
+      {
+        "setId": "neo4",
+        "setName": "闇、そして光へ...",
+        "releaseDate": "2001-04-20",
+        "recordCount": 39,
+        "path": "cards/ja/neo4.json"
+      },
+      {
+        "setId": "VS1",
+        "setName": "ポケモンカード★VS",
+        "releaseDate": "2001-07-19",
+        "recordCount": 52,
+        "path": "cards/ja/VS1.json"
+      },
+      {
+        "setId": "web1",
+        "setName": "ポケモンカード★web",
+        "releaseDate": "2001-10-20",
+        "recordCount": 40,
+        "path": "cards/ja/web1.json"
+      },
+      {
+        "setId": "E1",
+        "setName": "基本拡張パック",
+        "releaseDate": "2001-12-01",
+        "recordCount": 87,
+        "path": "cards/ja/E1.json"
+      },
+      {
+        "setId": "E2",
+        "setName": "地図にない町",
+        "releaseDate": "2002-03-08",
+        "recordCount": 36,
+        "path": "cards/ja/E2.json"
+      },
+      {
+        "setId": "E3",
+        "setName": "海からの風",
+        "releaseDate": "2002-05-24",
+        "recordCount": 41,
+        "path": "cards/ja/E3.json"
+      },
+      {
+        "setId": "E4",
+        "setName": "裂けた大地",
+        "releaseDate": "2002-08-23",
+        "recordCount": 44,
+        "path": "cards/ja/E4.json"
+      },
+      {
+        "setId": "E5",
+        "setName": "神秘なる山",
+        "releaseDate": "2002-10-04",
+        "recordCount": 49,
+        "path": "cards/ja/E5.json"
+      }
+    ]
+  }
+}
