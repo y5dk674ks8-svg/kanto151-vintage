@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-57"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-58"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -67,9 +67,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
 <script src="./card-vision.js?v=20261128-58"></script>
+<script src="./visual-match.js?v=20261128-58"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-57';
+const KANTO_BUILD='2026.11.28-58';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -163,7 +164,7 @@ async function getOfflineOcrWorker(){
  });
  return offlineOcrWorker;
 }
-let photoFile=null;
+let photoFile=null, scanCardImageCanvas=null;
 let scanDexGuess=null, scanNumberGuess=null, scanTotalGuess=null;
 async function findScannedCandidates(dex,cardNo,totalNo){
  document.getElementById('scanstatus').textContent='Alle TCGdex-sets uit 1996–2002 doorzoeken…';
@@ -203,7 +204,18 @@ async function findScannedCandidates(dex,cardNo,totalNo){
     }
    });
   });
+  let visualStats=null;
+  if(scanCardImageCanvas&&matches.length&&window.KantoVisualMatch){
+   document.getElementById('scanstatus').textContent='Kaartillustraties visueel vergelijken…';
+   try{
+    visualStats=await KantoVisualMatch.rank(scanCardImageCanvas,matches,(done,total)=>{
+     document.getElementById('scanstatus').textContent='Afbeeldingen vergelijken: '+done+' / '+total;
+    });
+    matches=visualStats.matches;
+   }catch(visualError){console.warn('Visuele kaartvergelijking mislukt:',visualError);}
+  }
   matches.sort((a,b)=>{
+   if(a.visualMatch&&b.visualMatch&&Math.abs(a.visualScore-b.visualScore)>.001)return b.visualScore-a.visualScore;
    if(totalNo){
     const am=a.totalMatch===true?0:a.totalMatch===false?1:2;
     const bm=b.totalMatch===true?0:b.totalMatch===false?1:2;
@@ -220,7 +232,7 @@ async function findScannedCandidates(dex,cardNo,totalNo){
   }
   const confirmed=totalNo?matches.filter(x=>x.totalMatch===true).length:0;
   document.getElementById('scanstatus').textContent=matches.length+' kandidaat-kaart(en) gevonden in alle vintage sets'+(cardNo?' · gefilterd op kaartnummer '+esc(cardNo):' · alleen op Pokémonnaam; vergelijk de afbeeldingen')+(totalNo?' · '+confirmed+' met overeenkomend settotaal':'')+'.';
-  box.innerHTML='<div class="panel"><b>Kaartkandidaten</b><p class="muted">'+matches.length+' kandidaat(en)'+(cardNo?' op Pokémonnaam en kaartnummer '+esc(cardNo):' op Pokémonnaam omdat het kaartnummer niet betrouwbaar is uitgelezen')+(totalNo?'/'+esc(totalNo):'')+'. Settotaal is een extra aanwijzing, geen harde uitsluitingsregel: databases kunnen official/total verschillend vastleggen. Controleer de kaartafbeelding voordat je kiest.</p>'+matches.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small><small>'+(totalNo?(x.totalMatch===true?'Settotaal komt overeen':x.totalMatch===false?'Settotaal wijkt af':'Settotaal onbekend'):'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
+  box.innerHTML='<div class="panel"><b>Kaartkandidaten</b><p class="muted">'+matches.length+' kandidaat(en)'+(visualStats?' · '+visualStats.compared+' afbeeldingen visueel vergeleken':'')+(cardNo?' op Pokémonnaam en kaartnummer '+esc(cardNo):' op Pokémonnaam omdat het kaartnummer niet betrouwbaar is uitgelezen')+(totalNo?'/'+esc(totalNo):'')+'. Settotaal is een extra aanwijzing, geen harde uitsluitingsregel: databases kunnen official/total verschillend vastleggen. Controleer de kaartafbeelding voordat je kiest.</p>'+matches.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small><small>'+(x.visualMatch?'Visuele overeenkomst: '+Math.round(x.visualScore*100)+'%':(visualStats?'Afbeelding niet vergelijkbaar':''))+'</small><small>'+(totalNo?(x.totalMatch===true?'Settotaal komt overeen':x.totalMatch===false?'Settotaal wijkt af':'Settotaal onbekend'):'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
  }catch(e){
   document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;
   document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>';
@@ -320,7 +332,7 @@ async function scanPhoto(file){
     document.getElementById('scanstatus').textContent='Kaartcontour zoeken en kaart rechtzetten…';
     const detected=await scanTimeout(KantoCardVision.detect(canvas,fullPhotoCanvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
     if(detected.found){
-     cardCanvas=detected.canvas;numberCanvas=detected.numberCanvas||detected.canvas;cardDetected=true;
+     cardCanvas=detected.canvas;numberCanvas=detected.numberCanvas||detected.canvas;cardDetected=true;scanCardImageCanvas=cardCanvas;
      const debugCanvas=document.createElement('canvas');const debugScale=Math.min(1,1200/Math.max(canvas.width,canvas.height));debugCanvas.width=Math.round(canvas.width*debugScale);debugCanvas.height=Math.round(canvas.height*debugScale);
      const debugCtx=debugCanvas.getContext('2d');debugCtx.drawImage(canvas,0,0,debugCanvas.width,debugCanvas.height);
      if(detected.points&&detected.points.length===4){
