@@ -17,10 +17,6 @@ concurrency:
 permissions:
   contents: write
 
-concurrency:
-  group: kanto151-catalog-audit-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   audit:
     runs-on: ubuntu-latest
