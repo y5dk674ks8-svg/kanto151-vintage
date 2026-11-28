@@ -8,10 +8,13 @@ on:
       - "tools/catalog-audit.mjs"
       - "src/catalog-loader.mjs"
       - "src/recognition-pipeline.mjs"
+      - "src/ocr-adapter.mjs"
+      - "src/recognition-pipeline.mjs"
       - "tests/catalog-loader.test.mjs"
       - "tests/recognition-pipeline.test.mjs"
       - "tests/catalog-data.test.mjs"
       - "tests/app-shell.test.mjs"
+      - "tests/recognition-pipeline.test.mjs"
       - "index.html"
       - ".github/workflows/catalog-audit.yml"
 
@@ -38,6 +41,8 @@ jobs:
         run: node --test tests/recognition-pipeline.test.mjs
       - name: Test scanner app shell
         run: node --test tests/app-shell.test.mjs
+      - name: Test OCR number parsing and recognition pipeline
+        run: node --test tests/recognition-pipeline.test.mjs
       - name: Run multilingual catalog audit
         run: node tools/catalog-audit.mjs
       - name: Validate generated catalog data
