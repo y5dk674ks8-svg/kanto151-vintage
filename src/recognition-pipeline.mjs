@@ -110,7 +110,8 @@ export async function recognizeCardPhoto({
       method: detection.method ?? null
     },
     results,
-    candidates: candidates.slice(0, 30),
+    candidates: candidates.slice(0, 60),
+    visualCanvas: detection.canvas,
     autoConfirmed: false
   };
 }
