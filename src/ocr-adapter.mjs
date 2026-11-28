@@ -94,22 +94,51 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
 
   // Printed number is absent on many Japanese vintage cards, and is a weak
   // signal when present. OCR failure must not cancel name-based retrieval.
-  let number = { text: "", confidence: null };
+  // Base Set numbers are tiny and sit close to the lower/right card edge.
+  // A single crop is brittle, so read overlapping regions with different
+  // page-segmentation modes and accept only an unambiguous fraction.
+  let number = { text: "", confidence: null, passes: [] };
   try {
     const numberWorker = await getWorker("en");
-    // The collector number sits on the bottom copyright line. The old crop\n    // stopped too high and clipped the lower half of 47/102 on Base Set cards.\n    const numberCrop = cropRegion(numberCanvas, [0.73, 0.94, 0.97, 0.995], 4);
-    try {
-      number = await recognize(numberWorker, numberCrop, {
-        tessedit_char_whitelist: "0123456789/",
-        tessedit_pageseg_mode: "6",
-        preserve_interword_spaces: "0"
-      }, "Kaartnummer herkennen");
-    } finally {
-      numberCrop.width = 0;
-      numberCrop.height = 0;
+    const attempts = [
+      { bounds: [0.73, 0.925, 0.985, 0.998], mode: "7" },
+      { bounds: [0.62, 0.90, 0.998, 0.998], mode: "6" },
+      { bounds: [0.78, 0.90, 0.998, 0.985], mode: "7" }
+    ];
+    for (const [index, attempt] of attempts.entries()) {
+      const numberCrop = cropRegion(numberCanvas, attempt.bounds, 5);
+      try {
+        const read = await recognize(numberWorker, numberCrop, {
+          tessedit_char_whitelist: "0123456789/|",
+          tessedit_pageseg_mode: attempt.mode,
+          preserve_interword_spaces: "0"
+        }, "Kaartnummer herkennen (" + (index + 1) + ")");
+        number.passes.push(read);
+      } finally {
+        numberCrop.width = 0;
+        numberCrop.height = 0;
+      }
+    }
+
+    const fractions = number.passes.flatMap(read =>
+      [...read.text.matchAll(/(\\d{1,3})\\s*[\\/|]\\s*(\\d{1,3})/g)]
+        .map(match => match[1] + "/" + match[2])
+    );
+    const counts = new Map();
+    for (const fraction of fractions) counts.set(fraction, (counts.get(fraction) || 0) + 1);
+    const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    const clearWinner = ranked.length === 1 ||
+      (ranked.length > 1 && ranked[0][1] > ranked[1][1]);
+    if (ranked.length && clearWinner) {
+      number.text = ranked[0][0];
+      number.confidence = Math.max(...number.passes.map(read => read.confidence ?? 0));
+    } else {
+      // Preserve conflicting raw reads so the strict parser rejects ambiguity.
+      number.text = number.passes.map(read => read.text).filter(Boolean).join("\\n");
+      number.confidence = null;
     }
   } catch (error) {
-    number = { text: "", confidence: null, error: error.message };
+    number = { ...number, text: number.passes.map(read => read.text).filter(Boolean).join("\\n"), error: error.message };
   }
 
   return {
