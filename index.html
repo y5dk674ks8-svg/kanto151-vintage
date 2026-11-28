@@ -280,14 +280,33 @@ async function scanPhoto(file){
    // Reset the numeric-only whitelist from the previous scan before reading the Pokémon name.
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
    const nameCrops=cardDetected
-    ?[makeOcrRegion(cardCanvas,.07,.025,.92,.19,7),makeOcrRegion(cardCanvas,.09,.035,.82,.17,9),makeOcrRegion(cardCanvas,.03,.015,.96,.22,5)]
+    ?[
+      // The printed Pokémon name is a separate line below "Basic Pokémon".
+      makeOcrRegion(cardCanvas,.13,.065,.76,.155,12),
+      makeOcrRegion(cardCanvas,.10,.045,.82,.18,10),
+      makeOcrRegion(cardCanvas,.07,.025,.92,.19,7),
+      makeOcrRegion(cardCanvas,.09,.035,.82,.17,9),
+      makeOcrRegion(cardCanvas,.03,.015,.96,.22,5)
+     ]
     :[makeOcrRegion(canvas,.06,.08,.94,.43,3),makeOcrRegion(canvas,.04,.05,.96,.48,2)];
    const nameTexts=[];
+   if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:'7',preserve_interword_spaces:'1'});
    for(let i=0;i<nameCrops.length;i++){
-    const r=await recognizeRegion(worker,nameCrops[i],'Pokémonnaam herkennen · uitsnede '+(i+1)+'/'+nameCrops.length,45000);
-    nameTexts.push(r.data.text||'');
-    if(NAMES.some(n=>(r.data.text||'').toLowerCase().includes(n.toLowerCase())))break;
+    const crop=nameCrops[i];
+    const variants=[crop];
+    if(cardDetected&&i<2){
+     const enhanced=document.createElement('canvas');enhanced.width=crop.width;enhanced.height=crop.height;
+     const ec=enhanced.getContext('2d');ec.filter='grayscale(1) contrast(1.9) brightness(1.08)';ec.drawImage(crop,0,0);
+     variants.push(enhanced);
+    }
+    for(let v=0;v<variants.length;v++){
+     const r=await recognizeRegion(worker,variants[v],'Pokémonnaam herkennen · uitsnede '+(i+1)+'/'+nameCrops.length+(v?' · contrast':'') ,45000);
+     nameTexts.push(r.data.text||'');
+     if(NAMES.some(n=>(r.data.text||'').toLowerCase().includes(n.toLowerCase())))break;
+    }
+    if(NAMES.some(n=>nameTexts.some(t=>t.toLowerCase().includes(n.toLowerCase()))))break;
    }
+   if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberCrops=cardDetected
     ?[makeOcrRegion(cardCanvas,.885,.955,.998,.990,16),makeOcrRegion(cardCanvas,.85,.945,.999,.997,12)]
