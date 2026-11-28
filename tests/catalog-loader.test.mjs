@@ -45,8 +45,10 @@ test("loads each set once and searches a local language catalog", async () => {
     ]
   };
   const calls = [];
-  const fetchImpl = async url => {
+  const optionsSeen = [];
+  const fetchImpl = async (url, options) => {
     calls.push(url);
+    optionsSeen.push(options);
     return { ok: true, json: async () => payloads[url] };
   };
   const catalog = new KantoCatalog({ fetchImpl });
@@ -55,4 +57,5 @@ test("loads each set once and searches a local language catalog", async () => {
   assert.equal(first[0].record.recordId, "en:base1-58");
   assert.equal(second.length, 1);
   assert.equal(calls.filter(url => url.endsWith("base1.json")).length, 1);
+  assert.equal(optionsSeen[0]?.cache, "no-cache");
 });
