@@ -19,6 +19,9 @@ test("generated record and printing identities are unique", () => {
   assert.deepEqual(coverage.validation.recordsWithDuplicatePrintingIds, []);
   assert.equal(coverage.validation.recordsWithNoKantoDexId, 0);
   assert.equal(coverage.validation.recordsWithNoPrintingEntry, 0);
+  assert.equal(coverage.validation.firstEditionStampMismatches, 0);
+  assert.equal(coverage.validation.unlimitedMisclassified, 0);
+  assert.equal(coverage.validation.noRarityMisclassified, 0);
 });
 
 test("variant mapping does not leak first-edition status to Unlimited printings", () => {
