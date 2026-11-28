@@ -1,4 +1,4 @@
-const CACHE = "kanto151-v3-1";
+const CACHE = "kanto151-v3-2";
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -23,10 +23,10 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Network-first keeps catalog manifests and set records fresh after deploys.
+  // Every successful same-origin response is cached, so the app, OCR runtime,
+  // language models and lazily loaded card sets remain available offline later.
   event.respondWith((async () => {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-
     try {
       const response = await fetch(request);
       if (response && response.ok) {
@@ -35,6 +35,8 @@ self.addEventListener("fetch", event => {
       }
       return response;
     } catch (error) {
+      const cached = await caches.match(request);
+      if (cached) return cached;
       if (request.mode === "navigate") {
         const shell = await caches.match("./index.html");
         if (shell) return shell;
