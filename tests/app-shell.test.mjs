@@ -63,3 +63,8 @@ test("registration preserves source printing identity and variant metadata", () 
   assert.match(script, /variantData:selectedVariant\?\.data/);
   assert.match(script, /window\.pendingCardVariants=sourceVariants\.map/);
 });
+
+test("manual retry keeps English and Japanese OCR names separate", () => {
+  assert.match(script, /window\.scanNameTextByLanguage\?\.en/);
+  assert.match(script, /window\.scanNameTextByLanguage\?\.ja/);
+});
