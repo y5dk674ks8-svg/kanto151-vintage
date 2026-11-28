@@ -30,4 +30,5 @@ jobs:
           git rm -f catalog/cards.json || true
           git add catalog/cards/ catalog/index.json catalog/audit/
           git diff --cached --quiet || git commit -m "Generate English and Japanese Kanto catalog audit"
+          git pull --rebase origin catalog-first-rebuild
           git push origin catalog-first-rebuild
