@@ -32,7 +32,7 @@
   const ctx=normalized.getContext('2d',{willReadFrequently:true});ctx.drawImage(canvas,0,0,128,128);
   // The footer carries the actual collector number. Keep it as a separate signal
   // so a near-identical reprint (e.g. Base Set 2) cannot outrank the right printing.
-  const footer=document.createElement('canvas');footer.width=64;footer.height=32;
+  const footer=document.createElement('canvas');footer.width=32;footer.height=32;
   const footerCtx=footer.getContext('2d',{willReadFrequently:true});
   footerCtx.drawImage(normalized,78,118,48,10,0,0,64,32);
   const footerHash=hash(footerCtx);footer.width=0;footer.height=0;
@@ -55,7 +55,7 @@
  }
  function similarity(a,b){
   // Compare normalized card face, artwork and collector-number footer separately.
-  return Math.max(0,Math.min(1,.76*compareFeature(a.full,b.full)+.16*compareFeature(a.art,b.art)+.08*(1-hamming(a.full.footer,b.full.footer)/64)));
+  return Math.max(0,Math.min(1,.84*compareFeature(a.full,b.full)+.16*compareFeature(a.art,b.art)));
  }
  function queryVariants(source){
   // Scanner contours can include a clear sleeve. Evaluate several inset crops
