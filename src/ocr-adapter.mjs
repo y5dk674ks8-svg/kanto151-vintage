@@ -121,7 +121,7 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
     }
 
     const fractions = number.passes.flatMap(read =>
-      [...read.text.matchAll(/(\\d{1,3})\\s*[\\/|]\\s*(\\d{1,3})/g)]
+      [...read.text.matchAll(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/g)]
         .map(match => match[1] + "/" + match[2])
     );
     const counts = new Map();
@@ -134,11 +134,11 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
       number.confidence = Math.max(...number.passes.map(read => read.confidence ?? 0));
     } else {
       // Preserve conflicting raw reads so the strict parser rejects ambiguity.
-      number.text = number.passes.map(read => read.text).filter(Boolean).join("\\n");
+      number.text = number.passes.map(read => read.text).filter(Boolean).join("\n");
       number.confidence = null;
     }
   } catch (error) {
-    number = { ...number, text: number.passes.map(read => read.text).filter(Boolean).join("\\n"), error: error.message };
+    number = { ...number, text: number.passes.map(read => read.text).filter(Boolean).join("\n"), error: error.message };
   }
 
   return {
