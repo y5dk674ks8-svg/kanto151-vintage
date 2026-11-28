@@ -211,10 +211,11 @@ async function findScannedCandidates(dex,cardNo,totalNo){
    }
    return (a.releaseDate||'').localeCompare(b.releaseDate||'');
   });
+  matches=matches.slice(0,40);
   const box=document.getElementById('scanresult');
   if(!matches.length){
    document.getElementById('scanstatus').textContent='Geen kaartkandidaten gevonden.';
-   box.innerHTML='<div class="panel"><b>Geen match gevonden</b><p class="muted">Alle catalogussets uit 1996–2002 zijn doorzocht. Controleer de Pokémonnaam of voer het kaartnummer handmatig in.</p><label>Kaartnummer (optioneel)</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc(cardNo+(totalNo?'/'+totalNo:''))+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
+   box.innerHTML='<div class="panel"><b>Geen match gevonden</b><p class="muted">Alle catalogussets uit 1996–2002 zijn doorzocht. Controleer de Pokémonnaam of voer het kaartnummer handmatig in.</p><label>Kaartnummer (optioneel)</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc((cardNo||'')+(totalNo?'/'+totalNo:''))+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
    return;
   }
   const confirmed=totalNo?matches.filter(x=>x.totalMatch===true).length:0;
