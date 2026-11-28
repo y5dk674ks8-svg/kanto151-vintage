@@ -1,0 +1,224 @@
+{
+  "source": "https://japanesepokemoncards.net/vintage",
+  "sourceDescription": "Independent secondary checklist of 27 Japanese vintage set groups and 1,777 cards, covering 1996–2002. Use as a discovery checklist, not as an authoritative primary source.",
+  "retrievedAt": "2026-11-28",
+  "caveat": "Set totals differ across sources and may include different card definitions. Each entry must be verified against primary product checklists and card-level records before it is treated as complete.",
+  "sets": [
+    {
+      "englishName": "Expansion Pack",
+      "japaneseName": "拡張パック",
+      "year": "1996",
+      "referenceCardCount": 102,
+      "tcgdexSetId": "PMCG1",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Pokémon Jungle",
+      "japaneseName": "ポケモンジャングル",
+      "year": "1997",
+      "referenceCardCount": 48,
+      "tcgdexSetId": "PMCG2",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Mystery of the Fossils",
+      "japaneseName": "化石の秘密",
+      "year": "1997",
+      "referenceCardCount": 48,
+      "tcgdexSetId": "PMCG3",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Team Rocket",
+      "japaneseName": "ロケット団",
+      "year": "1997",
+      "referenceCardCount": 65,
+      "tcgdexSetId": "PMCG4",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Gym Heroes",
+      "japaneseName": "リーダーズスタジアム",
+      "year": "1998",
+      "referenceCardCount": 96,
+      "tcgdexSetId": "PMCG5",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Gym Challenge",
+      "japaneseName": "闇からの挑戦",
+      "year": "1999",
+      "referenceCardCount": 99,
+      "tcgdexSetId": "PMCG6",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "City Gym Decks",
+      "japaneseName": "リーダーズスタジアム デッキ",
+      "year": "1998",
+      "referenceCardCount": 123,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Neo Genesis",
+      "japaneseName": "金、銀、新世界へ...",
+      "year": "2000",
+      "referenceCardCount": 102,
+      "tcgdexSetId": "neo1",
+      "tcgdexAuditStatus": "present-count-differs"
+    },
+    {
+      "englishName": "Neo Discovery",
+      "japaneseName": "遺跡をこえて...",
+      "year": "2000",
+      "referenceCardCount": 59,
+      "tcgdexSetId": "neo2",
+      "tcgdexAuditStatus": "present-count-differs"
+    },
+    {
+      "englishName": "Neo Revelation",
+      "japaneseName": "めざめる伝説",
+      "year": "2000",
+      "referenceCardCount": 57,
+      "tcgdexSetId": "neo3",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Neo Destiny",
+      "japaneseName": "闇、そして光へ...",
+      "year": "2001",
+      "referenceCardCount": 113,
+      "tcgdexSetId": "neo4",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Neo Premium File 1",
+      "japaneseName": "ネオ プレミアムファイル1",
+      "year": "1999",
+      "referenceCardCount": 9,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Neo Premium File 2",
+      "japaneseName": "ネオ プレミアムファイル2",
+      "year": "2000",
+      "referenceCardCount": 9,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Neo Premium File 3",
+      "japaneseName": "ネオ プレミアムファイル3",
+      "year": "2000",
+      "referenceCardCount": 9,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Vending Series 1",
+      "japaneseName": "ポケモンカードになったワケ 第1弾",
+      "year": "1998",
+      "referenceCardCount": 36,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Vending Series 2",
+      "japaneseName": "ポケモンカードになったワケ 第2弾",
+      "year": "1998",
+      "referenceCardCount": 36,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Vending Series 3",
+      "japaneseName": "ポケモンカードになったワケ 第3弾",
+      "year": "1998",
+      "referenceCardCount": 52,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "CD Promo",
+      "japaneseName": "CDプロモ",
+      "year": "1999",
+      "referenceCardCount": 10,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Southern Islands",
+      "japaneseName": "サザンアイランド",
+      "year": "1999",
+      "referenceCardCount": 18,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Unnumbered Promos (1998)",
+      "japaneseName": "番号なしプロモ",
+      "year": "1998",
+      "referenceCardCount": 1,
+      "tcgdexSetId": null,
+      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+    },
+    {
+      "englishName": "Pokémon Card VS",
+      "japaneseName": "ポケモンカード★VS",
+      "year": "2001",
+      "referenceCardCount": 145,
+      "tcgdexSetId": "VS1",
+      "tcgdexAuditStatus": "present-count-differs"
+    },
+    {
+      "englishName": "Pokémon Web",
+      "japaneseName": "ポケモンカード★web",
+      "year": "2001",
+      "referenceCardCount": 48,
+      "tcgdexSetId": "web1",
+      "tcgdexAuditStatus": "present-count-differs"
+    },
+    {
+      "englishName": "Expedition",
+      "japaneseName": "基本拡張パック",
+      "year": "2001",
+      "referenceCardCount": 128,
+      "tcgdexSetId": "E1",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "The Town on No Map",
+      "japaneseName": "地図にない町",
+      "year": "2002",
+      "referenceCardCount": 92,
+      "tcgdexSetId": "E2",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Wind from the Sea",
+      "japaneseName": "海からの風",
+      "year": "2002",
+      "referenceCardCount": 90,
+      "tcgdexSetId": "E3",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Split Earth",
+      "japaneseName": "裂けた大地",
+      "year": "2002",
+      "referenceCardCount": 91,
+      "tcgdexSetId": "E4",
+      "tcgdexAuditStatus": "present"
+    },
+    {
+      "englishName": "Mysterious Mountains",
+      "japaneseName": "神秘なる山",
+      "year": "2002",
+      "referenceCardCount": 91,
+      "tcgdexSetId": "E5",
+      "tcgdexAuditStatus": "present"
+    }
+  ]
+}
