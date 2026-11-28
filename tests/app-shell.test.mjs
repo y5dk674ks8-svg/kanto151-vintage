@@ -44,6 +44,7 @@ test("OCR assets are loaded locally and no OCR CDN is used", () => {
 test("candidate choice retains the language and set/card identifiers", () => {
   assert.match(script, /scanChooseCard\(setId,cardId,lang='en'\)/);
   assert.match(script, /scanChooseCard\(\\'/);
+  assert.match(script, /c\.pokemonNames/);
 });
 
 test("service worker caches same-origin scanner assets and catalog files", () => {
