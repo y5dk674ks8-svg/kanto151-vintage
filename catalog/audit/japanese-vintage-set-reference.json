@@ -333,35 +333,40 @@
       "year": 1999,
       "source": "japanese-poke-cards",
       "sourceCount": 41,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "Intro Pack (Squirtle)",
       "year": 1999,
       "source": "japanese-poke-cards",
       "sourceCount": 41,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "T Promos",
       "year": 2002,
       "source": "japanese-poke-cards",
       "sourceCount": 24,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "P Promos",
       "year": 2001,
       "source": "japanese-poke-cards",
       "sourceCount": 47,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "J Promos",
       "year": 2001,
       "source": "japanese-poke-cards",
       "sourceCount": 2,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "Unnumbered Promos",
@@ -369,49 +374,56 @@
       "source": "japanese-poke-cards",
       "sourceCount": 299,
       "tcgdexStatus": "not-yet-audited",
-      "note": "Broad catch-all source group; must be de-duplicated and filtered to TCG products."
+      "note": "Broad catch-all source group; must be de-duplicated and filtered to TCG products.",
+      "overlapsCoreVintageGroup": false
     },
     {
       "name": "Vending Machine Series 1 (Blue)",
       "year": 1998,
       "source": "japanese-poke-cards",
       "sourceCount": 36,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Vending Machine Series 2 (Red)",
       "year": 1998,
       "source": "japanese-poke-cards",
       "sourceCount": 36,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Vending Machine Series 3 (Green)",
       "year": 1998,
       "source": "japanese-poke-cards",
       "sourceCount": 53,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Neo Premium File 1",
       "year": 1999,
       "source": "japanese-poke-cards",
       "sourceCount": 9,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Neo Premium File 2",
       "year": 2000,
       "source": "japanese-poke-cards",
       "sourceCount": 9,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Neo Premium File 3",
       "year": 2000,
       "source": "japanese-poke-cards",
       "sourceCount": 9,
-      "tcgdexStatus": "not-yet-audited"
+      "tcgdexStatus": "not-yet-audited",
+      "overlapsCoreVintageGroup": true
     }
   ],
   "excludedNonTcgCandidates": [
