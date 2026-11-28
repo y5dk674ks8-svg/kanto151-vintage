@@ -329,6 +329,7 @@ for (const record of supplementalCards) {
 coverage.supplementalJapaneseSets = supplementalSets.map(set => ({
   setId: set.setId,
   name: set.name,
+  referenceGroupName: set.referenceGroupName ?? set.name,
   releaseDate: set.releaseDate,
   releaseDatePrecision: set.releaseDatePrecision ?? "day",
   releaseDateNote: set.releaseDateNote ?? null,
@@ -348,7 +349,7 @@ coverage.languages.ja.combinedSourceCardCountInScope = coverage.languages.ja.sou
 coverage.languages.ja.combinedCatalogKantoCardRecords = coverage.languages.ja.kantoCardRecords + supplementalCards.length;
 coverage.languages.ja.combinedKantoRecordsMissingImage = coverage.languages.ja.kantoRecordsMissingImage + supplementalCards.length;
 coverage.languages.ja.combinedSourceVariantEntries = coverage.languages.ja.sourceVariantEntries + supplementalCards.reduce((sum, card) => sum + card.printings.length, 0);
-const supplementalGroupNames = new Set(supplementalSets.map(set => set.name));
+const supplementalGroupNames = new Set(supplementalSets.map(set => set.referenceGroupName ?? set.name));
 coverage.externalJapaneseSetReference.supplementalSeededGroups = referenceMissing
   .filter(set => supplementalGroupNames.has(set.englishName))
   .map(set => ({ name: set.englishName, japaneseName: set.japaneseName }));
@@ -462,6 +463,8 @@ for (const [key, records] of setGroups) {
     setId: records[0].set.setId,
     setName: records[0].set.name,
     releaseDate: records[0].set.releaseDate,
+    releaseDatePrecision: records[0].set.releaseDatePrecision ?? "day",
+    releaseDateNote: records[0].set.releaseDateNote ?? null,
     recordCount: records.length,
     path: relativePath
   });
