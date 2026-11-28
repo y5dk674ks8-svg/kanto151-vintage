@@ -226,10 +226,29 @@ function makeOcrRegion(source,x0,y0,x1,y1,upscale){
  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(source,sx,sy,sw,sh,0,0,c.width,c.height);
  return c;
 }
+let scanDiagEntries=[];
+function scanDiagReset(){scanDiagEntries=[]}
+function scanDiagAdd(stage,message,extra={}){
+ scanDiagEntries.push({time:new Date().toLocaleTimeString(),stage,message,image:extra.image||null});
+}
+function renderScanDiagnostics(){
+ const rows=scanDiagEntries.map((e,i)=>'<div style="border-top:1px solid #e2e8f0;padding:12px 0"><b>'+(i+1)+'. '+esc(e.stage)+'</b><p class="muted" style="white-space:pre-wrap;margin:5px 0">'+esc(e.message)+'</p>'+(e.image?'<img src="'+e.image+'" alt="Diagnostische afbeelding '+(i+1)+'" style="display:block;max-width:100%;max-height:320px;object-fit:contain;border:1px solid #ddd;border-radius:8px;background:#fff">':'')+'</div>').join('');
+ return '<details class="panel" style="margin-top:12px"><summary style="font-weight:700;cursor:pointer">🔬 Volledige scanlog ('+scanDiagEntries.length+' stappen)</summary><p class="muted">Originele foto → kaartdetectie/rechtzetten → uitsneden → OCR per uitsnede → interpretatie. Afbeeldingen tonen de pixels die echt naar OCR zijn gestuurd.</p>'+rows+'<button class="btn" onclick="copyScanDiagnostics()">Kopieer scanlog</button></details>';
+}
+function copyScanDiagnostics(){
+ const data=scanDiagEntries.map((e,i)=>(i+1)+'. '+e.time+' | '+e.stage+'\n'+e.message).join('\n\n');
+ if(navigator.clipboard?.writeText)navigator.clipboard.writeText(data).then(()=>alert('Scanlog gekopieerd.')).catch(()=>alert(data));else alert(data);
+}
 async function recognizeRegion(worker,canvas,label,timeout=45000){
  const status=document.getElementById('scanstatus');status.textContent=label+' OCR start ('+canvas.width+' × '+canvas.height+')…';
- try{return await scanTimeout(worker.recognize(canvas),timeout,label+' duurde langer dan '+Math.round(timeout/1000)+' seconden.')}
- catch(e){if(/duurde langer dan/.test(e.message))await discardOcrWorker();throw e}
+ const started=performance.now();
+ scanDiagAdd('OCR invoer · '+label,'Naar Tesseract gestuurd. Afmetingen: '+canvas.width+' × '+canvas.height,{image:canvas.toDataURL('image/jpeg',.72)});
+ try{
+  const result=await scanTimeout(worker.recognize(canvas),timeout,label+' duurde langer dan '+Math.round(timeout/1000)+' seconden.');
+  const raw=result.data.text||'';
+  scanDiagAdd('OCR uitvoer · '+label,'Ruwe tekst: '+(raw||'[leeg]')+'\nTijd: '+Math.round(performance.now()-started)+' ms'+(result.data.confidence!=null?'\nConfidence: '+result.data.confidence:''));
+  return result;
+ }catch(e){scanDiagAdd('OCR fout · '+label,e.message);if(/duurde langer dan/.test(e.message))await discardOcrWorker();throw e}
 }
 async function testOcrEngine(){
  const status=document.getElementById('scanstatus'),result=document.getElementById('scanresult');result.innerHTML='';status.textContent='OCR-diagnose: worker initialiseren…';
@@ -244,7 +263,7 @@ async function testOcrEngine(){
  }catch(e){status.textContent='OCR-diagnose mislukt: '+e.message;result.innerHTML='<div class="notice">Technische fout: '+esc(e.stack||e.message)+'</div>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
 async function scanPhoto(file){
- if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto laden…';document.getElementById('scanresult').innerHTML='';
+ if(!file)return;scanDiagReset();scanDiagAdd('Start','Bestand: '+(file.name||'(camera)')+' · '+file.type+' · '+file.size+' bytes');photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto laden…';document.getElementById('scanresult').innerHTML='';
  try{
   const photo=new Image();
   photo.src=u;
@@ -256,6 +275,7 @@ async function scanPhoto(file){
   const photoContext=canvas.getContext('2d',{willReadFrequently:true});
   if(!photoContext)throw Error('De foto kan niet op het canvas worden voorbereid.');
   photoContext.drawImage(photo,0,0,canvas.width,canvas.height);
+  scanDiagAdd('Originele foto','Afmetingen: '+canvas.width+' × '+canvas.height,{image:canvas.toDataURL('image/jpeg',.72)});
   document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';
   const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
   let cardCanvas=canvas,cardDetected=false,detectionDebug=null;
@@ -273,6 +293,8 @@ async function scanPhoto(file){
       detected.points.forEach((p,i)=>{debugCtx.fillStyle='#ff1744';debugCtx.beginPath();debugCtx.arc(p.x,p.y,Math.max(7,canvas.width*.012),0,Math.PI*2);debugCtx.fill();debugCtx.fillStyle='#fff';debugCtx.font='bold '+Math.max(18,canvas.width*.035)+'px sans-serif';debugCtx.fillText(String(i+1),p.x+8,p.y-8)});
      }
      detectionDebug={image:debugCanvas.toDataURL('image/jpeg',.82),ratio:detected.ratio,rectangularity:detected.rectangularity,points:detected.points||[]};
+     scanDiagAdd('Kaartdetectie','Ratio: '+detected.ratio+' · rechthoekigheid: '+detected.rectangularity+' · hoekpunten: '+JSON.stringify(detected.points||[]),{image:detectionDebug.image});
+     scanDiagAdd('Kaart rechtgezet','OCR-bron: '+cardCanvas.width+' × '+cardCanvas.height,{image:cardCanvas.toDataURL('image/jpeg',.82)});
      document.getElementById('scanstatus').textContent='Kaartcontour gevonden. Hoekpunten controleren…';
     }
     else{document.getElementById('scanstatus').textContent='Kaartcontour niet zeker gevonden. Ruime foto-uitsneden als reserve gebruiken…'}
@@ -291,6 +313,7 @@ async function scanPhoto(file){
     :[makeOcrRegion(canvas,.06,.08,.94,.43,3),makeOcrRegion(canvas,.04,.05,.96,.48,2)];
    const nameTexts=[];
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:'7',preserve_interword_spaces:'1'});
+   scanDiagAdd('OCR-instellingen naam','Whitelist letters · PSM 7 (één tekstregel)');
    for(let i=0;i<nameCrops.length;i++){
     const crop=nameCrops[i];
     const variants=[crop];
@@ -307,12 +330,14 @@ async function scanPhoto(file){
     if(NAMES.some(n=>nameTexts.some(t=>t.toLowerCase().includes(n.toLowerCase()))))break;
    }
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
+   scanDiagAdd('Naam OCR samengevoegd','Aantal uitsneden: '+nameTexts.length+'\n'+(nameTexts.join(' | ')||'[leeg]'));
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberCrops=cardDetected
     ?[makeOcrRegion(cardCanvas,.885,.955,.998,.990,16),makeOcrRegion(cardCanvas,.85,.945,.999,.997,12)]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    const numberTexts=[];
    if(cardDetected&&worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:'7'});
+   scanDiagAdd('OCR-instellingen kaartnummer','Whitelist cijfers en slash · PSM 7');
    for(let i=0;i<numberCrops.length;i++){
     const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · cijfermodus '+(i+1)+'/'+numberCrops.length,45000);
     numberTexts.push(r.data.text||'');
@@ -330,6 +355,7 @@ async function scanPhoto(file){
    const unique=[...new Map([...pairs,...splitCandidates].map(x=>[x.num+'/'+x.total,x])).values()];
    if(unique.length===1){number=String(unique[0].num);totalNumber=String(unique[0].total)}
    scanNumberGuess=number;scanTotalGuess=totalNumber;
+   scanDiagAdd('Nummerinterpretatie','OCR: '+(numberText||'[leeg]')+'\nResultaat: '+(number?number+'/'+totalNumber:'geen eenduidige match')+'\nKandidaten: '+JSON.stringify(unique));
    const low=ocrText.toLowerCase();
    // Ignore a Pokémon mentioned only as the evolution source, e.g. "Evolves from Charmeleon".
    let withoutEvolutionSource=low;
@@ -358,10 +384,12 @@ async function scanPhoto(file){
    const bestFuzzy=fuzzyHits[0],secondFuzzy=fuzzyHits.find(x=>x.i!==bestFuzzy?.i);
    scanDexGuess=exactHits.length?exactHits[0].i+1:
     (bestFuzzy&&(!secondFuzzy||secondFuzzy.distance>bestFuzzy.distance)?bestFuzzy.i+1:null);
+   scanDiagAdd('Pokémoninterpretatie','Exact: '+JSON.stringify(exactHits)+'\nFuzzy: '+JSON.stringify(fuzzyHits.slice(0,8))+'\nResultaat: '+(scanDexGuess?'#'+scanDexGuess+' '+NAMES[scanDexGuess-1]:'niet herkend'));
    const normalizedPreview=cardDetected?'<div class="panel"><b>Gevonden kaarthoeken</b><p class="muted">Groene lijn = gekozen contour. Rode punten = hoekvolgorde. Verhouding: '+Number(detectionDebug?.ratio||0).toFixed(3)+' · rechthoekigheid: '+Number(detectionDebug?.rectangularity||0).toFixed(2)+'</p><img alt="Gevonden kaarthoeken op de originele foto" src="'+detectionDebug.image+'" style="display:block;width:100%;height:auto;border-radius:10px;margin:8px auto"><b>Kaart rechtgezet</b><img alt="Automatisch rechtgezette Pokémonkaart" src="'+cardCanvas.toDataURL('image/jpeg',.88)+'" style="display:block;width:100%;max-width:420px;height:auto;border-radius:10px;margin:8px auto"></div>':'';
    document.getElementById('scanresult').innerHTML=normalizedPreview+'<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex"><option value="" '+(scanDexGuess===null?'selected':'')+'>Niet automatisch herkend — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Volledig kaartnummer</label><input id="scannumber" type="text" inputmode="text" value="'+esc(scanNumberGuess?(scanNumberGuess+(scanTotalGuess?'/'+scanTotalGuess:'')):'')+'" placeholder="Bijvoorbeeld 4/102"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Controleer de herkenning voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
+   document.getElementById('scanresult').insertAdjacentHTML('beforeend',renderScanDiagnostics());
    scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Pokémonnaam of kaartnummer niet volledig herkend. Controleer beide velden handmatig.';
- }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
+ }catch(e){scanDiagAdd('Onverwachte scanfout',e.message+'\n'+(e.stack||''));document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\\'catalog\\')">Open catalogus</button>'+renderScanDiagnostics();if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
 function setManualDex(n){document.getElementById('scandex').value=n}
 function continueScanToCatalog(){let n=Number(document.getElementById('scandex').value);let name=NAMES[n-1];show('catalog');document.getElementById('setquery').value='';document.getElementById('setstatus').textContent='Je bevestigde Pokémon is '+name+'. Kies de juiste taal en vintage set. Filter daarna de kaarten op de Pokémon-naam.';document.getElementById('setquery').focus();}
