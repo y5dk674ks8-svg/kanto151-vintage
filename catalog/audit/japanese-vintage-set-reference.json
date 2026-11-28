@@ -421,5 +421,6 @@
       "source": "japanese-poke-cards",
       "reason": "Non-TCG collectible cards; separate product family."
     }
-  ]
+  ],
+  "caveat": "undefined The source also states that trophy cards and most one-off promos sit outside its 27-group checklist; those remain a separate discovery task."
 }
