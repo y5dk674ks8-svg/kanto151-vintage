@@ -96,3 +96,9 @@ test("registration requires an explicit Pokémon choice when the source record i
   assert.match(script, /Selecteer de juiste Pokémon/);
   assert.match(script, /Selecteer eerst de juiste Pokémon/);
 });
+
+test("locally learned visual references can rank Japanese cards on later scans", () => {
+  assert.match(script, /hasUserReference\(candidate\.record\?\.recordId\)/);
+  assert.match(visual, /export async function hasUserReference/);
+  assert.match(visual, /visualSource: "personal"/);
+});
