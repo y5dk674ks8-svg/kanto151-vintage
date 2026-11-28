@@ -36,9 +36,9 @@ The current data is a seed catalog, not a complete historical checklist or a ver
 
 ## Latest verified snapshot — 2026-11-28
 
-The latest full test run is being revalidated after the expanded Japanese seed import. The previous successful run [#46160175292](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46160175292) passed all 34 tests before the latest 26 promo records were added.
+GitHub Actions run [#46160866801](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46160866801) completed successfully. **All 35 automated tests passed.**
 
-Expected catalog composition after the new seed import:
+Verified catalog composition:
 
 | Metric | Result |
 |---|---:|
