@@ -127,6 +127,21 @@
         "isPromo": {
           "type": "boolean",
           "default": false
+        },
+        "releaseDatePrecision": {
+          "type": "string",
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "range"
+          ]
+        },
+        "releaseDateNote": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "additionalProperties": false
