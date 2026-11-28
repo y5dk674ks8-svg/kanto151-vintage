@@ -1,0 +1,2067 @@
+{
+  "source": "Japanese Neo Premium File 2, CD Promo (1999), Southern Islands and Unnumbered Promos (1998) checklist pages at japanesepokemoncards.net",
+  "sourceType": "secondary-checklist-seed",
+  "retrievedAt": "2026-11-28T15:34:00.000Z",
+  "caveats": [
+    "Only entries with a Kanto Pokédex number were imported.",
+    "Collector-number fields are null because no reliable set collector number was established from the source pages.",
+    "Release-date precision is recorded separately; year-only and month-only dates are not represented as exact release days.",
+    "The CD Promo page reports 10 total cards but lists 11 entries; this source discrepancy is retained for review.",
+    "No card images were copied. Source-image reuse rights have not been confirmed.",
+    "All records remain verificationStatus=unverified until checked against physical cards."
+  ],
+  "sets": [
+    {
+      "setId": "neo-premium-file-2",
+      "name": "Neo Premium File 2",
+      "releaseDate": "2000-01-01",
+      "releaseDatePrecision": "year",
+      "releaseDateNote": "Source gives year 2000; exact day not established.",
+      "totalCardsInSource": 9,
+      "listedCardsInSource": 9,
+      "holos": 0,
+      "sourceUrl": "https://japanesepokemoncards.net/neo-premium-file-2",
+      "kantoPokemonRecords": 2
+    },
+    {
+      "setId": "cd-promo-1999",
+      "name": "CD Promo (1999)",
+      "releaseDate": "1999-01-01",
+      "releaseDatePrecision": "year",
+      "releaseDateNote": "Source gives year 1999; exact day not established.",
+      "totalCardsInSource": 10,
+      "listedCardsInSource": 11,
+      "holos": 0,
+      "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+      "kantoPokemonRecords": 9
+    },
+    {
+      "setId": "southern-islands",
+      "name": "Southern Islands",
+      "releaseDate": "1999-07-01",
+      "releaseDatePrecision": "month",
+      "releaseDateNote": "Source gives July 1999; day not established.",
+      "totalCardsInSource": 18,
+      "listedCardsInSource": 18,
+      "holos": 0,
+      "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+      "kantoPokemonRecords": 14
+    },
+    {
+      "setId": "unnumbered-promos-1998",
+      "name": "Unnumbered Promos (1998)",
+      "releaseDate": "1998-01-01",
+      "releaseDatePrecision": "year",
+      "releaseDateNote": "Source gives year 1998; exact day not established.",
+      "totalCardsInSource": 1,
+      "listedCardsInSource": 1,
+      "holos": 0,
+      "sourceUrl": "https://japanesepokemoncards.net/unnumbered-promos-1998",
+      "kantoPokemonRecords": 1
+    }
+  ],
+  "cards": [
+    {
+      "recordId": "ja:neo-premium-file-2-charizard",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "neo-premium-file-2:0",
+        "sourceUrl": "https://japanesepokemoncards.net/neo-premium-file-2",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "リザードン",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": null
+      },
+      "pokemonDexIds": [
+        6
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 6,
+          "en": "Charizard",
+          "ja": "リザードン"
+        }
+      ],
+      "set": {
+        "setId": "neo-premium-file-2",
+        "name": "Neo Premium File 2",
+        "releaseDate": "2000-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 2000; exact day not established.",
+        "series": "Neo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:neo-premium-file-2-charizard:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as rarity not specified in Neo Premium File 2. Source reports 9 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/neo-premium-file-2"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:neo-premium-file-2-eevee",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "neo-premium-file-2:1",
+        "sourceUrl": "https://japanesepokemoncards.net/neo-premium-file-2",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "イーブイ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": null
+      },
+      "pokemonDexIds": [
+        133
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 133,
+          "en": "Eevee",
+          "ja": "イーブイ"
+        }
+      ],
+      "set": {
+        "setId": "neo-premium-file-2",
+        "name": "Neo Premium File 2",
+        "releaseDate": "2000-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 2000; exact day not established.",
+        "series": "Neo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:neo-premium-file-2-eevee:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as rarity not specified in Neo Premium File 2. Source reports 9 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/neo-premium-file-2"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-arcanine",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:0",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ウインディ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        59
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 59,
+          "en": "Arcanine",
+          "ja": "ウインディ"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-arcanine:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-blastoise",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:1",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "カメックス",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        9
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 9,
+          "en": "Blastoise",
+          "ja": "カメックス"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-blastoise:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-charizard",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:2",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "リザードン",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        6
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 6,
+          "en": "Charizard",
+          "ja": "リザードン"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-charizard:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-cool-porygon",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:3",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ポリゴン",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        137
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 137,
+          "en": "Porygon",
+          "ja": "ポリゴン"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-cool-porygon:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-meowth",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:4",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ニャース",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        52
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 52,
+          "en": "Meowth",
+          "ja": "ニャース"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-meowth:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-mew",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:5",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ミュウ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        151
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 151,
+          "en": "Mew",
+          "ja": "ミュウ"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-mew:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-mewtwo",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:6",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ミュウツー",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        150
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 150,
+          "en": "Mewtwo",
+          "ja": "ミュウツー"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-mewtwo:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": "glossy"
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-snorlax",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:8",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "カビゴン",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        143
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 143,
+          "en": "Snorlax",
+          "ja": "カビゴン"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-snorlax:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:cd-promo-1999-venusaur",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "cd-promo-1999:10",
+        "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "フシギバナ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Rare"
+      },
+      "pokemonDexIds": [
+        3
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 3,
+          "en": "Venusaur",
+          "ja": "フシギバナ"
+        }
+      ],
+      "set": {
+        "setId": "cd-promo-1999",
+        "name": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:cd-promo-1999-venusaur:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/cd-promo-1999"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-mew",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:0",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ミュウ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        151
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 151,
+          "en": "Mew",
+          "ja": "ミュウ"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-mew:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-pidgeot",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:1",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ピジョット",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        18
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 18,
+          "en": "Pidgeot",
+          "ja": "ピジョット"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-pidgeot:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-onix",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:2",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "イワーク",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        95
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 95,
+          "en": "Onix",
+          "ja": "イワーク"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-onix:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-ivysaur",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:4",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "フシギソウ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        2
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 2,
+          "en": "Ivysaur",
+          "ja": "フシギソウ"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-ivysaur:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-raticate",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:5",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ラッタ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        20
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 20,
+          "en": "Raticate",
+          "ja": "ラッタ"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-raticate:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-jigglypuff",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:7",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "プリン",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        39
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 39,
+          "en": "Jigglypuff",
+          "ja": "プリン"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-jigglypuff:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-butterfree",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:8",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "バタフリー",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        12
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 12,
+          "en": "Butterfree",
+          "ja": "バタフリー"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-butterfree:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-tentacruel",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:9",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ドククラゲ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        73
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 73,
+          "en": "Tentacruel",
+          "ja": "ドククラゲ"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-tentacruel:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-lapras",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:11",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ラプラス",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        131
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 131,
+          "en": "Lapras",
+          "ja": "ラプラス"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-lapras:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-exeggutor",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:12",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ナッシー",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        103
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 103,
+          "en": "Exeggutor",
+          "ja": "ナッシー"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-exeggutor:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-wartortle",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:14",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "カメール",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        8
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 8,
+          "en": "Wartortle",
+          "ja": "カメール"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-wartortle:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-lickitung",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:15",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ベロリンガ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        108
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 108,
+          "en": "Lickitung",
+          "ja": "ベロリンガ"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-lickitung:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-vileplume",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:16",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ラフレシア",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        45
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 45,
+          "en": "Vileplume",
+          "ja": "ラフレシア"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-vileplume:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:southern-islands-primeape",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "southern-islands:17",
+        "sourceUrl": "https://japanesepokemoncards.net/southern-islands",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "オコリザル",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Common"
+      },
+      "pokemonDexIds": [
+        57
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 57,
+          "en": "Primeape",
+          "ja": "オコリザル"
+        }
+      ],
+      "set": {
+        "setId": "southern-islands",
+        "name": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:southern-islands-primeape:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": null
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Common in Southern Islands. Source reports 18 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/southern-islands"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    },
+    {
+      "recordId": "ja:unnumbered-promos-1998-ancient-mew-japanese-exclusive-print",
+      "language": "ja",
+      "source": {
+        "provider": "japanesepokemoncards.net",
+        "sourceCardId": "unnumbered-promos-1998:0",
+        "sourceUrl": "https://japanesepokemoncards.net/unnumbered-promos-1998",
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
+      },
+      "cardIdentity": {
+        "name": "ミュウ",
+        "category": "Pokemon",
+        "illustrator": null,
+        "rarity": "Promo"
+      },
+      "pokemonDexIds": [
+        151
+      ],
+      "pokemonNames": [
+        {
+          "dexId": 151,
+          "en": "Mew",
+          "ja": "ミュウ"
+        }
+      ],
+      "set": {
+        "setId": "unnumbered-promos-1998",
+        "name": "Unnumbered Promos (1998)",
+        "releaseDate": "1998-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1998; exact day not established.",
+        "series": "Promo",
+        "isPromo": true
+      },
+      "collectorNumber": {
+        "raw": null,
+        "normalized": null,
+        "total": null
+      },
+      "images": {
+        "sourceBaseUrl": null,
+        "lowUrl": null,
+        "highUrl": null,
+        "localPath": null,
+        "sha256": null,
+        "available": false
+      },
+      "printings": [
+        {
+          "printingId": "ja:unnumbered-promos-1998-ancient-mew-japanese-exclusive-print:source",
+          "variant": {
+            "edition": null,
+            "shadowless": null,
+            "finish": null,
+            "promoStamp": null,
+            "other": "japanese-exclusive-print"
+          },
+          "sourceVariants": null,
+          "sourceDetailedVariants": null,
+          "verificationStatus": "unverified",
+          "evidence": [
+            {
+              "kind": "secondary-checklist",
+              "description": "Listed as Promo in Unnumbered Promos (1998). Source reports 1 total cards and 0 holos; no collector number has been established.",
+              "url": "https://japanesepokemoncards.net/unnumbered-promos-1998"
+            }
+          ]
+        }
+      ],
+      "audit": {
+        "recordStatus": "missing-image",
+        "issues": [
+          "No image imported: source image reuse rights have not been confirmed.",
+          "Seeded from a secondary checklist; physical card identity and printing are not manually verified."
+        ]
+      }
+    }
+  ]
+}
