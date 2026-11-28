@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-54"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-55"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261128-47"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-54';
+const KANTO_BUILD='2026.11.28-55';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -390,12 +390,28 @@ async function scanPhoto(file){
    for(const x of repairedPairs)repairedCounts.set(x.num+'/'+x.total,(repairedCounts.get(x.num+'/'+x.total)||0)+1);
    // If OCR drops the slash, allow a split only when the digits produce exactly one
    // plausible vintage-set number/total pair. This safely handles e.g. "8102" -> 8/102.
-   const digitStrings=numberTexts.map(t=>(t.match(/\d/g)||[]).join('')).filter(s=>s.length>=3&&s.length<=6);
+   const digitStrings=numberTexts.map(t=>(t.match(/\d/g)||[]).join('')).filter(s=>s.length>=3&&s.length<=7);
    const splitCandidates=[];
    for(const raw of digitStrings){
-    for(let i=1;i<raw.length;i++){
-     const num=Number(raw.slice(0,i)),total=Number(raw.slice(i));
-     if(num>0&&num<=250&&total>num&&vintageTotals.has(total))splitCandidates.push({num,total,source:raw});
+    // A slash is sometimes read as nothing. Only allow a digit-only split
+    // for four-digit strings (e.g. 8102 -> 8/102); five-digit strings are
+    // ambiguous (71102 could be 7/102 or 71/102) and must not be guessed.
+    if(raw.length===4){
+     for(let i=1;i<raw.length;i++){
+      const num=Number(raw.slice(0,i)),total=Number(raw.slice(i));
+      if(num>0&&num<=250&&total>num&&vintageTotals.has(total))splitCandidates.push({num,total,source:raw});
+     }
+    }
+    // On some vintage footers Tesseract reads the printed slash as "1":
+    // 47/102 -> 471102. Remove exactly one internal 1 as the separator,
+    // then accept only a unique valid vintage-set pair.
+    if(raw.length>=6&&raw.length<=7){
+     for(let i=1;i<raw.length-2;i++){
+      if(raw[i]!=='1')continue;
+      const num=Number(raw.slice(0,i)),total=Number(raw.slice(i+1));
+      if(num>0&&num<=250&&total>num&&vintageTotals.has(total))
+       splitCandidates.push({num,total,source:raw,slashReadAsOne:true});
+     }
     }
    }
    const unique=[...new Map(pairs.map(x=>[x.num+'/'+x.total,x])).values()];
