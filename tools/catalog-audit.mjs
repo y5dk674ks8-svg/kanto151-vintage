@@ -64,6 +64,7 @@ const coverage = {
   ]
 };
 const gaps = [];
+let duplicateSourceVariantEntriesRemoved = 0;
 
 for (const language of LANGUAGES) {
   console.log(`[${language}] Fetching complete set index`);
@@ -132,7 +133,11 @@ for (const language of LANGUAGES) {
       }
       const variants = card.variants ?? null;
       const detailedVariants = card.variants_detailed ?? (Array.isArray(variants) ? variants : null);
-      const variantArray = Array.isArray(variants) ? variants : (Array.isArray(detailedVariants) ? detailedVariants : []);
+      const rawVariantArray = Array.isArray(variants) ? variants : (Array.isArray(detailedVariants) ? detailedVariants : []);
+      const variantArray = rawVariantArray.filter((variant, index, all) =>
+        all.findIndex(candidate => JSON.stringify(candidate) === JSON.stringify(variant)) === index
+      );
+      duplicateSourceVariantEntriesRemoved += rawVariantArray.length - variantArray.length;
       const hasFirstEdition = Array.isArray(variants)
         ? variants.some(v => Array.isArray(v.stamp) && v.stamp.some(stamp => /1st[ -]?edition/i.test(stamp)))
         : variants?.firstEdition === true;
@@ -313,6 +318,7 @@ const noRarityMisclassified = allPrintings.filter(printing =>
 ).length;
 coverage.validation = {
   recordCount: normalized.length,
+  duplicateSourceVariantEntriesRemoved,
   uniqueRecordIds: new Set(recordIds).size,
   duplicateRecordIds: recordIds.length - new Set(recordIds).size,
   recordsWithNoKantoDexId: normalized.filter(card => !card.pokemonDexIds.length).length,
