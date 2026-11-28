@@ -83,10 +83,15 @@
       const ratio=((top+bottom)/2)/Math.max(1,(left+right)/2);
       const minSide=Math.min(top,bottom,left,right);
       const rectangularity=area/Math.max(1,rect.width*rect.height);
-      if(ratio<.55||ratio>.96||minSide<Math.min(src.cols,src.rows)*.09||rectangularity<.30){
+      // A Pokémon card has a physical width/height ratio close to 0.714.
+      // Reject broad, clipped or merged contours (e.g. the previous 0.863 Machamp false quad).
+      if(ratio<.58||ratio>.84||minSide<Math.min(src.cols,src.rows)*.09||rectangularity<.30){
        accepted.delete();contour.delete();continue;
       }
-      const score=area*(1-Math.abs(ratio-.714))*rectangularity;
+      // Strongly prioritize the real card aspect ratio so a larger, merged neighboring contour
+      // cannot win merely because it encloses more pixels.
+      const ratioFit=Math.exp(-Math.abs(Math.log(ratio/.714))*7);
+      const score=area*ratioFit*rectangularity;
       if(!best||score>best.score){
        best={points:ordered,area,ratio,score,rectangularity};
       }
@@ -103,7 +108,7 @@
    transform=cv.getPerspectiveTransform(srcPts,dstPts);warped=new cv.Mat();
    cv.warpPerspective(src,warped,transform,new cv.Size(W,H),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
    const output=document.createElement('canvas');output.width=W;output.height=H;cv.imshow(output,warped);
-   return {found:true,canvas:output,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:'multi-pass-contour'};
+   return {found:true,canvas:output,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:'multi-pass-contour-ratio-validated'};
   }finally{
    [src,gray,srcPts,dstPts,transform,warped].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
   }
