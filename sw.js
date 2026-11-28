@@ -1,5 +1,5 @@
 const CACHE='kanto151-v2-41';
-const APP=['./','./index.html','./manifest.webmanifest','./offline.js','./card-vision.js?v=20261128-35'];
+const APP=['./','./index.html','./manifest.webmanifest','./offline.js','./card-vision.js?v=20261128-36'];
 const OCR=['./assets/opencv.js','./assets/tesseract.min.js','./assets/worker.min.js','./assets/tesseract-core/index.js','./assets/tesseract-core/tesseract-core-lstm.js','./assets/tesseract-core/tesseract-core-lstm.wasm','./assets/tesseract-core/tesseract-core-lstm.wasm.js','./assets/tesseract-core/tesseract-core-simd-lstm.js','./assets/tesseract-core/tesseract-core-simd-lstm.wasm','./assets/tesseract-core/tesseract-core-simd-lstm.wasm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.js','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm','./assets/tesseract-core/tesseract-core-relaxedsimd-lstm.wasm.js','./assets/tessdata/eng.traineddata.gz'];
 self.addEventListener('install',event=>{
  self.skipWaiting();
