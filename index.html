@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-40"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-41"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -66,7 +66,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
-<script src="./card-vision.js?v=20261128-40"></script>
+<script src="./card-vision.js?v=20261128-41"></script>
 <script>
 // KANTO_BUILD_20261127_11
 const KANTO_BUILD='2026.11.28-39';
@@ -381,7 +381,7 @@ async function scanPhoto(file){
      nameTexts.push(r.data.text||'');
      if(NAMES.some(n=>(r.data.text||'').toLowerCase().includes(n.toLowerCase())))break;
     }
-    if(variants.length>1){variants[1].width=0;variants[1].height=0}
+    variants.slice(1).forEach(v=>{v.width=0;v.height=0})
     crop.width=0;crop.height=0;
     if(NAMES.some(n=>nameTexts.some(t=>t.toLowerCase().includes(n.toLowerCase()))))break;
    }
@@ -409,6 +409,24 @@ async function scanPhoto(file){
     const cropTexts=[];
     const variants=[crop];
     if(cardDetected){
+     // Variant 2: remove colour cast without crushing the faint printed strokes.
+     const gray=document.createElement('canvas');gray.width=crop.width;gray.height=crop.height;
+     const gc=gray.getContext('2d',{willReadFrequently:true});gc.filter='grayscale(1)';gc.drawImage(crop,0,0);gc.filter='none';
+     variants.push(gray);
+     // Variant 3: mild unsharp mask on the grayscale crop; preserve the original as a fallback.
+     const sharp=document.createElement('canvas');sharp.width=crop.width;sharp.height=crop.height;
+     const sc=sharp.getContext('2d',{willReadFrequently:true});sc.drawImage(gray,0,0);
+     const w=sharp.width,h=sharp.height,src=sc.getImageData(0,0,w,h),dst=sc.createImageData(w,h);
+     for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+      const i=(y*w+x)*4;
+      for(let ch=0;ch<3;ch++){
+       const v=src.data[i+ch]*1.5-(src.data[i-4+ch]+src.data[i+4+ch]+src.data[i-w*4+ch]+src.data[i+w*4+ch])*.125;
+       dst.data[i+ch]=Math.max(0,Math.min(255,Math.round(v)));
+      }
+      dst.data[i+3]=255;
+     }
+     sc.putImageData(dst,0,0);variants.push(sharp);
+     // Variant 4: retain the earlier contrast enhancement as a last alternative.
      const enhanced=document.createElement('canvas');enhanced.width=crop.width;enhanced.height=crop.height;
      const ec=enhanced.getContext('2d');ec.filter='grayscale(1) contrast(1.8) brightness(1.08)';ec.drawImage(crop,0,0);
      variants.push(enhanced);
