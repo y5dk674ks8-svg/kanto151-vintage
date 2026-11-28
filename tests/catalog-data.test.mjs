@@ -61,9 +61,13 @@ test("catalog audit reports the Japanese vintage reference omissions and count c
 });
 
 test("Japanese Vending Series 1–3 supplemental Kanto records are included and explicitly unverified", () => {
-  assert.equal(coverage.languages.ja.supplementalKantoCardRecords, 100);
-  assert.equal(coverage.languages.ja.combinedCatalogKantoCardRecords, 886);
-  assert.equal(coverage.supplementalJapaneseSets.length, 3);
+  assert.equal(coverage.languages.ja.supplementalKantoCardRecords, 126);
+  assert.equal(coverage.languages.ja.combinedCatalogKantoCardRecords, 912);
+  assert.equal(coverage.supplementalJapaneseSets.length, 7);
+  assert.equal(coverage.languages.ja.supplementalSets, 7);
+  assert.equal(coverage.languages.ja.combinedCatalogSetGroups, 24);
+  assert.equal(coverage.languages.ja.combinedSourceCardCountInScope, 1624);
+  assert.equal(coverage.languages.ja.combinedSourceVariantEntries, 1324);
   const index = JSON.parse(fs.readFileSync("catalog/index.json", "utf8"));
   const indexRecordCount = [...index.languages.en, ...index.languages.ja].reduce((sum, set) => sum + set.recordCount, 0);
   assert.equal(coverage.totalNormalizedRecords, indexRecordCount);
@@ -72,8 +76,10 @@ test("Japanese Vending Series 1–3 supplemental Kanto records are included and 
     return sum + records.reduce((n, card) => n + card.printings.length, 0);
   }, 0);
   assert.equal(coverage.totalSourceVariantEntries, printings);
-  assert.equal(coverage.externalJapaneseSetReference.supplementalSeededGroups.length, 3);
-  assert.equal(coverage.externalJapaneseSetReference.remainingUnseededGroups.length, 7);
+  assert.equal(coverage.externalJapaneseSetReference.supplementalSeededGroups.length, 7);
+  assert.equal(coverage.externalJapaneseSetReference.remainingUnseededGroups.length, 3);
+  assert.equal(coverage.externalJapaneseSetReference.noKantoGroups.length, 2);
+  assert.equal(coverage.externalJapaneseSetReference.remainingKantoRelevantGroups.length, 1);
   for (const setId of ["vending1", "vending2", "vending3", "neo-premium-file-2", "cd-promo-1999", "southern-islands", "unnumbered-promos-1998"]) {
     const records = readSet("ja", setId);
     assert.ok(records.length > 0);
