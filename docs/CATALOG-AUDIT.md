@@ -28,6 +28,18 @@ The source pages list 36, 36 and 52 cards respectively, report zero holos, and s
 
 The 3 Vending groups remain absent from the TCGdex set index; they are represented in the local catalog as secondary-source seeds, not misreported as TCGdex records.
 
+### Additional Japanese promo/deck seed records
+
+A further 26 Kanto metadata records have been seeded from the independent checklist pages for [Neo Premium File 2](https://japanesepokemoncards.net/neo-premium-file-2), [CD Promo](https://japanesepokemoncards.net/cd-promo-1999), [Southern Islands](https://japanesepokemoncards.net/southern-islands) and [1998 Unnumbered Promos](https://japanesepokemoncards.net/unnumbered-promos-1998). This brings the Japanese supplemental seed total to 126 records across 7 groups.
+
+- Neo Premium File 2 contributes Charizard and Eevee; Neo Premium Files 1 and 3 were checked and contain no Kanto Pokémon.
+- CD Promo contributes 9 Kanto Pokémon records. Its source page reports 10 cards but lists 11 entries; the discrepancy is retained. Cool Porygon's Pokédex ID is inferred from the card title because the source page gives no Pokédex number.
+- Southern Islands contributes 14 Kanto Pokémon records; the other 4 listed cards are Johto Pokémon.
+- The 1998 Unnumbered Promos group contributes the Japanese-exclusive Ancient Mew record.
+- Year-only and month-only release dates are stored with explicit `releaseDatePrecision` and explanatory notes, rather than pretending the placeholder day is exact.
+
+Seven of the ten Japanese core groups absent from TCGdex now have secondary-source seeds. Neo Premium Files 1 and 3 are not Kanto-relevant; City Gym Decks is the remaining Kanto-relevant core group without card-level records.
+
 ### Independent Japanese discovery references
 
 - [Vintage Japanese Pokémon Cards](https://japanesepokemoncards.net/vintage): lists 27 vintage groups and 1,777 cards for 1996–2002. Its FAQ says trophy cards and most one-off promos are outside its list.
