@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-30"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-31"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261128-30"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-30';
+const KANTO_BUILD='2026.11.28-31';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -411,13 +411,22 @@ async function scanPhoto(file){
    scanNumberGuess=number;scanTotalGuess=totalNumber;
    scanDiagAdd('Nummerinterpretatie','OCR: '+(numberText||'[leeg]')+'\nResultaat: '+(number?number+'/'+totalNumber:'niet automatisch geaccepteerd')+'\nExpliciete slashmatches: '+JSON.stringify(unique)+'\nMogelijke slash-als-1 splitsingen (niet automatisch gebruikt): '+JSON.stringify(splitCandidates));
    const low=ocrText.toLowerCase();
-   // Ignore a Pokémon mentioned only as the evolution source, e.g. "Evolves from Charmeleon".
+   // Evolution-source labels are often split across OCR lines/crops (e.g. "Evolves fromMac ... achoke").
+   // Normalize all OCR text and exclude a Pokémon name found immediately after "evolvesfrom".
+   const compactOcr=low.replace(/[^a-z]/g,'');
+   const evolutionSourceNames=new Set();
+   const evoAt=compactOcr.indexOf('evolvesfrom');
+   if(evoAt>=0){
+    const sourceWindow=compactOcr.slice(evoAt+'evolvesfrom'.length,evoAt+'evolvesfrom'.length+42);
+    NAMES.forEach(n=>{const key=n.toLowerCase().replace(/[^a-z]/g,'');if(key.length>=4&&sourceWindow.includes(key))evolutionSourceNames.add(n)});
+   }
    let withoutEvolutionSource=low;
    NAMES.forEach(n=>{
     withoutEvolutionSource=withoutEvolutionSource.split('evolves from '+n.toLowerCase()).join('evolves from');
    });
    const exactHits=NAMES.map((n,i)=>({n,i,pos:withoutEvolutionSource.indexOf(n.toLowerCase())}))
-    .filter(x=>x.pos>=0).sort((a,b)=>a.pos-b.pos);
+    .filter(x=>x.pos>=0&&!evolutionSourceNames.has(x.n)).sort((a,b)=>a.pos-b.pos);
+   scanDiagAdd('Controle evolutiebron','Uitgesloten namen uit “Evolves from”: '+JSON.stringify([...evolutionSourceNames]));
    function editDistance(a,b){
     const row=Array.from({length:b.length+1},(_,i)=>i);
     for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const old=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=old}}
