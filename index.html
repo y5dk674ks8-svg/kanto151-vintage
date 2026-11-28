@@ -53,7 +53,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. OCR leest kaarttekst en kaartnummer uit. Daarna zoeken we lokaal in de Engelse én Japanse vintage catalogus. Jij controleert de match en de drukvariant.</p><label>Kaarttaal op de foto</label><select id="scanlang"><option value="auto">Automatisch (Engels + Japans)</option><option value="en">Engels</option><option value="ja">Japans</option></select>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
 <div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
-<div class="notice">De foto wordt alleen in je browser verwerkt en niet naar een herkenningsserver verstuurd. Tesseract.js wordt gratis geladen; kaartgegevens worden opgehaald bij TCGdex. Je collectie blijft op je iPhone.</div>
+<div class="notice">De foto wordt alleen in je browser verwerkt en niet naar een herkenningsserver verstuurd. OpenCV en Engelse/Japanse Tesseract OCR draaien lokaal; kaartgegevens staan in de lokale catalogus. Je foto wordt niet geüpload. Je collectie blijft op je iPhone.</div>
 </section>
 <section id="inventory" class="hidden">
 <div class="sectiontitle">Mijn kaarten</div><p class="muted">Elke kaart is een afzonderlijke registratie. Dubbelen tellen mee in je kaartenaantal, maar niet dubbel in je 151-voortgang.</p><div class="panel" id="inventorylist">Nog geen kaarten geregistreerd.</div>
@@ -66,6 +66,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
+<script src="./src/card-vision.js"></script>
 <script>
 const NAMES=["Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise", "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto", "Pidgeot", "Rattata", "Raticate", "Spearow", "Fearow", "Ekans", "Arbok", "Pikachu", "Raichu", "Sandshrew", "Sandslash", "Nidoran♀", "Nidorina", "Nidoqueen", "Nidoran♂", "Nidorino", "Nidoking", "Clefairy", "Clefable", "Vulpix", "Ninetales", "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom", "Vileplume", "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth", "Persian", "Psyduck", "Golduck", "Mankey", "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath", "Abra", "Kadabra", "Alakazam", "Machop", "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel", "Tentacool", "Tentacruel", "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", "Slowbro", "Magnemite", "Magneton", "Farfetch'd", "Doduo", "Dodrio", "Seel", "Dewgong", "Grimer", "Muk", "Shellder", "Cloyster", "Gastly", "Haunter", "Gengar", "Onix", "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb", "Electrode", "Exeggcute", "Exeggutor", "Cubone", "Marowak", "Hitmonlee", "Hitmonchan", "Lickitung", "Koffing", "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela", "Kangaskhan", "Horsea", "Seadra", "Goldeen", "Seaking", "Staryu", "Starmie", "Mr. Mime", "Scyther", "Jynx", "Electabuzz", "Magmar", "Pinsir", "Tauros", "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon", "Jolteon", "Flareon", "Porygon", "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl", "Snorlax", "Articuno", "Zapdos", "Moltres", "Dratini", "Dragonair", "Dragonite", "Mewtwo", "Mew"];
 const DBKEY='kanto151_v2';
@@ -115,71 +116,104 @@ function commitCard(id,isVintage){if(!isVintage&&!confirm('Deze set is niet aant
 function removeCard(uid){if(confirm('Deze kaart uit je verzameling verwijderen?')){state.cards=state.cards.filter(c=>c.uid!==uid);save()}}
 let photoFile=null;
 let scanDexGuess=null, scanNumberGuess=null;
-async function findScannedCandidates(dex,cardNo){
- document.getElementById('scanstatus').textContent='Lokale Engelse en Japanse catalogus laden…';
+function renderScanCandidateList(matches){
+ if(!matches.length)return '<div class="notice">Geen kandidaten gevonden. Bevestig de Pokémon hieronder en zoek opnieuw. Bij oudere Japanse kaarten kan het gedrukte kaartnummer ontbreken.</div>';
+ return '<div class="panel"><b>Controleer de mogelijke kaarten</b><p class="muted">'+matches.length+' kandidaten. De score is een rangschikking, geen kanspercentage. Controleer afbeelding, set en drukvariant zelf.</p>'+matches.slice(0,30).map(x=>{
+  const c=x.record, image=c.images?.lowUrl||'', language=x.language==='ja'?'Japans':'Engels';
+  const variants=(c.printings||[]).map(p=>[p.variant?.edition,p.variant?.finish,p.variant?.promoStamp].filter(Boolean).join(' · ')).filter(Boolean);
+  const variantText=[...new Set(variants)].join(' / ')||'Drukvariant niet gespecificeerd';
+  const evidence=x.evidence?.length?x.evidence.join(' · '):'Catalogusmatch';
+  return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy" alt="">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(variantText)+'</small><small>'+esc(evidence)+' · score '+x.score.toFixed(2)+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
+ }).join('')+'</div>';
+}
+async function findScannedCandidates(dex,cardNo,nameText=''){
+ document.getElementById('scanstatus').textContent='Lokale Engelse en Japanse catalogus doorzoeken…';
  try{
-  const {KantoCatalog,rankCatalogCandidates,normalizeCollectorNumber}=await import('./src/catalog-loader.mjs');
+  const {KantoCatalog,rankCatalogCandidates}=await import('./src/catalog-loader.mjs');
   window.kanto151Catalog=window.kanto151Catalog||new KantoCatalog({baseUrl:'./catalog/'});
   const [english,japanese]=await Promise.all([
    window.kanto151Catalog.loadLanguage('en'),
    window.kanto151Catalog.loadLanguage('ja')
   ]);
-  const query={dexId:dex,collectorNumber:cardNo};
-  const wanted=normalizeCollectorNumber(cardNo);
+  const query={dexId:dex||undefined,collectorNumber:cardNo||'',name:nameText||''};
   const matches=[
-   ...rankCatalogCandidates(english,query).filter(x=>normalizeCollectorNumber(x.record.collectorNumber?.raw)===wanted).map(x=>({...x,language:'en'})),
-   ...rankCatalogCandidates(japanese,query).filter(x=>normalizeCollectorNumber(x.record.collectorNumber?.raw)===wanted).map(x=>({...x,language:'ja'}))
-  ];
-  matches.sort((a,b)=>b.score-a.score||String(a.record.set?.releaseDate||'').localeCompare(String(b.record.set?.releaseDate||'')));
-  const box=document.getElementById('scanresult');
-  if(!matches.length){
-   document.getElementById('scanstatus').textContent='Geen exacte match in de lokale catalogus.';
-   box.innerHTML='<div class="panel"><b>Geen exacte kaartnummer-match</b><p class="muted">Controleer het Pokédex-nummer en het kaartnummer. Let op: het kaartnummer is het getal vóór de slash.</p><label>Kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 67" value="'+esc(cardNo||'')+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
-   return;
-  }
-  document.getElementById('scanstatus').textContent=matches.length+' mogelijke kaart(en) gevonden in de lokale catalogus.';
-  box.innerHTML='<div class="panel"><b>Controleer de kaartmatches</b><p class="muted">'+esc(NAMES[dex-1])+' · kaartnummer '+esc(cardNo)+'. Resultaten komen uit de lokale Engelse en Japanse catalogus; een matchscore is geen kanspercentage.</p>'+matches.slice(0,30).map(x=>{
-   const c=x.record, image=c.images?.lowUrl||'';
-   const language=x.language==='ja'?'Japans':'Engels';
-   const evidence=x.evidence.length?x.evidence.join(' · '):'Kaartnummer en Pokédexnummer';
-   return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(evidence)+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
-  }).join('')+'</div>';
+   ...rankCatalogCandidates(english,query).map(x=>({...x,language:'en'})),
+   ...rankCatalogCandidates(japanese,query).map(x=>({...x,language:'ja'}))
+  ].filter(x=>x.score>0);
+  matches.sort((a,b)=>b.score-a.score||a.record.recordId.localeCompare(b.record.recordId));
+  document.getElementById('scanstatus').textContent=matches.length+' mogelijke kaart(en) gevonden. Controleer de resultaten.';
+  document.getElementById('scanresult').innerHTML=renderScanCandidateList(matches);
  }catch(e){
   document.getElementById('scanstatus').textContent='Lokale catalogus kon niet worden geladen: '+e.message;
   document.getElementById('scanresult').innerHTML='<div class="notice">Controleer of de app via HTTPS wordt geopend en of de map catalog/ beschikbaar is.</div>';
  }
 }
-function runFreeMatch(){const dex=Number(document.getElementById('scandex')?.value||0);const number=document.getElementById('scannumber')?.value.trim().match(/\d{1,3}/);if(!dex){document.getElementById('scanstatus').textContent='Selecteer eerst de juiste Pokémon.';return}if(!number){document.getElementById('scanstatus').textContent='Vul het kaartnummer in (het getal vóór de slash).';return}findScannedCandidates(dex,number[0])}
-function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||0);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!dex){document.getElementById('scanstatus').textContent='Selecteer eerst de juiste Pokémon.';return}if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
+function runFreeMatch(){
+ const dex=Number(document.getElementById('scandex')?.value||0);
+ const number=document.getElementById('scannumber')?.value.trim().match(/\d{1,3}/)?.[0]||'';
+ const nameText=window.scanNameText||'';
+ if(!dex&&!number&&!nameText){document.getElementById('scanstatus').textContent='Selecteer de Pokémon of vul een kaartnummer in.';return}
+ findScannedCandidates(dex||null,number,nameText);
+}
+function retryScanMatch(){
+ const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||0);
+ const number=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/)?.[0]||'';
+ const nameText=window.scanNameText||'';
+ if(!dex&&!number&&!nameText){document.getElementById('scanstatus').textContent='Selecteer de Pokémon of vul een kaartnummer in.';return}
+ findScannedCandidates(dex||null,number,nameText);
+}
 async function scanChooseCard(setId,cardId,lang='en'){show('catalog');await openSet(setId,lang);await chooseCard(cardId)}
-async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Kaarttekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
-try{
- if(!window.Tesseract){await new Promise((ok,no)=>{let sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
- const scanLanguage=document.getElementById('scanlang')?.value||'auto';const ocrLanguage=scanLanguage==='ja'?'jpn':scanLanguage==='en'?'eng':'eng+jpn';const full=await Tesseract.recognize(file,ocrLanguage,{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
- ocrText=full.data.text||'';
- let number=null;
- const pair=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/);
- if(pair&&Number(pair[1])>0)number=pair[1];
- // Read the bottom edge separately: card numbers are printed at the lower-right corner.
- const bitmap=await createImageBitmap(file);
- const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
- const sx=Math.floor(bitmap.width*.06), sy=Math.floor(bitmap.height*.73), sw=Math.floor(bitmap.width*.88), sh=Math.floor(bitmap.height*.20);
- canvas.width=sw*3;canvas.height=sh*3;
- ctx.drawImage(bitmap,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
- const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
- for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]*.299+pixels.data[i+1]*.587+pixels.data[i+2]*.114);const c=Math.max(0,Math.min(255,(v-115)*2.1+128));pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=c}
- ctx.putImageData(pixels,0,0);
- const bottom=await Tesseract.recognize(canvas,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaartnummer uitlezen '+Math.round((m.progress||0)*100)+'%'},tessedit_char_whitelist:'0123456789/|'});
- const bottomText=bottom.data.text||'';
- const bottomPair=bottomText.match(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/);
- if(bottomPair&&Number(bottomPair[1])>0)number=bottomPair[1];
- scanNumberGuess=number;
- const low=ocrText.toLowerCase();
- const hits=NAMES.map((n,i)=>({n,i,score:low.includes(n.toLowerCase())?1:0})).filter(x=>x.score);
- scanDexGuess=hits.length?hits[0].i+1:null;
- document.getElementById('scanresult').innerHTML='<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">'+esc(ocrText.slice(0,250))+'</p><label>Herkenning Pokémon</label><select id="scandex"><option value="" '+(!scanDexGuess?'selected':'')+'>Selecteer of bevestig de Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer</label><input id="scannumber" type="text" inputmode="numeric" pattern="[0-9]*" value="'+esc(scanNumberGuess||'')+'" placeholder="Alleen het getal vóór de slash, bv. 67"><p class="muted">De scanner leest het nummer apart uit de onderrand van de kaart. Je hoeft geen slash of totaal aantal in te voeren.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
- document.getElementById('scanstatus').textContent=scanNumberGuess?'Pokémon en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Pokémon herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
- }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>'}
+async function scanPhoto(file){
+ if(!file)return;
+ photoFile=file;const url=URL.createObjectURL(file);
+ document.getElementById('preview').innerHTML='<img src="'+url+'" alt="Kaartfoto">';
+ document.getElementById('scanstatus').textContent='Foto laden…';
+ document.getElementById('scanresult').innerHTML='';
+ let bitmap=null;
+ try{
+  bitmap=await createImageBitmap(file);
+  if(!bitmap.width||!bitmap.height)throw Error('De foto heeft geen geldige afmetingen.');
+  const scale=Math.min(1,1800/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+  canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const context=canvas.getContext('2d',{willReadFrequently:true});
+  if(!context)throw Error('De foto kan niet worden voorbereid.');
+  context.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  const fullCanvas=document.createElement('canvas');
+  fullCanvas.width=bitmap.width;fullCanvas.height=bitmap.height;
+  const fullContext=fullCanvas.getContext('2d');
+  if(!fullContext)throw Error('De originele fotoresolutie kan niet worden voorbereid.');
+  fullContext.drawImage(bitmap,0,0);
+  const {KantoCatalog}=await import('./src/catalog-loader.mjs');
+  const {recognizeCardPhoto}=await import('./src/recognition-pipeline.mjs');
+  window.kanto151Catalog=window.kanto151Catalog||new KantoCatalog({baseUrl:'./catalog/'});
+  const language=document.getElementById('scanlang')?.value||'auto';
+  const result=await recognizeCardPhoto({
+   sourceCanvas:canvas,
+   fullResolutionCanvas:fullCanvas,
+   language,
+   catalog:window.kanto151Catalog,
+   onStage:stage=>{document.getElementById('scanstatus').textContent=stage+'…'}
+  });
+  if(result.status==='needs-better-photo'){
+   document.getElementById('scanstatus').textContent='Kaart niet betrouwbaar gevonden.';
+   document.getElementById('scanresult').innerHTML='<div class="notice"><b>Maak een nieuwe foto</b><p>'+esc(result.reason)+'</p>Leg één kaart volledig in beeld, recht en scherp, zonder andere kaarten eromheen.</div>';
+   return;
+  }
+  const ocrSummary=result.results.map(x=>(x.language==='ja'?'Japans':'Engels')+': '+(x.ocr.nameText||'[geen naam]')+' · nummer '+(x.parsedNumber?x.parsedNumber.number+'/'+x.parsedNumber.total:'niet gelezen')).join('\n');
+  window.scanNameText=result.results.map(x=>x.ocr.nameText).filter(Boolean).join(' ');
+  scanNumberGuess=result.results.find(x=>x.parsedNumber)?.parsedNumber?.number||'';
+  scanDexGuess=null;
+  const manual='<div class="panel"><b>Gecontroleerde zoekgegevens</b><p class="muted" style="white-space:pre-wrap">'+esc(ocrSummary)+'</p><label>Bevestig de Pokémon</label><select id="scandex"><option value="">Niet bevestigd — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'">#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer (optioneel)</label><input id="scannumber" type="text" inputmode="numeric" value="'+esc(scanNumberGuess)+'" placeholder="Bijvoorbeeld 67"><p class="muted">Bij veel oudere Japanse kaarten ontbreekt een gedrukt kaartnummer. De naamherkenning blijft dan bruikbaar.</p><button class="btn green" onclick="runFreeMatch()">Zoek in beide catalogi</button></div>';
+  document.getElementById('scanresult').innerHTML=manual+renderScanCandidateList(result.candidates);
+  document.getElementById('scanstatus').textContent=result.candidates.length+' kandidaten gevonden. Controleer de kaart en drukvariant voordat je registreert.';
+ }catch(e){
+  document.getElementById('scanstatus').textContent='Scannen mislukt: '+e.message;
+  document.getElementById('scanresult').innerHTML='<div class="notice">'+esc(e.message)+'</div>';
+ }finally{
+  if(bitmap)bitmap.close?.();
+ }
 }
 function setManualDex(n){document.getElementById('scandex').value=n}
 function continueScanToCatalog(){let n=Number(document.getElementById('scandex').value);let name=NAMES[n-1];show('catalog');document.getElementById('setquery').value='';document.getElementById('setstatus').textContent='Je bevestigde Pokémon is '+name+'. Kies de juiste taal en vintage set. Filter daarna de kaarten op de Pokémon-naam.';document.getElementById('setquery').focus();}
