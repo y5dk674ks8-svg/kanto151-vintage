@@ -2,6 +2,11 @@ name: Run Kanto 151 catalog audit
 
 on:
   workflow_dispatch:
+  push:
+    branches: [catalog-first-rebuild]
+    paths:
+      - "tools/catalog-audit.mjs"
+      - ".github/workflows/catalog-audit.yml"
 
 permissions:
   contents: write
