@@ -25,26 +25,32 @@ Do not claim that a printing variant is identified if the photo or catalog canno
 - [x] Run the first reproducible English/Japanese TCGdex source audit.
 - [x] Build a normalized seed catalog split into per-set files.
 - [x] Add unique-record, Kanto coverage, source-variant and image-gap metrics.
-- [x] Cross-check Japanese vintage set coverage against an independent 27-group reference list.
-- [ ] Reconcile the 10 Japanese set groups missing from TCGdex against primary checklists.
+- [x] Cross-check Japanese vintage coverage against 27 core set groups and 12 additional deck/promo groups.
+- [x] Add a metadata-based candidate ranker and local catalog loader.
+- [x] Add IndexedDB caching for catalog index and per-set records.
+- [x] Add automated tests for text normalization, Japanese kana, number parsing, candidate ranking, catalog integrity and variant mapping.
+- [x] Review the preserved OpenCV card detector and legacy visual matcher for reuse.
+- [ ] Reconcile the 10 core Japanese set groups missing from TCGdex against primary checklists.
 - [ ] Add verified Japanese deck, vending, premium-file and promo records.
 - [ ] Resolve image-source permissions and fill image gaps.
-- [ ] Build deterministic candidate retrieval.
+- [ ] Port card localization and integrate OCR into the new scanner UI.
+- [ ] Port visual ranking after image coverage and permissions are resolved.
 - [ ] Add OCR and visual ranking as independent signals.
 - [ ] Establish a labeled test set and measure precision/recall.
 - [ ] Integrate camera and upload flows.
 
 
-## First audit snapshot — 2026-11-28
+## Latest verified audit snapshot — 2026-11-28
 
-GitHub Actions run: [#46157221267](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46157221267) — successful.
+GitHub Actions run: [#46157621131](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46157621131) — successful. Both test suites passed (10 tests total).
 
 - 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
 - All 151 Kanto Pokédex IDs are represented in both languages.
-- 3,110 source detailed-variant entries are represented across the imported records.
+- 3,072 source detailed-variant entries after removing 38 exact duplicate source entries.
+- No duplicate record IDs or duplicate printing IDs.
+- Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
 - 793 records have no TCGdex image URL: 7 English and 786 Japanese.
-- 17 Japanese set groups matched in TCGdex against an independent 27-group vintage checklist; 10 reference groups are not present in the current TCGdex date-scope audit.
-- Five matched Japanese set groups have differing source card totals and require checklist-level reconciliation.
-- Record IDs are unique; no record is missing a Kanto dex ID or source variant entry.
+- Independent Japanese reference: 27 core vintage set groups plus 12 additional promotional/deck groups. The date-filtered TCGdex audit currently includes 17 core groups; 10 core groups are absent.
+- Five matched Japanese groups have source-count differences requiring checklist-level reconciliation.
 
-This is a successful **seed-catalog audit**, not a complete vintage checklist or a validated printing census. Japanese promos, vending, decks, premium files and image permissions remain open work.
+This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files and image permissions remain open work.
