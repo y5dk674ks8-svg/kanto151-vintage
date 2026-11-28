@@ -133,10 +133,13 @@ function renderScanCandidateList(matches){
 }
 async function applyVisualRanking(matches,queryCanvas){
  if(!queryCanvas)return matches;
- const candidates=matches.filter(x=>x.language==='en'&&x.record?.images?.sourceBaseUrl);
+ const {rankVisualCandidates,hasUserReference}=await import('./src/visual-match.mjs');
+ const candidates=[];
+ for(const candidate of matches){
+  if(candidate.record?.images?.sourceBaseUrl||await hasUserReference(candidate.record?.recordId))candidates.push(candidate);
+ }
  if(!candidates.length)return matches;
  try{
-  const {rankVisualCandidates}=await import('./src/visual-match.mjs');
   document.getElementById('scanstatus').textContent='Engelse kaartafbeeldingen visueel vergelijken…';
   const ranked=await rankVisualCandidates(queryCanvas,candidates,(done,total)=>{
    document.getElementById('scanstatus').textContent='Visueel vergelijken '+done+'/'+total+'…';
