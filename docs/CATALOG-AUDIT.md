@@ -20,6 +20,14 @@ Build a reproducible inventory of English and Japanese Pokémon TCG cards from 1
 - These are species-name aliases, not card-specific names. They let OCR match a species even where a card name contains a prefix (Rocket, Dark, Light, owner name) or the TCGdex Japanese card-name field is mistranslated.
 - The original TCGdex card name is preserved unchanged. Name-alias gaps are reported for review rather than silently rewriting source data.
 
+### Japanese Vending Series supplemental seed
+
+The catalog now includes 100 Kanto Pokémon metadata records from Japanese Vending Series 1–3, seeded from the set checklists at [Vending Series 1](https://japanesepokemoncards.net/vending-series-1), [Vending Series 2](https://japanesepokemoncards.net/vending-series-2) and [Vending Series 3](https://japanesepokemoncards.net/vending-series-3).
+
+The source pages list 36, 36 and 52 cards respectively, report zero holos, and state that the Vending cards have no set collector number. Only entries with a Kanto Pokédex number were imported; Trainer and novelty cards without a Kanto Pokédex number were excluded. This gives 34 + 32 + 34 = 100 Kanto Pokémon records. Collector-number fields are null. No card images were copied because reuse rights have not been established. All imported records and their single source-printing entries remain `unverified` until checked against physical cards.
+
+The 3 Vending groups remain absent from the TCGdex set index; they are represented in the local catalog as secondary-source seeds, not misreported as TCGdex records.
+
 ### Independent Japanese discovery references
 
 - [Vintage Japanese Pokémon Cards](https://japanesepokemoncards.net/vintage): lists 27 vintage groups and 1,777 cards for 1996–2002. Its FAQ says trophy cards and most one-off promos are outside its list.
