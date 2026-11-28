@@ -127,7 +127,9 @@ function renderScanCandidateList(matches){
   const variantText=[...new Set(variants)].join(' / ')||'Drukvariant niet gespecificeerd';
   const evidence=x.evidence?.length?x.evidence.join(' · '):'Catalogusmatch';
   const visualLabel=Number.isFinite(x.visualScore)?' · beeldscore '+x.visualScore.toFixed(2)+' ('+(x.visualSource==='personal'?'eigen referentie':'TCGdex')+')':'';
-  return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy" alt="" onerror="this.style.display=\'none\'">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>Pokémon: '+esc(speciesNames||'niet gekoppeld')+'</small><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(variantText)+'</small><small>'+esc(evidence)+' · tekstscore '+x.score.toFixed(2)+visualLabel+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
+  const matchedPrinting=x.visualPrintingIds?.length===1?c.printings?.find(p=>p.printingId===x.visualPrintingIds[0]):null;
+  const matchedPrintingLabel=matchedPrinting?' · eigen drukreferentie: '+[matchedPrinting.variant?.edition,matchedPrinting.variant?.finish,matchedPrinting.variant?.promoStamp].filter(Boolean).join(' · '):'';
+  return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy" alt="" onerror="this.style.display=\'none\'">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>Pokémon: '+esc(speciesNames||'niet gekoppeld')+'</small><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(variantText)+'</small><small>'+esc(evidence)+' · tekstscore '+x.score.toFixed(2)+visualLabel+matchedPrintingLabel+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
  }).join('')+'</div>');
  return '<div class="panel"><b>Controleer de mogelijke kaarten</b><p class="muted">De tekst- en beeldscores zijn rangschikkingen, geen kanspercentages. Controleer afbeelding, set en drukvariant zelf.</p></div>'+renderGroup(english,'Engelse kandidaten','Visuele vergelijking met TCGdex-referentieafbeeldingen waar beschikbaar.')+renderGroup(japanese,'Japanse kandidaten','Gerangschikt op kaartnaam, Pokédexnummer en kaartnummer. Na bevestiging kan de scanner een lokale visuele referentie opbouwen; Japanse bronafbeeldingen ontbreken grotendeels.');
 }
@@ -144,10 +146,14 @@ async function applyVisualRanking(matches,queryCanvas){
   const ranked=await rankVisualCandidates(queryCanvas,candidates,(done,total)=>{
    document.getElementById('scanstatus').textContent='Visueel vergelijken '+done+'/'+total+'…';
   });
-  const scores=new Map(ranked.matches.filter(x=>x.visualMatch).map(x=>[x.record.recordId,x.visualScore]));
-  const enriched=matches.map(x=>({...x,visualScore:scores.get(x.record.recordId)}));
-  const en=enriched.filter(x=>x.language==='en').sort((a,b)=>(b.visualScore??-1)-(a.visualScore??-1)||b.score-a.score);
-  const ja=enriched.filter(x=>x.language==='ja').sort((a,b)=>b.score-a.score);
+  const visualMatches=new Map(ranked.matches.filter(x=>x.visualMatch).map(x=>[x.record.recordId,x]));
+  const enriched=matches.map(x=>{
+   const visual=visualMatches.get(x.record.recordId);
+   return {...x,visualScore:visual?.visualScore,visualSource:visual?.visualSource,visualPrintingIds:visual?.visualPrintingIds||[]};
+  });
+  const byVisualThenText=(a,b)=>(b.visualScore??-1)-(a.visualScore??-1)||b.score-a.score;
+  const en=enriched.filter(x=>x.language==='en').sort(byVisualThenText);
+  const ja=enriched.filter(x=>x.language==='ja').sort(byVisualThenText);
   return [...en,...ja];
  }catch(error){
   document.getElementById('scanstatus').textContent='Visuele vergelijking niet beschikbaar; tekstmatches blijven zichtbaar.';
