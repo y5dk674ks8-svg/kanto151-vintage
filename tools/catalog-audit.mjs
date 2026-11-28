@@ -25,6 +25,15 @@ async function requestJson(url, attempts = 5) {
   throw lastError;
 }
 
+async function readCachedArray(filePath) {
+  try {
+    const value = JSON.parse(await fs.readFile(filePath, "utf8"));
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
+
 async function mapLimit(items, limit, fn) {
   const results = new Array(items.length);
   let next = 0;
@@ -71,16 +80,33 @@ let duplicateSourceVariantEntriesRemoved = 0;
 
 for (const language of LANGUAGES) {
   console.log(`[${language}] Fetching complete set index`);
+  const rawDir = path.join(OUT, "audit", "raw");
+  const cachedSetIndex = await readCachedArray(path.join(rawDir, `${language}-sets.json`));
+  const cachedSetDetails = await readCachedArray(path.join(rawDir, `${language}-set-details.json`));
+  const cachedKantoDetails = await readCachedArray(path.join(rawDir, `${language}-kanto-card-details.json`));
+  const cachedSetDetailsById = new Map(cachedSetDetails.filter(Boolean).map(set => [set.id, set]));
+  const cachedKantoDetailsById = new Map(cachedKantoDetails.filter(Boolean).map(card => [card.id, card]));
   const setIndexUrl = `${BASE}/${language}/sets`;
-  const allSets = await requestJson(setIndexUrl);
-  await fs.writeFile(path.join(OUT, "audit", "raw", `${language}-sets.json`), JSON.stringify(allSets, null, 2));
+  let allSets;
+  try {
+    allSets = await requestJson(setIndexUrl);
+  } catch (error) {
+    allSets = cachedSetIndex;
+    sourceFetchWarnings.push({ language, type: "set-index-cache-fallback", detail: String(error) });
+  }
+  await fs.writeFile(path.join(rawDir, `${language}-sets.json`), JSON.stringify(allSets, null, 2));
 
   const setDetails = await mapLimit(allSets, 4, async brief => {
     try {
       const detail = await requestJson(`${BASE}/${language}/sets/${encodeURIComponent(brief.id)}`);
       return detail;
     } catch (error) {
-      sourceFetchWarnings.push({ language, setId: brief.id, setName: brief.name, detail: String(error) });
+      const cached = cachedSetDetailsById.get(brief.id);
+      if (cached) {
+        sourceFetchWarnings.push({ language, type: "set-detail-cache-fallback", setId: brief.id, setName: brief.name, detail: String(error) });
+        return cached;
+      }
+      sourceFetchWarnings.push({ language, type: "set-fetch-failed", setId: brief.id, setName: brief.name, detail: String(error) });
       return null;
     }
   });
@@ -111,6 +137,11 @@ for (const language of LANGUAGES) {
       try {
         return await requestJson(`${BASE}/${language}/cards/${encodeURIComponent(brief.id)}`);
       } catch (error) {
+        const cached = cachedKantoDetailsById.get(brief.id);
+        if (cached) {
+          sourceFetchWarnings.push({ language, type: "card-detail-cache-fallback", setId: set.id, cardId: brief.id, detail: String(error) });
+          return cached;
+        }
         sourceFetchWarnings.push({ language, type: "card-fetch-failed", setId: set.id, cardId: brief.id, detail: String(error) });
         return null;
       }
