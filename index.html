@@ -50,7 +50,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 <section id="scanner" class="hidden">
 <div class="sectiontitle">Kaart scannen</div>
-<div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. De gratis OCR leest Pokémonnaam en kaartnummer uit en vergelijkt die met vintage kaartgegevens. Jij kiest de juiste kaartafbeelding; de drukvariant wordt daarna bevestigd.</p>
+<div class="panel"><h2>1. Maak een foto</h2><p class="muted">Leg de volledige voorkant recht en scherp vast. OCR leest kaarttekst en kaartnummer uit. Daarna zoeken we lokaal in de Engelse én Japanse vintage catalogus. Jij controleert de match en de drukvariant.</p><label>Kaarttaal op de foto</label><select id="scanlang"><option value="auto">Automatisch (Engels + Japans)</option><option value="en">Engels</option><option value="ja">Japans</option></select>
 <div class="scanpreview" id="preview">📷<br>Kies een foto of maak een foto</div>
 <div class="actions"><label class="btn">Maak foto<input id="camera" type="file" accept="image/*" capture="environment" hidden></label><label class="btn light">Kies bestaande foto<input id="upload" type="file" accept="image/*" hidden></label></div><div id="scanstatus" class="muted">Wacht op foto.</div><div id="scanresult"></div></div>
 <div class="notice">De foto wordt alleen in je browser verwerkt en niet naar een herkenningsserver verstuurd. Tesseract.js wordt gratis geladen; kaartgegevens worden opgehaald bij TCGdex. Je collectie blijft op je iPhone.</div>
@@ -116,42 +116,46 @@ function removeCard(uid){if(confirm('Deze kaart uit je verzameling verwijderen?'
 let photoFile=null;
 let scanDexGuess=null, scanNumberGuess=null;
 async function findScannedCandidates(dex,cardNo){
- document.getElementById('scanstatus').textContent='Vintage kaartcatalogus doorzoeken…';
+ document.getElementById('scanstatus').textContent='Lokale Engelse en Japanse catalogus laden…';
  try{
-  const all=await api('https://api.tcgdex.net/v2/en/sets');
-  const known=QUICK_SETS.en.map(x=>x.toLowerCase());
-  const sets=all.filter(x=>known.includes((x.name||'').toLowerCase()));
-  const details=await Promise.all(sets.map(async x=>{try{return await api('https://api.tcgdex.net/v2/en/sets/'+encodeURIComponent(x.id))}catch(e){return null}}));
-  const pokemon=NAMES[dex-1].toLowerCase();
-  let matches=[];
-  details.filter(Boolean).forEach(set=>{
-   (set.cards||[]).forEach(card=>{
-    const nm=(card.name||'').toLowerCase();
-    if(nm.includes(pokemon)){
-     const num=String(card.localId||'').replace(/^0+/,'')||'0';
-     matches.push({setId:set.id,setName:set.name,releaseDate:set.releaseDate,cardId:card.id,cardName:card.name,localId:card.localId,image:card.image||'',numberMatch:cardNo?num===String(cardNo).replace(/^0+/,''):false});
-    }
-   });
-  });
-  if(cardNo)matches=matches.filter(x=>x.numberMatch);
-  else matches=[];
-  matches.sort((a,b)=>(a.releaseDate||'').localeCompare(b.releaseDate||''));
+  const {KantoCatalog,rankCatalogCandidates,normalizeCollectorNumber}=await import('./src/catalog-loader.mjs');
+  window.kanto151Catalog=window.kanto151Catalog||new KantoCatalog({baseUrl:'./catalog/'});
+  const [english,japanese]=await Promise.all([
+   window.kanto151Catalog.loadLanguage('en'),
+   window.kanto151Catalog.loadLanguage('ja')
+  ]);
+  const query={dexId:dex,collectorNumber:cardNo};
+  const wanted=normalizeCollectorNumber(cardNo);
+  const matches=[
+   ...rankCatalogCandidates(english,query).filter(x=>normalizeCollectorNumber(x.record.collectorNumber?.raw)===wanted).map(x=>({...x,language:'en'})),
+   ...rankCatalogCandidates(japanese,query).filter(x=>normalizeCollectorNumber(x.record.collectorNumber?.raw)===wanted).map(x=>({...x,language:'ja'}))
+  ];
+  matches.sort((a,b)=>b.score-a.score||String(a.record.set?.releaseDate||'').localeCompare(String(b.record.set?.releaseDate||'')));
   const box=document.getElementById('scanresult');
   if(!matches.length){
-   document.getElementById('scanstatus').textContent=cardNo?'Geen exacte kaartnummer-match. Controleer het nummer.':'Kaartnummer niet herkend; vul het kaartnummer in om verkeerde kaarten te voorkomen.';
-   box.innerHTML='<div class="panel"><b>We hebben nog geen betrouwbare match</b><p class="muted">Ik toon bewust niet alle kaarten met dezelfde Pokémonnaam. Vul het nummer onderaan de kaart in (bijvoorbeeld 67 bij 67/130). Dan filter ik op dat nummer en voorkom ik dat Erika’s Bulbasaur tussen de resultaten staat.</p><label>Kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 67" value="'+esc(cardNo||'')+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
+   document.getElementById('scanstatus').textContent='Geen exacte match in de lokale catalogus.';
+   box.innerHTML='<div class="panel"><b>Geen exacte kaartnummer-match</b><p class="muted">Controleer het Pokédex-nummer en het kaartnummer. Let op: het kaartnummer is het getal vóór de slash.</p><label>Kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 67" value="'+esc(cardNo||'')+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
    return;
   }
-  document.getElementById('scanstatus').textContent=matches.length+' kaart(en) met exact kaartnummer gevonden.';
-  box.innerHTML='<div class="panel"><b>Kaartnummer-match</b><p class="muted">'+matches.length+' overeenkomst(en) voor '+esc(NAMES[dex-1])+' · nummer '+esc(cardNo)+'. Controleer de setafbeelding.</p>'+matches.slice(0,20).map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
- }catch(e){document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>'}
+  document.getElementById('scanstatus').textContent=matches.length+' mogelijke kaart(en) gevonden in de lokale catalogus.';
+  box.innerHTML='<div class="panel"><b>Controleer de kaartmatches</b><p class="muted">'+esc(NAMES[dex-1])+' · kaartnummer '+esc(cardNo)+'. Resultaten komen uit de lokale Engelse en Japanse catalogus; een matchscore is geen kanspercentage.</p>'+matches.slice(0,30).map(x=>{
+   const c=x.record, image=c.images?.lowUrl||'';
+   const language=x.language==='ja'?'Japans':'Engels';
+   const evidence=x.evidence.length?x.evidence.join(' · '):'Kaartnummer en Pokédexnummer';
+   return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(evidence)+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
+  }).join('')+'</div>';
+ }catch(e){
+  document.getElementById('scanstatus').textContent='Lokale catalogus kon niet worden geladen: '+e.message;
+  document.getElementById('scanresult').innerHTML='<div class="notice">Controleer of de app via HTTPS wordt geopend en of de map catalog/ beschikbaar is.</div>';
+ }
 }
-function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||1);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
-async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
+function runFreeMatch(){const dex=Number(document.getElementById('scandex')?.value||0);const number=document.getElementById('scannumber')?.value.trim().match(/\d{1,3}/);if(!dex){document.getElementById('scanstatus').textContent='Selecteer eerst de juiste Pokémon.';return}if(!number){document.getElementById('scanstatus').textContent='Vul het kaartnummer in (het getal vóór de slash).';return}findScannedCandidates(dex,number[0])}
+function retryScanMatch(){const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||0);const n=document.getElementById('retrycardnumber')?.value.trim().match(/\d{1,3}/);if(!dex){document.getElementById('scanstatus').textContent='Selecteer eerst de juiste Pokémon.';return}if(!n){document.getElementById('scanstatus').textContent='Vul eerst het kaartnummer in.';return}findScannedCandidates(dex,n[0])}
+async function scanChooseCard(setId,cardId,lang='en'){show('catalog');await openSet(setId,lang);await chooseCard(cardId)}
 async function scanPhoto(file){if(!file)return;photoFile=file;let u=URL.createObjectURL(file);document.getElementById('preview').innerHTML='<img src="'+u+'" alt="Kaartfoto">';document.getElementById('scanstatus').textContent='Foto geladen. Kaarttekst wordt lokaal uitgelezen…';document.getElementById('scanresult').innerHTML='';
 try{
  if(!window.Tesseract){await new Promise((ok,no)=>{let sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
- const full=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
+ const scanLanguage=document.getElementById('scanlang')?.value||'auto';const ocrLanguage=scanLanguage==='ja'?'jpn':scanLanguage==='en'?'eng':'eng+jpn';const full=await Tesseract.recognize(file,ocrLanguage,{logger:m=>{if(m.status==='recognizing text')document.getElementById('scanstatus').textContent='Kaarttekst uitlezen '+Math.round((m.progress||0)*100)+'%'}});
  ocrText=full.data.text||'';
  let number=null;
  const pair=ocrText.match(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/);
