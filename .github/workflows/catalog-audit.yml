@@ -9,6 +9,7 @@ on:
       - "catalog/pokemon-name-reference.json"
       - "catalog/card-record.schema.json"
       - "catalog/audit/japanese-vintage-set-reference.json"
+      - "catalog/audit/japanese-vending-seed.json"
       - "src/catalog-loader.mjs"
       - "src/recognition-pipeline.mjs"
       - "src/ocr-adapter.mjs"
