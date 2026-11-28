@@ -28,7 +28,7 @@
   if(out[1].y>out[3].y)return [out[0],out[3],out[2],out[1]];
   return out;
  }
- async function detect(sourceCanvas){
+ async function detect(sourceCanvas,fullResolutionCanvas){
   const cv=await loadOpenCV();
   const maxEdge=1100,scale=Math.min(1,maxEdge/Math.max(sourceCanvas.width,sourceCanvas.height));
   const input=document.createElement('canvas');input.width=Math.round(sourceCanvas.width*scale);input.height=Math.round(sourceCanvas.height*scale);
@@ -108,9 +108,18 @@
    transform=cv.getPerspectiveTransform(srcPts,dstPts);warped=new cv.Mat();
    cv.warpPerspective(src,warped,transform,new cv.Size(W,H),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
    const output=document.createElement('canvas');output.width=W;output.height=H;cv.imshow(output,warped);
-   // Keep the normal 744x1039 image for name OCR, but rectify a second copy directly from the full-resolution processing canvas for the tiny footer number.
-   const fullSrc=cv.imread(sourceCanvas),fullPts=cv.matFromArray(4,1,cv.CV_32FC2,points.flatMap(p=>[p.x/scale,p.y/scale]));
-   const numberW=W*2,numberH=H*2,numberDst=cv.matFromArray(4,1,cv.CV_32FC2,[0,0,numberW-1,0,numberW-1,numberH-1,0,numberH-1]);
+   // Use the original decoded photograph for the number image. The detector runs on a smaller working copy, but its corner coordinates are mapped back to the original pixels before perspective correction.
+   const numberBase=fullResolutionCanvas||sourceCanvas;
+   const sx=numberBase.width/sourceCanvas.width,sy=numberBase.height/sourceCanvas.height;
+   const fullPoints=points.map(p=>({x:p.x*sx,y:p.y*sy}));
+   const topFull=Math.hypot(fullPoints[1].x-fullPoints[0].x,fullPoints[1].y-fullPoints[0].y);
+   const bottomFull=Math.hypot(fullPoints[2].x-fullPoints[3].x,fullPoints[2].y-fullPoints[3].y);
+   const leftFull=Math.hypot(fullPoints[3].x-fullPoints[0].x,fullPoints[3].y-fullPoints[0].y);
+   const rightFull=Math.hypot(fullPoints[2].x-fullPoints[1].x,fullPoints[2].y-fullPoints[1].y);
+   const numberW=Math.max(744,Math.min(2400,Math.round((topFull+bottomFull)/2)));
+   const numberH=Math.max(1039,Math.min(3400,Math.round((leftFull+rightFull)/2)));
+   const fullSrc=cv.imread(numberBase),fullPts=cv.matFromArray(4,1,cv.CV_32FC2,fullPoints.flatMap(p=>[p.x,p.y]));
+   const numberDst=cv.matFromArray(4,1,cv.CV_32FC2,[0,0,numberW-1,0,numberW-1,numberH-1,0,numberH-1]);
    const numberTransform=cv.getPerspectiveTransform(fullPts,numberDst),numberWarp=new cv.Mat();
    cv.warpPerspective(fullSrc,numberWarp,numberTransform,new cv.Size(numberW,numberH),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
    const numberOutput=document.createElement('canvas');numberOutput.width=numberW;numberOutput.height=numberH;cv.imshow(numberOutput,numberWarp);
