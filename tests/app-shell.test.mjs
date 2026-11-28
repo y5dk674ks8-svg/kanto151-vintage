@@ -85,7 +85,8 @@ test("scanner visually ranks English candidates without pretending Japanese imag
 });
 
 test("user-confirmed scans can save only local visual fingerprints", () => {
-  assert.match(script, /id="savevisualref" type="checkbox" checked/);
+  assert.match(script, /id="savevisualref" type="checkbox"/);
+  assert.doesNotMatch(script, /id="savevisualref" type="checkbox" checked/);
   assert.match(script, /storeUserReference\(c\.recordId,variantId,window\.lastScanVisualCanvas\)/);
   assert.match(visual, /export async function storeUserReference/);
   assert.match(visual, /writeCachedFeature\(key, entries\.slice\(-8\)\)/);
