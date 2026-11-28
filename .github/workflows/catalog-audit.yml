@@ -9,6 +9,8 @@ on:
       - "src/catalog-loader.mjs"
       - "tests/catalog-loader.test.mjs"
       - "tests/catalog-data.test.mjs"
+      - "tests/app-shell.test.mjs"
+      - "index.html"
       - ".github/workflows/catalog-audit.yml"
 
 concurrency:
@@ -30,6 +32,8 @@ jobs:
           node-version: 20
       - name: Test catalog loader and candidate ranking
         run: node --test tests/catalog-loader.test.mjs
+      - name: Test scanner app shell
+        run: node --test tests/app-shell.test.mjs
       - name: Run multilingual catalog audit
         run: node tools/catalog-audit.mjs
       - name: Validate generated catalog data
