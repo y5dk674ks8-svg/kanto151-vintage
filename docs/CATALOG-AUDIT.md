@@ -50,7 +50,7 @@ A missing TCGdex image URL does not prove that no image exists elsewhere. Japane
 
 ## Japanese name-data quality
 
-A spot check found Japanese TCGdex card-name fields that do not contain the canonical species name associated with the source dex ID. For example, the current `ja:neo1-001` seed record is named `奇妙な`, while dex ID 43 is Oddish / `ナゾノクサ`. This is treated as a source-name quality gap, not silently corrected. The scanner therefore ranks against both the original card name and the canonical species aliases.
+The latest audit flags 278 Japanese Kanto records whose TCGdex card-name field does not contain the canonical species name associated with the source dex ID. For example, the current `ja:neo1-001` seed record is named `奇妙な`, while dex ID 43 is Oddish / `ナゾノクサ`. This is treated as a source-name quality gap, not silently corrected. The scanner therefore ranks against both the original card name and the canonical species aliases, and shows both names in candidate results.
 
 ## Variant handling
 
@@ -93,4 +93,6 @@ TCGdex assigns `1996-01-01` to the generic English `Miscellaneous Promos` bucket
 
 ## Completion rule
 
-The API audit is not complete merely because it returned successfully. It is complete only when the inventory is reproducible, omissions and source disagreements are explicit, variant claims are tested against per-variant evidence, and the image source and reuse rights are documented. The full historical catalog is not yet complete.
+The API audit is not complete merely because it returned successfully. It is complete only when the inventory is reproducible, omissions and source disagreements are explicit, variant claims are tested against per-variant evidence, and the image source and reuse rights are documented. Failed detail requests for sets whose scope cannot be established are kept in `coverage.sourceFetchWarnings`, not counted as vintage card-coverage gaps. This prevents transient API failures for modern sets from inflating the historical catalog gap count.
+
+The full historical catalog is not yet complete.
