@@ -135,10 +135,11 @@ async function findScannedCandidates(dex,cardNo,nameText=''){
    window.kanto151Catalog.loadLanguage('en'),
    window.kanto151Catalog.loadLanguage('ja')
   ]);
-  const query={dexId:dex||undefined,collectorNumber:cardNo||'',name:nameText||''};
+  const englishQuery={dexId:dex||undefined,collectorNumber:cardNo||'',name:window.scanNameTextByLanguage?.en||nameText||''};
+  const japaneseQuery={dexId:dex||undefined,collectorNumber:cardNo||'',name:window.scanNameTextByLanguage?.ja||nameText||''};
   const matches=[
-   ...rankCatalogCandidates(english,query).map(x=>({...x,language:'en'})),
-   ...rankCatalogCandidates(japanese,query).map(x=>({...x,language:'ja'}))
+   ...rankCatalogCandidates(english,englishQuery).map(x=>({...x,language:'en'})),
+   ...rankCatalogCandidates(japanese,japaneseQuery).map(x=>({...x,language:'ja'}))
   ].filter(x=>x.score>0);
   matches.sort((a,b)=>b.score-a.score||a.record.recordId.localeCompare(b.record.recordId));
   document.getElementById('scanstatus').textContent=matches.length+' mogelijke kaart(en) gevonden. Controleer de resultaten.';
@@ -202,6 +203,7 @@ async function scanPhoto(file){
    return;
   }
   const ocrSummary=result.results.map(x=>(x.language==='ja'?'Japans':'Engels')+': '+(x.ocr.nameText||'[geen naam]')+' · nummer '+(x.parsedNumber?x.parsedNumber.number+'/'+x.parsedNumber.total:'niet gelezen')).join('\n');
+  window.scanNameTextByLanguage=Object.fromEntries(result.results.map(x=>[x.language,x.ocr.nameText||'']));
   window.scanNameText=result.results.map(x=>x.ocr.nameText).filter(Boolean).join(' ');
   scanNumberGuess=result.results.find(x=>x.parsedNumber)?.parsedNumber?.number||'';
   scanDexGuess=null;
