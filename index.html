@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-46"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-47"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -66,10 +66,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
-<script src="./card-vision.js?v=20261128-41"></script>
+<script src="./card-vision.js?v=20261128-47"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-46';
+const KANTO_BUILD='2026.11.28-47';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -352,7 +352,7 @@ async function scanPhoto(file){
    const nameCrops=cardDetected
     ?[
       // Create one crop at a time: keeping every enlarged canvas alive can exhaust iPhone Safari memory.
-      ()=>makeOcrRegion(cardCanvas,.075,.065,.67,.12,7),
+      ()=>makeOcrRegion(cardCanvas,.075,.035,.42,.105,8), // Full Venonat title line; previous crop clipped the top of the capital letter.
       // Tight title-line fallback for Stage cards: excludes the smaller "Evolves from" label.
       ()=>makeOcrRegion(cardCanvas,.12,.07,.72,.15,8),
       ()=>makeOcrRegion(cardCanvas,.10,.045,.82,.18,6),
@@ -367,7 +367,7 @@ async function scanPhoto(file){
      ];
    const nameTexts=[];
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:'7',preserve_interword_spaces:'1'});
-   scanDiagAdd('OCR-instellingen naam','Eerste uitsneden: alleen de Pokémonnaamregel, zonder Basic Pokémon-label of HP. PSM 7; brede reserve-uitsneden PSM 6.');
+   scanDiagAdd('OCR-instellingen naam','Naamuitsnede omhoog en smaller gezet: volledige titelregel, zonder het Basic-label en zonder HP. PSM 7.');
    for(let i=0;i<nameCrops.length;i++){
     const namePsm=cardDetected?(i===0?'7':i===1?'6':'6'):(i===0?'11':i===1?'6':'11');
     if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:namePsm,preserve_interword_spaces:'1'});
@@ -393,12 +393,12 @@ async function scanPhoto(file){
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberSource=cardDetected?(numberCanvas||cardCanvas):canvas;
    const numberCrops=cardDetected
-    // Wider, taller footer crop with 8x resampling. This retains the complete first digit and slash while leaving the adjacent energy symbol out as much as possible.
-    ?[makeOcrRegion(numberSource,.815,.942,.955,.982,8)]
+    // Footer crop moved upward: the previous y=.942 start clipped the tops of the printed digits on this card. The new crop includes the complete 63/64 line.
+    ?[makeOcrRegion(numberSource,.80,.915,.96,.965,8)]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    if(cardDetected){
-    const x0=Math.floor(numberSource.width*.833333),y0=Math.floor(numberSource.height*.947065);
-    const x1=Math.floor(numberSource.width*.940860),y1=Math.floor(numberSource.height*.972089);
+    const x0=Math.floor(numberSource.width*.80),y0=Math.floor(numberSource.height*.915);
+    const x1=Math.floor(numberSource.width*.96),y1=Math.floor(numberSource.height*.965);
     const overlay=document.createElement('canvas');overlay.width=numberSource.width;overlay.height=numberSource.height;
     overlay.getContext('2d').drawImage(numberSource,0,0);
     const oc=overlay.getContext('2d');oc.strokeStyle='#ff1744';oc.lineWidth=4;oc.strokeRect(x0,y0,x1-x0,y1-y0);
@@ -406,7 +406,7 @@ async function scanPhoto(file){
    }
    const numberTexts=[];
    const numberTextsByCrop=[];
-   scanDiagAdd('OCR-instellingen kaartnummer','Gerichte footeruitsneden · alleen kaartnummer rechtsonder · PSM 7, 8 en 6');
+   scanDiagAdd('OCR-instellingen kaartnummer','Footeruitsnede omvat nu de volledige cijferregel · PSM 7, 10, 6 en 8');
    for(let i=0;i<numberCrops.length;i++){
     const crop=numberCrops[i];
     const cropTexts=[];
