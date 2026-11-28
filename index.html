@@ -66,10 +66,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
-<script src="./card-vision.js?v=20261128-36"></script>
+<script src="./card-vision.js?v=20261128-37"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-36';
+const KANTO_BUILD='2026.11.28-37';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -389,38 +389,62 @@ async function scanPhoto(file){
    scanDiagAdd('Naam OCR samengevoegd','Aantal uitsneden: '+nameTexts.length+'\n'+(nameTexts.join(' | ')||'[leeg]'));
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberCrops=cardDetected
-    // Previous x=.85/.885 crops clipped the first digit on common vintage footer layouts.
-    ?[makeOcrRegion(cardCanvas,.76,.94,.985,.99,10),makeOcrRegion(cardCanvas,.78,.93,.985,.99,10)]
+    // Tight crops target the bottom-right collector number, excluding LV and Pokédex text.
+    // The previous .76/.94 crop included unrelated digits and clipped the top of the printed number.
+    ?[
+      makeOcrRegion(cardCanvas,.84,.90,.995,.98,14),
+      makeOcrRegion(cardCanvas,.82,.89,.995,.985,12),
+      makeOcrRegion(cardCanvas,.86,.905,.995,.98,14)
+     ]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    const numberTexts=[];
-   scanDiagAdd('OCR-instellingen kaartnummer','Whitelist cijfers en slash · PSM 7 en 6 als tweede poging');
+   scanDiagAdd('OCR-instellingen kaartnummer','Gerichte footeruitsneden · alleen kaartnummer rechtsonder · PSM 7, 8 en 6');
    let validNumberFound=false;
    for(let i=0;i<numberCrops.length&&!validNumberFound;i++){
-    const modes=cardDetected?['11','6']:['6'];
-    for(const mode of modes){
-     if(cardDetected&&worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:mode});
-     const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · uitsnede '+(i+1)+' · PSM '+mode,45000);
-     const raw=r.data.text||'';numberTexts.push(raw);
-     const candidate=raw.match(/\b(\d{1,3})\s*\/\s*(\d{1,3})\b/);
-     if(candidate&&Number(candidate[1])>0&&Number(candidate[1])<=250&&Number(candidate[2])>Number(candidate[1])&&Number(candidate[2])<=300){validNumberFound=true;break}
+    const crop=numberCrops[i];
+    const variants=[crop];
+    if(cardDetected){
+     const enhanced=document.createElement('canvas');enhanced.width=crop.width;enhanced.height=crop.height;
+     const ec=enhanced.getContext('2d');ec.filter='grayscale(1) contrast(1.8) brightness(1.08)';ec.drawImage(crop,0,0);
+     variants.push(enhanced);
     }
+    for(let v=0;v<variants.length&&!validNumberFound;v++){
+     const modes=cardDetected?['7','8','6']:['6'];
+     for(const mode of modes){
+      if(cardDetected&&worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:mode});
+      const r=await recognizeRegion(worker,variants[v],'Kaartnummer herkennen · uitsnede '+(i+1)+(v?' · contrast':'')+' · PSM '+mode,45000);
+      const raw=r.data.text||'';numberTexts.push(raw);
+      const candidate=raw.match(/(?:^|\D)(\d{1,3})\s*[\/|Il]\s*(\d{1,3})(?:$|\D)/);
+      if(candidate&&Number(candidate[1])>0&&Number(candidate[1])<=250&&Number(candidate[2])>Number(candidate[1])&&Number(candidate[2])<=300){validNumberFound=true;break}
+     }
+    }
+    if(variants.length>1){variants[1].width=0;variants[1].height=0}
    }
    numberCrops.forEach(c=>{c.width=0;c.height=0});
-   const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
+   const numberText=numberTexts.join('\n--- volgende uitsnede/poging ---\n');
    let number=null,totalNumber=null;
-   const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|Il]\s*(\d{1,3})\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
-   const digits=(numberText.match(/\d/g)||[]).join('');
+   const pairs=[...numberText.matchAll(/(?:^|\D)(\d{1,3})\s*[\/|Il]\s*(\d{1,3})(?:$|\D)/g)]
+    .map(m=>({num:Number(m[1]),total:Number(m[2])}))
+    .filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
+   // If OCR drops the slash, allow a split only when the digits produce exactly one
+   // plausible vintage-set number/total pair. This safely handles e.g. "8102" -> 8/102.
+   const vintageTotals=new Set([62,64,82,83,90,100,102,105,110,111,113,123,130,132,147,159,165,182]);
+   const digitStrings=numberTexts.map(t=>(t.match(/\d/g)||[]).join('')).filter(s=>s.length>=3&&s.length<=6);
    const splitCandidates=[];
-   const addSplits=raw=>{for(let i=1;i<raw.length;i++){const num=Number(raw.slice(0,i)),total=Number(raw.slice(i));if(num>0&&num<=250&&total>num&&total<=300)splitCandidates.push({num,total})}};
-   addSplits(digits);
-   // Tesseract sometimes reads the printed slash as the digit "1" (67/130 -> 671130).
-   for(let i=0;i<digits.length;i++)if(digits[i]==='1')addSplits(digits.slice(0,i)+digits.slice(i+1));
-   // Never turn a six-digit OCR string into a card number by guessing that one "1" was a slash.
-   // Only accept a number when OCR actually returned the separator; otherwise leave it for confirmation.
+   for(const raw of digitStrings){
+    for(let i=1;i<raw.length;i++){
+     const num=Number(raw.slice(0,i)),total=Number(raw.slice(i));
+     if(num>0&&num<=250&&total>num&&vintageTotals.has(total))splitCandidates.push({num,total,source:raw});
+    }
+   }
    const unique=[...new Map(pairs.map(x=>[x.num+'/'+x.total,x])).values()];
    if(unique.length===1){number=String(unique[0].num);totalNumber=String(unique[0].total)}
+   else if(unique.length===0){
+    const splitUnique=[...new Map(splitCandidates.map(x=>[x.num+'/'+x.total,{num:x.num,total:x.total}])).values()];
+    if(splitUnique.length===1){number=String(splitUnique[0].num);totalNumber=String(splitUnique[0].total)}
+   }
    scanNumberGuess=number;scanTotalGuess=totalNumber;
-   scanDiagAdd('Nummerinterpretatie','OCR: '+(numberText||'[leeg]')+'\nResultaat: '+(number?number+'/'+totalNumber:'niet automatisch geaccepteerd')+'\nExpliciete slashmatches: '+JSON.stringify(unique)+'\nMogelijke slash-als-1 splitsingen (niet automatisch gebruikt): '+JSON.stringify(splitCandidates));
+   scanDiagAdd('Nummerinterpretatie','OCR: '+(numberText||'[leeg]')+'\nResultaat: '+(number?number+'/'+totalNumber:'niet automatisch geaccepteerd')+'\nExpliciete slashmatches: '+JSON.stringify(unique)+'\nUnieke splitsingen zonder slash (alleen bekende vintage-settotalen): '+JSON.stringify(splitCandidates));
    const low=ocrText.toLowerCase();
    // Evolution-source labels are often split across OCR lines/crops (e.g. "Evolves fromMac ... achoke").
    // Normalize all OCR text and exclude a Pokémon name found immediately after "evolvesfrom".
