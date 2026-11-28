@@ -307,6 +307,45 @@ coverage.externalJapaneseSetReference = {
   })),
   caveats: japaneseReference.caveats
 };
+const vendingSeed = JSON.parse(await fs.readFile(path.join(OUT, "audit", "japanese-vending-seed.json"), "utf8"));
+for (const record of vendingSeed.cards) {
+  if (normalized.some(existing => existing.recordId === record.recordId)) continue;
+  normalized.push(record);
+  gaps.push({
+    language: "ja",
+    type: "missing-image",
+    setId: record.set.setId,
+    setName: record.set.name,
+    cardId: record.source.sourceCardId,
+    cardName: record.cardIdentity.name,
+    detail: "Secondary-checklist seed; no image imported"
+  });
+}
+coverage.supplementalJapaneseSets = vendingSeed.sets.map(set => ({
+  setId: set.setId,
+  name: set.name,
+  releaseDate: set.releaseDate,
+  totalCardsInSource: set.totalCards,
+  kantoPokemonRecords: set.kantoPokemonRecords,
+  sourceUrl: set.sourceUrl,
+  status: "secondary-seed-unverified"
+}));
+coverage.languages.ja.supplementalSets = vendingSeed.sets.length;
+coverage.languages.ja.supplementalSourceCardCount = vendingSeed.sets.reduce((sum, set) => sum + set.totalCards, 0);
+coverage.languages.ja.supplementalKantoCardRecords = vendingSeed.cards.length;
+coverage.languages.ja.supplementalKantoRecordsMissingImage = vendingSeed.cards.length;
+coverage.languages.ja.combinedCatalogSetGroups = coverage.languages.ja.setsInDateScope + vendingSeed.sets.length;
+coverage.languages.ja.combinedSourceCardCountInScope = coverage.languages.ja.sourceCardsInDateScopeSets + coverage.languages.ja.supplementalSourceCardCount;
+coverage.languages.ja.combinedCatalogKantoCardRecords = coverage.languages.ja.kantoCardRecords + vendingSeed.cards.length;
+coverage.languages.ja.combinedKantoRecordsMissingImage = coverage.languages.ja.kantoRecordsMissingImage + vendingSeed.cards.length;
+const vendingGroupNames = new Set(vendingSeed.sets.map(set => set.name));
+coverage.externalJapaneseSetReference.supplementalSeededGroups = referenceMissing
+  .filter(set => vendingGroupNames.has(set.englishName))
+  .map(set => ({ name: set.englishName, japaneseName: set.japaneseName }));
+coverage.externalJapaneseSetReference.remainingUnseededGroups = referenceMissing
+  .filter(set => !vendingGroupNames.has(set.englishName))
+  .map(set => ({ name: set.englishName, japaneseName: set.japaneseName }));
+
 const recordIds = normalized.map(card => card.recordId);
 const duplicatePrintingIds = normalized.flatMap(card => {
   const ids = card.printings.map(printing => printing.printingId);
