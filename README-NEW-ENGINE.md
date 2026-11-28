@@ -22,9 +22,29 @@ Do not claim that a printing variant is identified if the photo or catalog canno
 - [x] Legacy repositories and branches located.
 - [x] Preservation branch created.
 - [x] Isolated rebuild branch created from production main.
-- [ ] Audit all source sets, cards, languages, images and variant metadata.
-- [ ] Build a normalized local catalog.
+- [x] Run the first reproducible English/Japanese TCGdex source audit.
+- [x] Build a normalized seed catalog split into per-set files.
+- [x] Add unique-record, Kanto coverage, source-variant and image-gap metrics.
+- [x] Cross-check Japanese vintage set coverage against an independent 27-group reference list.
+- [ ] Reconcile the 10 Japanese set groups missing from TCGdex against primary checklists.
+- [ ] Add verified Japanese deck, vending, premium-file and promo records.
+- [ ] Resolve image-source permissions and fill image gaps.
 - [ ] Build deterministic candidate retrieval.
 - [ ] Add OCR and visual ranking as independent signals.
 - [ ] Establish a labeled test set and measure precision/recall.
 - [ ] Integrate camera and upload flows.
+
+
+## First audit snapshot — 2026-11-28
+
+GitHub Actions run: [#46157221267](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46157221267) — successful.
+
+- 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
+- All 151 Kanto Pokédex IDs are represented in both languages.
+- 3,110 source detailed-variant entries are represented across the imported records.
+- 793 records have no TCGdex image URL: 7 English and 786 Japanese.
+- 17 Japanese set groups matched in TCGdex against an independent 27-group vintage checklist; 10 reference groups are not present in the current TCGdex date-scope audit.
+- Five matched Japanese set groups have differing source card totals and require checklist-level reconciliation.
+- Record IDs are unique; no record is missing a Kanto dex ID or source variant entry.
+
+This is a successful **seed-catalog audit**, not a complete vintage checklist or a validated printing census. Japanese promos, vending, decks, premium files and image permissions remain open work.
