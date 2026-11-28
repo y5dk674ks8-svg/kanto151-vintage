@@ -254,6 +254,11 @@ normalized.sort((a, b) =>
 );
 
 coverage.totalNormalizedRecords = normalized.length;
+coverage.totalSourceVariantEntries = normalized.reduce((sum, card) => sum + card.printings.length, 0);
+for (const language of LANGUAGES) {
+  const languageCards = normalized.filter(card => card.language === language);
+  coverage.languages[language].sourceVariantEntries = languageCards.reduce((sum, card) => sum + card.printings.length, 0);
+}
 coverage.uniqueKantoDexIds = [...new Set(normalized.flatMap(card => card.pokemonDexIds))].sort((a, b) => a - b);
 coverage.missingKantoDexIds = Array.from({ length: 151 }, (_, i) => i + 1).filter(id => !coverage.uniqueKantoDexIds.includes(id));
 coverage.gapCount = gaps.length;
@@ -261,6 +266,35 @@ coverage.gapTypes = gaps.reduce((counts, gap) => {
   counts[gap.type] = (counts[gap.type] || 0) + 1;
   return counts;
 }, {});
+const japaneseReference = JSON.parse(await fs.readFile(path.join(OUT, "audit", "japanese-vintage-set-reference.json"), "utf8"));
+const japaneseActualSets = new Map(coverage.languages.ja.selectedSets.map(set => [set.setId, set]));
+const referenceMissing = japaneseReference.sets.filter(set => !set.tcgdexSetId || !japaneseActualSets.has(set.tcgdexSetId));
+const referenceCountDiffers = japaneseReference.sets.filter(set => {
+  const actual = set.tcgdexSetId ? japaneseActualSets.get(set.tcgdexSetId) : null;
+  return actual && actual.sourceCardCount !== set.referenceCardCount;
+});
+coverage.externalJapaneseSetReference = {
+  source: japaneseReference.source,
+  referenceSetGroups: japaneseReference.sets.length,
+  presentInTcgdexSetAudit: japaneseReference.sets.length - referenceMissing.length,
+  missingFromTcgdexSetAudit: referenceMissing.map(set => ({ name: set.englishName, japaneseName: set.japaneseName, year: set.year, referenceCardCount: set.referenceCardCount })),
+  sourceCountDiffers: referenceCountDiffers.map(set => ({
+    name: set.englishName,
+    tcgdexSetId: set.tcgdexSetId,
+    referenceCardCount: set.referenceCardCount,
+    tcgdexCardCount: japaneseActualSets.get(set.tcgdexSetId).sourceCardCount
+  })),
+  caveat: japaneseReference.caveat
+};
+const recordIds = normalized.map(card => card.recordId);
+coverage.validation = {
+  recordCount: normalized.length,
+  uniqueRecordIds: new Set(recordIds).size,
+  duplicateRecordIds: recordIds.length - new Set(recordIds).size,
+  recordsWithNoKantoDexId: normalized.filter(card => !card.pokemonDexIds.length).length,
+  recordsWithNoPrintingEntry: normalized.filter(card => !card.printings.length).length,
+  allKantoDexIdsRepresented: coverage.missingKantoDexIds.length === 0
+};
 
 const setGroups = new Map();
 for (const card of normalized) {
