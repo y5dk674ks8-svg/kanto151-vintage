@@ -240,8 +240,8 @@ async function scanPhoto(file){
   let scanCandidates=await applyVisualRanking(result.candidates,result.visualCanvas);
   const ocrSummary=result.results.map(x=>{
    const reads=(x.ocr.numberPasses||[]).map((p,i)=>'OCR '+(i+1)+': '+(p.text||'[leeg]')+' ('+Math.round(p.confidence??0)+'%)').join(' | ');
-   return (x.language==='ja'?'Japans':'Engels')+': '+(x.ocr.nameText||'[geen naam]')+' ('+Math.round(x.ocr.nameConfidence??0)+'%) · nummer '+(x.parsedNumber?x.parsedNumber.number+'/'+x.parsedNumber.total:'niet eenduidig gelezen')+'\\n'+reads;
-  }).join('\\n');
+   return (x.language==='ja'?'Japans':'Engels')+': '+(x.ocr.nameText||'[geen naam]')+' ('+Math.round(x.ocr.nameConfidence??0)+'%) · nummer '+(x.parsedNumber?x.parsedNumber.number+'/'+x.parsedNumber.total:'niet eenduidig gelezen')+'\n'+reads;
+  }).join('\n');
   window.scanNameTextByLanguage=Object.fromEntries(result.results.map(x=>[x.language,x.ocr.nameText||'']));
   window.scanNameText=result.results.map(x=>x.ocr.nameText).filter(Boolean).join(' ');
   scanNumberGuess=result.results.find(x=>x.parsedNumber)?.parsedNumber?.number||'';
