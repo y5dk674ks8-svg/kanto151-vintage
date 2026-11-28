@@ -8,10 +8,11 @@ on:
       - ".github/workflows/vendor-scanner-assets.yml"
       - "src/card-vision.js"
       - "src/ocr-adapter.mjs"
+      - "src/recognition-pipeline.mjs"
 
 concurrency:
-  group: vendor-scanner-assets-${{ github.ref }}
-  cancel-in-progress: true
+  group: repo-writer-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
