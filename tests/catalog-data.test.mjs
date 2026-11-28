@@ -16,6 +16,7 @@ test("generated catalog covers all 151 Kanto dex IDs in both languages", () => {
 
 test("generated record and printing identities are unique", () => {
   assert.equal(coverage.validation.duplicateRecordIds, 0);
+  assert.ok(coverage.validation.duplicateSourceVariantEntriesRemoved > 0);
   assert.deepEqual(coverage.validation.recordsWithDuplicatePrintingIds, []);
   assert.equal(coverage.validation.recordsWithNoKantoDexId, 0);
   assert.equal(coverage.validation.recordsWithNoPrintingEntry, 0);
