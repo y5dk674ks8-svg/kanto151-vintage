@@ -16,6 +16,7 @@ on:
       - "tests/app-shell.test.mjs"
       - "tests/recognition-pipeline.test.mjs"
       - "index.html"
+      - "sw.js"
       - ".github/workflows/catalog-audit.yml"
 
 concurrency:
