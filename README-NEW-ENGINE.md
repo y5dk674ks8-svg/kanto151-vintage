@@ -2,11 +2,11 @@
 
 This branch is an isolated rebuild track. It is based on the existing `main` branch, but all work here is kept separate from the production app and legacy experiments.
 
-## Non-negotiable preservation rules
+## Preservation rules
 
 - Never delete or overwrite `main`.
 - Never delete or overwrite `offline-scanner` or `visual-card-matching-prototype`.
-- The legacy main snapshot is also preserved at `archive/legacy-main-2026-11-28`.
+- The legacy main snapshot is preserved at `archive/legacy-main-2026-11-28`.
 - Do not merge this branch into production until it passes the documented acceptance tests and the owner explicitly approves.
 
 ## Scope
@@ -15,74 +15,64 @@ Recognize camera photographs and uploaded images of English and Japanese Pokémo
 
 The current data is a seed catalog, not a complete historical checklist or a verified census of every physical printing.
 
-## Current status
+## Implemented
 
 - [x] Preserve the legacy application and work on an isolated rebuild branch.
-- [x] Run reproducible English/Japanese TCGdex source audits.
-- [x] Build a normalized catalog split into per-set files.
-- [x] Add source provenance, variant records, image-gap reporting and integrity metrics.
-- [x] Add canonical English/Japanese species names for all 151 Kanto Pokémon.
-- [x] Use canonical species aliases in OCR candidate ranking without overwriting original TCGdex card names.
-- [x] Compare the Japanese catalog against an independent vintage checklist and report missing groups/count disagreements.
-- [x] Add a local catalog loader, fuzzy ranking and version-aware IndexedDB caching.
+- [x] Audit English and Japanese TCGdex sources and normalize per-set records.
+- [x] Add source provenance, raw snapshots, image-gap reporting and variant-integrity metrics.
+- [x] Add canonical English and Japanese species names for all 151 Kanto Pokémon.
+- [x] Rank OCR results against both source card names and canonical species aliases without rewriting source data.
+- [x] Compare Japanese coverage against independent vintage set and promo/deck references.
+- [x] Load catalog sets locally with version-aware IndexedDB caching.
 - [x] Vendor OpenCV.js, Tesseract.js, WASM runtime and English/Japanese OCR models into the repository.
 - [x] Integrate card localization, perspective correction, bilingual OCR and local candidate retrieval.
-- [x] Connect camera and upload flows to the local scanner pipeline.
-- [x] Add experimental perceptual visual ranking for English candidates with available reference images; Japanese candidates remain text-ranked.
-- [x] Display OCR and visual scores separately; neither score is treated as a probability.
-- [x] Keep candidate and printing selection human-confirmed; the scanner never auto-registers a card.
-- [x] Require an explicit Pokémon choice when a source card record is ambiguous.
-- [x] Cache fetched same-origin scanner assets and catalog files for subsequent offline use.
-- [x] Add automated tests for catalog ranking, Japanese name aliases, OCR number parsing, visual ranking, app integration, data integrity and variant mapping.
-- [ ] Verify camera capture, OCR quality and offline use on a real iPhone.
-- [ ] Reconcile the 10 Japanese vintage groups absent from the current TCGdex audit against primary checklists.
-- [ ] Add verified Japanese deck, vending, premium-file and promo records.
-- [ ] Resolve image-source permissions and fill image gaps.
-- [ ] Resolve upstream card-image reuse permissions before treating visual matching as production-ready.
-- [ ] Add Japanese visual references; current Japanese catalog image coverage is absent in TCGdex.
-- [ ] Establish a labeled real-card test set and measure OCR/visual precision and recall.
-- [ ] Manually verify physical printing distinctions and card-specific variants.
+- [x] Add experimental perceptual visual ranking for English candidates with available reference images.
+- [x] Let users optionally save local visual fingerprints after confirming a card and printing; the raw camera photo is not stored.
+- [x] Use those opt-in personal references to help rank later scans, including Japanese cards without TCGdex images.
+- [x] Require human confirmation of the Pokémon, card and printing; ambiguous cards cannot silently default to Bulbasaur.
+- [x] Cache fetched same-origin assets and catalog files for subsequent offline use.
+- [x] Add automated tests for loader, bilingual aliases, OCR parsing, visual ranking, app integration, data integrity and variant mapping.
 
-## Latest verified audit snapshot — 2026-11-28
+## Latest verified snapshot — 2026-11-28
 
-GitHub Actions run: [#46158869084](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158869084) — successful. All 29 automated tests passed.
+GitHub Actions run: [#46159511187](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159511187) — successful. **All 32 automated tests passed.**
 
-- **1,668** TCGdex Kanto card records: 882 English and 786 Japanese.
-- All **151/151** Kanto Pokédex IDs are represented in both languages.
-- **3,072** detailed source-variant entries remain after removing 38 exact duplicate source entries.
-- No duplicate record IDs or printing IDs.
-- Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
-- **793** records have no TCGdex image URL: 7 English and 786 Japanese.
-- **278** Japanese source card names do not contain the canonical Japanese or English species name associated with their dex ID. The original source name is preserved; canonical aliases are added for OCR ranking and shown alongside it.
-- Independent Japanese checklist: 27 core vintage groups. The current date-filtered TCGdex audit maps 17; 10 are absent. Five matched groups have source-count disagreements.
-- The supplementary promo/deck reference contains 12 entries: 6 overlap with the 27 core groups and 6 are distinct additional groups.
+| Metric | Result |
+|---|---:|
+| Normalized Kanto card records | 1,668 |
+| English records | 882 |
+| Japanese records | 786 |
+| Kanto Pokédex IDs represented | 151/151 in both languages |
+| Detailed source-variant entries | 3,072 |
+| Exact duplicate source-variant entries removed | 38 |
+| Duplicate record / printing IDs | 0 / 0 |
+| First Edition / Unlimited / No Rarity mapping errors | 0 / 0 / 0 |
+| Missing TCGdex image URLs | 793 (7 English, 786 Japanese) |
+| Japanese source card names without canonical species-name match | 278 |
 
-The English visual matcher is experimental: it uses remote TCGdex reference-image URLs and stores derived feature descriptors locally, but upstream image rights have not been cleared. It is not a substitute for checking the actual card and printing.
+The 278 Japanese name flags do **not** mean 278 cards are missing. They mean the TCGdex card-name field does not contain the canonical species name for the associated dex ID. The source name is preserved, while the canonical alias is used for OCR ranking and shown in the candidate list.
 
-This is a successful **seed-catalog and scanner-pipeline milestone**, not a complete vintage catalog or a validated printing census. The largest remaining blockers are Japanese promo/deck coverage, image rights and image availability, and real-device accuracy testing.
-## Latest verified seed-catalog snapshot — 2026-11-28
+### Japanese set coverage
 
-GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158593772) — successful.
+- Independent vintage checklist: 27 core groups / 1,777 listed cards.
+- Current date-filtered TCGdex audit: 17 groups present, 10 core groups absent.
+- Supplementary promo/deck references: 12 entries, representing 5 additional distinct groups and 7 overlaps with the core checklist.
+- Five set-count comparisons disagree across the source checklists and TCGdex set/card data.
+- The missing groups currently have set-level references only; their card-level records have not yet been imported and verified.
 
-- 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
-- All 151 Kanto Pokédex IDs are represented in both languages.
-- 3,072 normalized source-variant entries after removing 38 exact duplicate source entries.
-- No duplicate card-record IDs or duplicate printing IDs.
-- Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
-- 793 records have no TCGdex image URL: 7 English and 786 Japanese.
-- Japanese discovery references list 27 core vintage set groups and 12 supplementary deck/promo source entries. Six supplementary entries overlap core groups; six are additional discovery groups.
-- TCGdex currently represents 17 of the 27 core Japanese groups. Ten are absent from its current date-scope audit.
-- Five matched Japanese groups have source-count differences requiring checklist-level reconciliation.
-- 278 Japanese card-title fields do not contain the canonical species name. Every record still has a canonical species alias, and both card titles and species aliases are used for ranking.
+### Visual matching and privacy
 
-The latest scanner integration run [#46159183213](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159183213) has passed all five test suites (33 tests); the refreshed catalog audit is still running.
+- English visual ranking is experimental and uses remote TCGdex reference-image URLs. Upstream image rights are not established by the TCGdex card-data licence, so this is not production-cleared.
+- Japanese visual ranking starts with OCR/text. If the user opts in after confirming a card and printing, a compact visual feature descriptor is saved locally and can help rank future scans.
+- The original camera photo is not stored by this feature. Personal visual references stay in local IndexedDB; they are not uploaded by this scanner.
+- OCR models and catalog data need to be fetched on first use. The service worker caches same-origin assets and catalog files as they are fetched; later use can work offline once the needed resources are cached. External image references may still need an initial network fetch.
 
-This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files, image permissions and historical card-name differences remain open work.
+## Remaining work
 
-## Scanner implementation
+1. Import and verify card-level records for the 10 missing Japanese core groups and 5 distinct supplementary promo/deck groups.
+2. Resolve image-source permissions and improve image coverage, especially for Japanese vintage cards.
+3. Test camera capture, OCR, local fingerprint storage and offline behavior on a real iPhone.
+4. Build a labeled real-card test set and measure OCR/visual precision and recall.
+5. Manually verify physical printing distinctions and card-specific variants before calling the catalog complete.
 
-The rebuild uses local OpenCV and Tesseract assets. User photos are processed in the browser; the scanner does not upload them. The first scan downloads and caches catalog chunks, OCR runtime/models and derived English reference-image features.
-
-For Japanese cards without a public reference image, the user can opt in to saving a local visual fingerprint after confirming a card. Only derived feature descriptors are stored in IndexedDB, not the raw photo. Later scans can use those fingerprints to rank Japanese candidates.
-
-Text and visual scores are ranking signals, not probabilities. The scanner always asks the user to inspect and choose a candidate; automatic confirmation remains disabled.
+This is a successful **scanner-pipeline and seed-catalog milestone**, not a complete vintage catalog or a validated printing census.
