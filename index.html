@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-43"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-44"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261128-41"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-43';
+const KANTO_BUILD='2026.11.28-44';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -310,12 +310,15 @@ async function scanPhoto(file){
   const photoContext=canvas.getContext('2d',{willReadFrequently:true});
   if(!photoContext)throw Error('De foto kan niet op het canvas worden voorbereid.');
   photoContext.drawImage(photo,0,0,canvas.width,canvas.height);
-  scanDiagAdd('Originele foto','Origineel: '+photo.naturalWidth+' × '+photo.naturalHeight+' · verwerking: '+canvas.width+' × '+canvas.height,{image:diagnosticImage(canvas,1000)});
+  const fullPhotoCanvas=document.createElement('canvas');fullPhotoCanvas.width=photo.naturalWidth;fullPhotoCanvas.height=photo.naturalHeight;
+  const fullPhotoContext=fullPhotoCanvas.getContext('2d');if(!fullPhotoContext)throw Error('De originele fotoresolutie kan niet worden voorbereid.');
+  fullPhotoContext.drawImage(photo,0,0,fullPhotoCanvas.width,fullPhotoCanvas.height);
+  scanDiagAdd('Originele foto','Origineel: '+photo.naturalWidth+' × '+photo.naturalHeight+' · detectiekopie: '+canvas.width+' × '+canvas.height+' · nummerbron blijft origineel',{image:diagnosticImage(canvas,1000)});
   document.getElementById('scanstatus').textContent='Foto geladen. Kaartcontour controleren…';
   let cardCanvas=canvas,numberCanvas=null,cardDetected=false,detectionDebug=null;
    try{
     document.getElementById('scanstatus').textContent='Kaartcontour zoeken en kaart rechtzetten…';
-    const detected=await scanTimeout(KantoCardVision.detect(canvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
+    const detected=await scanTimeout(KantoCardVision.detect(canvas,fullPhotoCanvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
     if(detected.found){
      cardCanvas=detected.canvas;numberCanvas=detected.numberCanvas||detected.canvas;cardDetected=true;
      const debugCanvas=document.createElement('canvas');const debugScale=Math.min(1,1200/Math.max(canvas.width,canvas.height));debugCanvas.width=Math.round(canvas.width*debugScale);debugCanvas.height=Math.round(canvas.height*debugScale);
@@ -391,7 +394,7 @@ async function scanPhoto(file){
    const numberSource=cardDetected?(numberCanvas||cardCanvas):canvas;
    const numberCrops=cardDetected
     // Crop the same normalized footer coordinates from the 2x rectification (1488x2078), retaining source pixels rather than enlarging a 744x1039 interpolation.
-    ?[makeOcrRegion(numberSource,.833333,.947065,.940860,.972089,8)]
+    ?[makeOcrRegion(numberSource,.833333,.947065,.940860,.972089,4)]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    if(cardDetected){
     const x0=Math.floor(numberSource.width*.833333),y0=Math.floor(numberSource.height*.947065);
@@ -399,7 +402,7 @@ async function scanPhoto(file){
     const overlay=document.createElement('canvas');overlay.width=numberSource.width;overlay.height=numberSource.height;
     overlay.getContext('2d').drawImage(numberSource,0,0);
     const oc=overlay.getContext('2d');oc.strokeStyle='#ff1744';oc.lineWidth=4;oc.strokeRect(x0,y0,x1-x0,y1-y0);
-    scanDiagAdd('Kaartnummer zoekgebied','Rechtgezette nummerbron: '+numberSource.width+' × '+numberSource.height+' px (2× bronresolutie)\\nZoekvak: x='+x0+'–'+x1+' px · y='+y0+'–'+y1+' px\\nBreedte: '+(x1-x0)+' px · hoogte: '+(y1-y0)+' px\\nRood kader toont exact het gebied dat voor het kaartnummer wordt gebruikt.',{image:diagnosticImage(overlay,900)});
+    scanDiagAdd('Kaartnummer zoekgebied','Rechtgezette nummerbron uit originele foto: '+numberSource.width+' × '+numberSource.height+' px\\nZoekvak: x='+x0+'–'+x1+' px · y='+y0+'–'+y1+' px\\nBreedte: '+(x1-x0)+' px · hoogte: '+(y1-y0)+' px\\nRood kader toont exact het gebied dat voor het kaartnummer wordt gebruikt.',{image:diagnosticImage(overlay,900)});
    }
    const numberTexts=[];
    const numberTextsByCrop=[];
