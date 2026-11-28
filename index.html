@@ -118,14 +118,38 @@ let photoFile=null;
 let scanDexGuess=null, scanNumberGuess=null;
 function renderScanCandidateList(matches){
  if(!matches.length)return '<div class="notice">Geen kandidaten gevonden. Bevestig de Pokémon hieronder en zoek opnieuw. Bij oudere Japanse kaarten kan het gedrukte kaartnummer ontbreken.</div>';
- return '<div class="panel"><b>Controleer de mogelijke kaarten</b><p class="muted">'+matches.length+' kandidaten. De score is een rangschikking, geen kanspercentage. Controleer afbeelding, set en drukvariant zelf.</p>'+matches.slice(0,30).map(x=>{
+ const english=matches.filter(x=>x.language==='en');
+ const japanese=matches.filter(x=>x.language==='ja');
+ const renderGroup=(items,title,note)=>!items.length?'':('<div class="panel"><b>'+title+'</b><p class="muted">'+note+'</p>'+items.slice(0,30).map(x=>{
   const c=x.record, image=c.images?.lowUrl||'', language=x.language==='ja'?'Japans':'Engels';
   const speciesNames=(c.pokemonNames||[]).map(names=>x.language==='ja'?names.ja:names.en).filter(Boolean).join(', ');
   const variants=(c.printings||[]).map(p=>[p.variant?.edition,p.variant?.finish,p.variant?.promoStamp].filter(Boolean).join(' · ')).filter(Boolean);
   const variantText=[...new Set(variants)].join(' / ')||'Drukvariant niet gespecificeerd';
   const evidence=x.evidence?.length?x.evidence.join(' · '):'Catalogusmatch';
-  return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy" alt="" onerror="this.style.display=\'none\'">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>Pokémon: '+esc(speciesNames||'niet gekoppeld')+'</small><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(variantText)+'</small><small>'+esc(evidence)+' · score '+x.score.toFixed(2)+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
- }).join('')+'</div>';
+  const visualLabel=Number.isFinite(x.visualScore)?' · beeldscore '+x.visualScore.toFixed(2):'';
+  return '<div class="cardentry">'+(image?'<img src="'+esc(image)+'" loading="lazy" alt="" onerror="this.style.display=\'none\'">':'<div style="width:52px;height:70px;background:#f3f5f8;border-radius:6px;display:grid;place-items:center;font-size:10px;color:#8793a5">Geen<br>beeld</div>')+'<div style="flex:1;min-width:0"><b>'+esc(c.cardIdentity?.name||'Naam onbekend')+'</b><small>Pokémon: '+esc(speciesNames||'niet gekoppeld')+'</small><small>'+esc(c.set?.name||c.set?.setId)+' · '+esc(c.collectorNumber?.raw)+' · '+language+'</small><small>'+esc(variantText)+'</small><small>'+esc(evidence)+' · tekstscore '+x.score.toFixed(2)+visualLabel+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(c.set?.setId)+'\',\''+esc(c.source?.sourceCardId)+'\',\''+x.language+'\')">Kies</button></div>';
+ }).join('')+'</div>');
+ return '<div class="panel"><b>Controleer de mogelijke kaarten</b><p class="muted">De tekst- en beeldscores zijn rangschikkingen, geen kanspercentages. Controleer afbeelding, set en drukvariant zelf.</p></div>'+renderGroup(english,'Engelse kandidaten','Visuele vergelijking met TCGdex-referentieafbeeldingen waar beschikbaar.')+renderGroup(japanese,'Japanse kandidaten','Op dit moment gerangschikt op kaartnaam, Pokédexnummer en kaartnummer; Japanse referentieafbeeldingen ontbreken grotendeels.');
+}
+async function applyVisualRanking(matches,queryCanvas){
+ if(!queryCanvas)return matches;
+ const candidates=matches.filter(x=>x.language==='en'&&x.record?.images?.sourceBaseUrl);
+ if(!candidates.length)return matches;
+ try{
+  const {rankVisualCandidates}=await import('./src/visual-match.mjs');
+  document.getElementById('scanstatus').textContent='Engelse kaartafbeeldingen visueel vergelijken…';
+  const ranked=await rankVisualCandidates(queryCanvas,candidates,(done,total)=>{
+   document.getElementById('scanstatus').textContent='Visueel vergelijken '+done+'/'+total+'…';
+  });
+  const scores=new Map(ranked.matches.filter(x=>x.visualMatch).map(x=>[x.record.recordId,x.visualScore]));
+  const enriched=matches.map(x=>({...x,visualScore:scores.get(x.record.recordId)}));
+  const en=enriched.filter(x=>x.language==='en').sort((a,b)=>(b.visualScore??-1)-(a.visualScore??-1)||b.score-a.score);
+  const ja=enriched.filter(x=>x.language==='ja').sort((a,b)=>b.score-a.score);
+  return [...en,...ja];
+ }catch(error){
+  document.getElementById('scanstatus').textContent='Visuele vergelijking niet beschikbaar; tekstmatches blijven zichtbaar.';
+  return matches;
+ }
 }
 async function findScannedCandidates(dex,cardNo,nameText=''){
  document.getElementById('scanstatus').textContent='Lokale Engelse en Japanse catalogus doorzoeken…';
@@ -138,11 +162,11 @@ async function findScannedCandidates(dex,cardNo,nameText=''){
   ]);
   const englishQuery={dexId:dex||undefined,collectorNumber:cardNo||'',name:window.scanNameTextByLanguage?.en||nameText||''};
   const japaneseQuery={dexId:dex||undefined,collectorNumber:cardNo||'',name:window.scanNameTextByLanguage?.ja||nameText||''};
-  const matches=[
+  let matches=[
    ...rankCatalogCandidates(english,englishQuery).map(x=>({...x,language:'en'})),
    ...rankCatalogCandidates(japanese,japaneseQuery).map(x=>({...x,language:'ja'}))
   ].filter(x=>x.score>0);
-  matches.sort((a,b)=>b.score-a.score||a.record.recordId.localeCompare(b.record.recordId));
+  matches=await applyVisualRanking(matches,window.lastScanVisualCanvas);
   document.getElementById('scanstatus').textContent=matches.length+' mogelijke kaart(en) gevonden. Controleer de resultaten.';
   document.getElementById('scanresult').innerHTML=renderScanCandidateList(matches);
  }catch(e){
@@ -203,13 +227,15 @@ async function scanPhoto(file){
    document.getElementById('scanresult').innerHTML='<div class="notice"><b>Maak een nieuwe foto</b><p>'+esc(result.reason)+'</p>Leg één kaart volledig in beeld, recht en scherp, zonder andere kaarten eromheen.</div>';
    return;
   }
+  window.lastScanVisualCanvas=result.visualCanvas;
+  let scanCandidates=await applyVisualRanking(result.candidates,result.visualCanvas);
   const ocrSummary=result.results.map(x=>(x.language==='ja'?'Japans':'Engels')+': '+(x.ocr.nameText||'[geen naam]')+' · nummer '+(x.parsedNumber?x.parsedNumber.number+'/'+x.parsedNumber.total:'niet gelezen')).join('\n');
   window.scanNameTextByLanguage=Object.fromEntries(result.results.map(x=>[x.language,x.ocr.nameText||'']));
   window.scanNameText=result.results.map(x=>x.ocr.nameText).filter(Boolean).join(' ');
   scanNumberGuess=result.results.find(x=>x.parsedNumber)?.parsedNumber?.number||'';
   scanDexGuess=null;
   const manual='<div class="panel"><b>Gecontroleerde zoekgegevens</b><p class="muted" style="white-space:pre-wrap">'+esc(ocrSummary)+'</p><label>Bevestig de Pokémon</label><select id="scandex"><option value="">Niet bevestigd — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'">#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Kaartnummer (optioneel)</label><input id="scannumber" type="text" inputmode="numeric" value="'+esc(scanNumberGuess)+'" placeholder="Bijvoorbeeld 67"><p class="muted">Bij veel oudere Japanse kaarten ontbreekt een gedrukt kaartnummer. De naamherkenning blijft dan bruikbaar.</p><button class="btn green" onclick="runFreeMatch()">Zoek in beide catalogi</button></div>';
-  document.getElementById('scanresult').innerHTML=manual+renderScanCandidateList(result.candidates);
+  document.getElementById('scanresult').innerHTML=manual+renderScanCandidateList(scanCandidates);
   document.getElementById('scanstatus').textContent=result.candidates.length+' kandidaten gevonden. Controleer de kaart en drukvariant voordat je registreert.';
  }catch(e){
   document.getElementById('scanstatus').textContent='Scannen mislukt: '+e.message;
