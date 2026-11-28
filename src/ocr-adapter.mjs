@@ -67,6 +67,32 @@ async function recognize(worker, canvas, parameters, label) {
 }
 
 /**
+ * Selects a collector-number fraction only when OCR passes agree.
+ * Conflicting readings remain raw text so the downstream strict parser fails closed.
+ */
+export function selectCollectorNumberRead(reads) {
+  const fractions = reads.flatMap(read =>
+    [...String(read.text ?? "").matchAll(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/g)]
+      .map(match => match[1] + "/" + match[2])
+  );
+  const counts = new Map();
+  for (const fraction of fractions) counts.set(fraction, (counts.get(fraction) || 0) + 1);
+  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const clearWinner = ranked.length === 1 ||
+    (ranked.length > 1 && ranked[0][1] > ranked[1][1]);
+  if (ranked.length && clearWinner) {
+    return {
+      text: ranked[0][0],
+      confidence: Math.max(...reads.map(read => read.confidence ?? 0))
+    };
+  }
+  return {
+    text: reads.map(read => read.text).filter(Boolean).join("\n"),
+    confidence: null
+  };
+}
+
+/**
  * OCR on a perspective-corrected card canvas.
  * Japanese early-era cards often have no printed collector number; an empty
  * number result is therefore valid and must not hard-exclude candidates.
@@ -120,23 +146,7 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
       }
     }
 
-    const fractions = number.passes.flatMap(read =>
-      [...read.text.matchAll(/(\d{1,3})\s*[\/|]\s*(\d{1,3})/g)]
-        .map(match => match[1] + "/" + match[2])
-    );
-    const counts = new Map();
-    for (const fraction of fractions) counts.set(fraction, (counts.get(fraction) || 0) + 1);
-    const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
-    const clearWinner = ranked.length === 1 ||
-      (ranked.length > 1 && ranked[0][1] > ranked[1][1]);
-    if (ranked.length && clearWinner) {
-      number.text = ranked[0][0];
-      number.confidence = Math.max(...number.passes.map(read => read.confidence ?? 0));
-    } else {
-      // Preserve conflicting raw reads so the strict parser rejects ambiguity.
-      number.text = number.passes.map(read => read.text).filter(Boolean).join("\n");
-      number.confidence = null;
-    }
+    number = { ...selectCollectorNumberRead(number.passes), passes: number.passes };
   } catch (error) {
     number = { ...number, text: number.passes.map(read => read.text).filter(Boolean).join("\n"), error: error.message };
   }
