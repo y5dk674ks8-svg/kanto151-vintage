@@ -375,7 +375,7 @@
       "sourceCount": 299,
       "tcgdexStatus": "not-yet-audited",
       "note": "Broad catch-all source group; must be de-duplicated and filtered to TCG products.",
-      "overlapsCoreVintageGroup": false
+      "overlapsCoreVintageGroup": true
     },
     {
       "name": "Vending Machine Series 1 (Blue)",
