@@ -81,8 +81,10 @@ for (const language of LANGUAGES) {
     }
   });
 
+  await fs.writeFile(path.join(OUT, "audit", "raw", `${language}-set-details.json`), JSON.stringify(setDetails, null, 2));
   const inScope = [];
   const unknownDate = [];
+  const rawKantoCards = [];
   for (const set of setDetails.filter(Boolean)) {
     if (dateInScope(set.releaseDate)) inScope.push(set);
     else if (!set.releaseDate || !/^\d{4}-\d{2}-\d{2}$/.test(set.releaseDate)) {
@@ -123,6 +125,7 @@ for (const language of LANGUAGES) {
 
       includedInSet++;
       kantoCardCount++;
+      rawKantoCards.push(card);
       const imageBase = card.image || null;
       if (!imageBase) {
         missingImageCount++;
@@ -215,6 +218,7 @@ for (const language of LANGUAGES) {
     });
   }
 
+  await fs.writeFile(path.join(OUT, "audit", "raw", `${language}-kanto-card-details.json`), JSON.stringify(rawKantoCards, null, 2));
   coverage.languages[language] = {
     totalSetsInSourceIndex: allSets.length,
     setsInDateScope: inScope.length,
@@ -222,8 +226,10 @@ for (const language of LANGUAGES) {
     sourceCardsInDateScopeSets: setCardCount,
     kantoCardRecords: kantoCardCount,
     kantoRecordsMissingImage: missingImageCount,
-    selectedSets: selectedSetSummaries
+    selectedSets: selectedSetSummaries,
+    uniqueKantoDexIds: [...new Set(normalized.filter(card => card.language === language).flatMap(card => card.pokemonDexIds))].sort((a, b) => a - b)
   };
+  coverage.languages[language].missingKantoDexIds = Array.from({ length: 151 }, (_, i) => i + 1).filter(id => !coverage.languages[language].uniqueKantoDexIds.includes(id));
   console.log(`[${language}] Done: ${inScope.length} sets, ${kantoCardCount} Kanto card records`);
 }
 
