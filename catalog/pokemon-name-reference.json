@@ -1,0 +1,768 @@
+{
+  "source": "PokeAPI/pokeapi data/v2/csv/pokemon_species_names.csv",
+  "sourceUrl": "https://github.com/PokeAPI/pokeapi/blob/master/data/v2/csv/pokemon_species_names.csv",
+  "sourceCommit": "791ef4d7b5f8d3c1cd653fd17aef547aa7c74b14",
+  "languageIds": {
+    "ja": 1,
+    "en": 9
+  },
+  "scope": "Canonical species display names for Kanto Pokédex IDs 1–151. These are species names, not card-specific names such as Dark, Light, Rocket's, owner or promo prefixes.",
+  "retrievedAt": "2026-11-28",
+  "entries": [
+    {
+      "dexId": 1,
+      "ja": "フシギダネ",
+      "en": "Bulbasaur"
+    },
+    {
+      "dexId": 2,
+      "ja": "フシギソウ",
+      "en": "Ivysaur"
+    },
+    {
+      "dexId": 3,
+      "ja": "フシギバナ",
+      "en": "Venusaur"
+    },
+    {
+      "dexId": 4,
+      "ja": "ヒトカゲ",
+      "en": "Charmander"
+    },
+    {
+      "dexId": 5,
+      "ja": "リザード",
+      "en": "Charmeleon"
+    },
+    {
+      "dexId": 6,
+      "ja": "リザードン",
+      "en": "Charizard"
+    },
+    {
+      "dexId": 7,
+      "ja": "ゼニガメ",
+      "en": "Squirtle"
+    },
+    {
+      "dexId": 8,
+      "ja": "カメール",
+      "en": "Wartortle"
+    },
+    {
+      "dexId": 9,
+      "ja": "カメックス",
+      "en": "Blastoise"
+    },
+    {
+      "dexId": 10,
+      "ja": "キャタピー",
+      "en": "Caterpie"
+    },
+    {
+      "dexId": 11,
+      "ja": "トランセル",
+      "en": "Metapod"
+    },
+    {
+      "dexId": 12,
+      "ja": "バタフリー",
+      "en": "Butterfree"
+    },
+    {
+      "dexId": 13,
+      "ja": "ビードル",
+      "en": "Weedle"
+    },
+    {
+      "dexId": 14,
+      "ja": "コクーン",
+      "en": "Kakuna"
+    },
+    {
+      "dexId": 15,
+      "ja": "スピアー",
+      "en": "Beedrill"
+    },
+    {
+      "dexId": 16,
+      "ja": "ポッポ",
+      "en": "Pidgey"
+    },
+    {
+      "dexId": 17,
+      "ja": "ピジョン",
+      "en": "Pidgeotto"
+    },
+    {
+      "dexId": 18,
+      "ja": "ピジョット",
+      "en": "Pidgeot"
+    },
+    {
+      "dexId": 19,
+      "ja": "コラッタ",
+      "en": "Rattata"
+    },
+    {
+      "dexId": 20,
+      "ja": "ラッタ",
+      "en": "Raticate"
+    },
+    {
+      "dexId": 21,
+      "ja": "オニスズメ",
+      "en": "Spearow"
+    },
+    {
+      "dexId": 22,
+      "ja": "オニドリル",
+      "en": "Fearow"
+    },
+    {
+      "dexId": 23,
+      "ja": "アーボ",
+      "en": "Ekans"
+    },
+    {
+      "dexId": 24,
+      "ja": "アーボック",
+      "en": "Arbok"
+    },
+    {
+      "dexId": 25,
+      "ja": "ピカチュウ",
+      "en": "Pikachu"
+    },
+    {
+      "dexId": 26,
+      "ja": "ライチュウ",
+      "en": "Raichu"
+    },
+    {
+      "dexId": 27,
+      "ja": "サンド",
+      "en": "Sandshrew"
+    },
+    {
+      "dexId": 28,
+      "ja": "サンドパン",
+      "en": "Sandslash"
+    },
+    {
+      "dexId": 29,
+      "ja": "ニドラン♀",
+      "en": "Nidoran♀"
+    },
+    {
+      "dexId": 30,
+      "ja": "ニドリーナ",
+      "en": "Nidorina"
+    },
+    {
+      "dexId": 31,
+      "ja": "ニドクイン",
+      "en": "Nidoqueen"
+    },
+    {
+      "dexId": 32,
+      "ja": "ニドラン♂",
+      "en": "Nidoran♂"
+    },
+    {
+      "dexId": 33,
+      "ja": "ニドリーノ",
+      "en": "Nidorino"
+    },
+    {
+      "dexId": 34,
+      "ja": "ニドキング",
+      "en": "Nidoking"
+    },
+    {
+      "dexId": 35,
+      "ja": "ピッピ",
+      "en": "Clefairy"
+    },
+    {
+      "dexId": 36,
+      "ja": "ピクシー",
+      "en": "Clefable"
+    },
+    {
+      "dexId": 37,
+      "ja": "ロコン",
+      "en": "Vulpix"
+    },
+    {
+      "dexId": 38,
+      "ja": "キュウコン",
+      "en": "Ninetales"
+    },
+    {
+      "dexId": 39,
+      "ja": "プリン",
+      "en": "Jigglypuff"
+    },
+    {
+      "dexId": 40,
+      "ja": "プクリン",
+      "en": "Wigglytuff"
+    },
+    {
+      "dexId": 41,
+      "ja": "ズバット",
+      "en": "Zubat"
+    },
+    {
+      "dexId": 42,
+      "ja": "ゴルバット",
+      "en": "Golbat"
+    },
+    {
+      "dexId": 43,
+      "ja": "ナゾノクサ",
+      "en": "Oddish"
+    },
+    {
+      "dexId": 44,
+      "ja": "クサイハナ",
+      "en": "Gloom"
+    },
+    {
+      "dexId": 45,
+      "ja": "ラフレシア",
+      "en": "Vileplume"
+    },
+    {
+      "dexId": 46,
+      "ja": "パラス",
+      "en": "Paras"
+    },
+    {
+      "dexId": 47,
+      "ja": "パラセクト",
+      "en": "Parasect"
+    },
+    {
+      "dexId": 48,
+      "ja": "コンパン",
+      "en": "Venonat"
+    },
+    {
+      "dexId": 49,
+      "ja": "モルフォン",
+      "en": "Venomoth"
+    },
+    {
+      "dexId": 50,
+      "ja": "ディグダ",
+      "en": "Diglett"
+    },
+    {
+      "dexId": 51,
+      "ja": "ダグトリオ",
+      "en": "Dugtrio"
+    },
+    {
+      "dexId": 52,
+      "ja": "ニャース",
+      "en": "Meowth"
+    },
+    {
+      "dexId": 53,
+      "ja": "ペルシアン",
+      "en": "Persian"
+    },
+    {
+      "dexId": 54,
+      "ja": "コダック",
+      "en": "Psyduck"
+    },
+    {
+      "dexId": 55,
+      "ja": "ゴルダック",
+      "en": "Golduck"
+    },
+    {
+      "dexId": 56,
+      "ja": "マンキー",
+      "en": "Mankey"
+    },
+    {
+      "dexId": 57,
+      "ja": "オコリザル",
+      "en": "Primeape"
+    },
+    {
+      "dexId": 58,
+      "ja": "ガーディ",
+      "en": "Growlithe"
+    },
+    {
+      "dexId": 59,
+      "ja": "ウインディ",
+      "en": "Arcanine"
+    },
+    {
+      "dexId": 60,
+      "ja": "ニョロモ",
+      "en": "Poliwag"
+    },
+    {
+      "dexId": 61,
+      "ja": "ニョロゾ",
+      "en": "Poliwhirl"
+    },
+    {
+      "dexId": 62,
+      "ja": "ニョロボン",
+      "en": "Poliwrath"
+    },
+    {
+      "dexId": 63,
+      "ja": "ケーシィ",
+      "en": "Abra"
+    },
+    {
+      "dexId": 64,
+      "ja": "ユンゲラー",
+      "en": "Kadabra"
+    },
+    {
+      "dexId": 65,
+      "ja": "フーディン",
+      "en": "Alakazam"
+    },
+    {
+      "dexId": 66,
+      "ja": "ワンリキー",
+      "en": "Machop"
+    },
+    {
+      "dexId": 67,
+      "ja": "ゴーリキー",
+      "en": "Machoke"
+    },
+    {
+      "dexId": 68,
+      "ja": "カイリキー",
+      "en": "Machamp"
+    },
+    {
+      "dexId": 69,
+      "ja": "マダツボミ",
+      "en": "Bellsprout"
+    },
+    {
+      "dexId": 70,
+      "ja": "ウツドン",
+      "en": "Weepinbell"
+    },
+    {
+      "dexId": 71,
+      "ja": "ウツボット",
+      "en": "Victreebel"
+    },
+    {
+      "dexId": 72,
+      "ja": "メノクラゲ",
+      "en": "Tentacool"
+    },
+    {
+      "dexId": 73,
+      "ja": "ドククラゲ",
+      "en": "Tentacruel"
+    },
+    {
+      "dexId": 74,
+      "ja": "イシツブテ",
+      "en": "Geodude"
+    },
+    {
+      "dexId": 75,
+      "ja": "ゴローン",
+      "en": "Graveler"
+    },
+    {
+      "dexId": 76,
+      "ja": "ゴローニャ",
+      "en": "Golem"
+    },
+    {
+      "dexId": 77,
+      "ja": "ポニータ",
+      "en": "Ponyta"
+    },
+    {
+      "dexId": 78,
+      "ja": "ギャロップ",
+      "en": "Rapidash"
+    },
+    {
+      "dexId": 79,
+      "ja": "ヤドン",
+      "en": "Slowpoke"
+    },
+    {
+      "dexId": 80,
+      "ja": "ヤドラン",
+      "en": "Slowbro"
+    },
+    {
+      "dexId": 81,
+      "ja": "コイル",
+      "en": "Magnemite"
+    },
+    {
+      "dexId": 82,
+      "ja": "レアコイル",
+      "en": "Magneton"
+    },
+    {
+      "dexId": 83,
+      "ja": "カモネギ",
+      "en": "Farfetch’d"
+    },
+    {
+      "dexId": 84,
+      "ja": "ドードー",
+      "en": "Doduo"
+    },
+    {
+      "dexId": 85,
+      "ja": "ドードリオ",
+      "en": "Dodrio"
+    },
+    {
+      "dexId": 86,
+      "ja": "パウワウ",
+      "en": "Seel"
+    },
+    {
+      "dexId": 87,
+      "ja": "ジュゴン",
+      "en": "Dewgong"
+    },
+    {
+      "dexId": 88,
+      "ja": "ベトベター",
+      "en": "Grimer"
+    },
+    {
+      "dexId": 89,
+      "ja": "ベトベトン",
+      "en": "Muk"
+    },
+    {
+      "dexId": 90,
+      "ja": "シェルダー",
+      "en": "Shellder"
+    },
+    {
+      "dexId": 91,
+      "ja": "パルシェン",
+      "en": "Cloyster"
+    },
+    {
+      "dexId": 92,
+      "ja": "ゴース",
+      "en": "Gastly"
+    },
+    {
+      "dexId": 93,
+      "ja": "ゴースト",
+      "en": "Haunter"
+    },
+    {
+      "dexId": 94,
+      "ja": "ゲンガー",
+      "en": "Gengar"
+    },
+    {
+      "dexId": 95,
+      "ja": "イワーク",
+      "en": "Onix"
+    },
+    {
+      "dexId": 96,
+      "ja": "スリープ",
+      "en": "Drowzee"
+    },
+    {
+      "dexId": 97,
+      "ja": "スリーパー",
+      "en": "Hypno"
+    },
+    {
+      "dexId": 98,
+      "ja": "クラブ",
+      "en": "Krabby"
+    },
+    {
+      "dexId": 99,
+      "ja": "キングラー",
+      "en": "Kingler"
+    },
+    {
+      "dexId": 100,
+      "ja": "ビリリダマ",
+      "en": "Voltorb"
+    },
+    {
+      "dexId": 101,
+      "ja": "マルマイン",
+      "en": "Electrode"
+    },
+    {
+      "dexId": 102,
+      "ja": "タマタマ",
+      "en": "Exeggcute"
+    },
+    {
+      "dexId": 103,
+      "ja": "ナッシー",
+      "en": "Exeggutor"
+    },
+    {
+      "dexId": 104,
+      "ja": "カラカラ",
+      "en": "Cubone"
+    },
+    {
+      "dexId": 105,
+      "ja": "ガラガラ",
+      "en": "Marowak"
+    },
+    {
+      "dexId": 106,
+      "ja": "サワムラー",
+      "en": "Hitmonlee"
+    },
+    {
+      "dexId": 107,
+      "ja": "エビワラー",
+      "en": "Hitmonchan"
+    },
+    {
+      "dexId": 108,
+      "ja": "ベロリンガ",
+      "en": "Lickitung"
+    },
+    {
+      "dexId": 109,
+      "ja": "ドガース",
+      "en": "Koffing"
+    },
+    {
+      "dexId": 110,
+      "ja": "マタドガス",
+      "en": "Weezing"
+    },
+    {
+      "dexId": 111,
+      "ja": "サイホーン",
+      "en": "Rhyhorn"
+    },
+    {
+      "dexId": 112,
+      "ja": "サイドン",
+      "en": "Rhydon"
+    },
+    {
+      "dexId": 113,
+      "ja": "ラッキー",
+      "en": "Chansey"
+    },
+    {
+      "dexId": 114,
+      "ja": "モンジャラ",
+      "en": "Tangela"
+    },
+    {
+      "dexId": 115,
+      "ja": "ガルーラ",
+      "en": "Kangaskhan"
+    },
+    {
+      "dexId": 116,
+      "ja": "タッツー",
+      "en": "Horsea"
+    },
+    {
+      "dexId": 117,
+      "ja": "シードラ",
+      "en": "Seadra"
+    },
+    {
+      "dexId": 118,
+      "ja": "トサキント",
+      "en": "Goldeen"
+    },
+    {
+      "dexId": 119,
+      "ja": "アズマオウ",
+      "en": "Seaking"
+    },
+    {
+      "dexId": 120,
+      "ja": "ヒトデマン",
+      "en": "Staryu"
+    },
+    {
+      "dexId": 121,
+      "ja": "スターミー",
+      "en": "Starmie"
+    },
+    {
+      "dexId": 122,
+      "ja": "バリヤード",
+      "en": "Mr. Mime"
+    },
+    {
+      "dexId": 123,
+      "ja": "ストライク",
+      "en": "Scyther"
+    },
+    {
+      "dexId": 124,
+      "ja": "ルージュラ",
+      "en": "Jynx"
+    },
+    {
+      "dexId": 125,
+      "ja": "エレブー",
+      "en": "Electabuzz"
+    },
+    {
+      "dexId": 126,
+      "ja": "ブーバー",
+      "en": "Magmar"
+    },
+    {
+      "dexId": 127,
+      "ja": "カイロス",
+      "en": "Pinsir"
+    },
+    {
+      "dexId": 128,
+      "ja": "ケンタロス",
+      "en": "Tauros"
+    },
+    {
+      "dexId": 129,
+      "ja": "コイキング",
+      "en": "Magikarp"
+    },
+    {
+      "dexId": 130,
+      "ja": "ギャラドス",
+      "en": "Gyarados"
+    },
+    {
+      "dexId": 131,
+      "ja": "ラプラス",
+      "en": "Lapras"
+    },
+    {
+      "dexId": 132,
+      "ja": "メタモン",
+      "en": "Ditto"
+    },
+    {
+      "dexId": 133,
+      "ja": "イーブイ",
+      "en": "Eevee"
+    },
+    {
+      "dexId": 134,
+      "ja": "シャワーズ",
+      "en": "Vaporeon"
+    },
+    {
+      "dexId": 135,
+      "ja": "サンダース",
+      "en": "Jolteon"
+    },
+    {
+      "dexId": 136,
+      "ja": "ブースター",
+      "en": "Flareon"
+    },
+    {
+      "dexId": 137,
+      "ja": "ポリゴン",
+      "en": "Porygon"
+    },
+    {
+      "dexId": 138,
+      "ja": "オムナイト",
+      "en": "Omanyte"
+    },
+    {
+      "dexId": 139,
+      "ja": "オムスター",
+      "en": "Omastar"
+    },
+    {
+      "dexId": 140,
+      "ja": "カブト",
+      "en": "Kabuto"
+    },
+    {
+      "dexId": 141,
+      "ja": "カブトプス",
+      "en": "Kabutops"
+    },
+    {
+      "dexId": 142,
+      "ja": "プテラ",
+      "en": "Aerodactyl"
+    },
+    {
+      "dexId": 143,
+      "ja": "カビゴン",
+      "en": "Snorlax"
+    },
+    {
+      "dexId": 144,
+      "ja": "フリーザー",
+      "en": "Articuno"
+    },
+    {
+      "dexId": 145,
+      "ja": "サンダー",
+      "en": "Zapdos"
+    },
+    {
+      "dexId": 146,
+      "ja": "ファイヤー",
+      "en": "Moltres"
+    },
+    {
+      "dexId": 147,
+      "ja": "ミニリュウ",
+      "en": "Dratini"
+    },
+    {
+      "dexId": 148,
+      "ja": "ハクリュー",
+      "en": "Dragonair"
+    },
+    {
+      "dexId": 149,
+      "ja": "カイリュー",
+      "en": "Dragonite"
+    },
+    {
+      "dexId": 150,
+      "ja": "ミュウツー",
+      "en": "Mewtwo"
+    },
+    {
+      "dexId": 151,
+      "ja": "ミュウ",
+      "en": "Mew"
+    }
+  ]
+}
