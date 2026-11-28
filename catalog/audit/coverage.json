@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T14:55:48.391Z",
+  "retrievedAt": "2026-11-28T14:56:38.116Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -337,7 +337,8 @@
         150,
         151
       ],
-      "missingKantoDexIds": []
+      "missingKantoDexIds": [],
+      "sourceVariantEntries": 1876
     },
     "ja": {
       "totalSetsInSourceIndex": 204,
@@ -638,7 +639,8 @@
         150,
         151
       ],
-      "missingKantoDexIds": []
+      "missingKantoDexIds": [],
+      "sourceVariantEntries": 1234
     }
   },
   "knownLimitations": [
@@ -647,6 +649,7 @@
     "A missing image or variant is recorded as a gap; it is not inferred."
   ],
   "totalNormalizedRecords": 1668,
+  "totalSourceVariantEntries": 3110,
   "uniqueKantoDexIds": [
     1,
     2,
@@ -804,5 +807,113 @@
   "gapCount": 793,
   "gapTypes": {
     "missing-image": 793
+  },
+  "externalJapaneseSetReference": {
+    "source": "https://japanesepokemoncards.net/vintage",
+    "referenceSetGroups": 27,
+    "presentInTcgdexSetAudit": 17,
+    "missingFromTcgdexSetAudit": [
+      {
+        "name": "City Gym Decks",
+        "japaneseName": "リーダーズスタジアム デッキ",
+        "year": "1998",
+        "referenceCardCount": 123
+      },
+      {
+        "name": "Neo Premium File 1",
+        "japaneseName": "ネオ プレミアムファイル1",
+        "year": "1999",
+        "referenceCardCount": 9
+      },
+      {
+        "name": "Neo Premium File 2",
+        "japaneseName": "ネオ プレミアムファイル2",
+        "year": "2000",
+        "referenceCardCount": 9
+      },
+      {
+        "name": "Neo Premium File 3",
+        "japaneseName": "ネオ プレミアムファイル3",
+        "year": "2000",
+        "referenceCardCount": 9
+      },
+      {
+        "name": "Vending Series 1",
+        "japaneseName": "ポケモンカードになったワケ 第1弾",
+        "year": "1998",
+        "referenceCardCount": 36
+      },
+      {
+        "name": "Vending Series 2",
+        "japaneseName": "ポケモンカードになったワケ 第2弾",
+        "year": "1998",
+        "referenceCardCount": 36
+      },
+      {
+        "name": "Vending Series 3",
+        "japaneseName": "ポケモンカードになったワケ 第3弾",
+        "year": "1998",
+        "referenceCardCount": 52
+      },
+      {
+        "name": "CD Promo",
+        "japaneseName": "CDプロモ",
+        "year": "1999",
+        "referenceCardCount": 10
+      },
+      {
+        "name": "Southern Islands",
+        "japaneseName": "サザンアイランド",
+        "year": "1999",
+        "referenceCardCount": 18
+      },
+      {
+        "name": "Unnumbered Promos (1998)",
+        "japaneseName": "番号なしプロモ",
+        "year": "1998",
+        "referenceCardCount": 1
+      }
+    ],
+    "sourceCountDiffers": [
+      {
+        "name": "Gym Challenge",
+        "tcgdexSetId": "PMCG6",
+        "referenceCardCount": 99,
+        "tcgdexCardCount": 98
+      },
+      {
+        "name": "Neo Genesis",
+        "tcgdexSetId": "neo1",
+        "referenceCardCount": 102,
+        "tcgdexCardCount": 96
+      },
+      {
+        "name": "Neo Discovery",
+        "tcgdexSetId": "neo2",
+        "referenceCardCount": 59,
+        "tcgdexCardCount": 57
+      },
+      {
+        "name": "Pokémon Card VS",
+        "tcgdexSetId": "VS1",
+        "referenceCardCount": 145,
+        "tcgdexCardCount": 143
+      },
+      {
+        "name": "Pokémon Web",
+        "tcgdexSetId": "web1",
+        "referenceCardCount": 48,
+        "tcgdexCardCount": 47
+      }
+    ],
+    "caveat": "Set totals differ across sources and may include different card definitions. Each entry must be verified against primary product checklists and card-level records before it is treated as complete."
+  },
+  "validation": {
+    "recordCount": 1668,
+    "uniqueRecordIds": 1668,
+    "duplicateRecordIds": 0,
+    "recordsWithNoKantoDexId": 0,
+    "recordsWithNoPrintingEntry": 0,
+    "allKantoDexIdsRepresented": true
   }
 }
