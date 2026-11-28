@@ -34,7 +34,7 @@ export function parseCollectorNumber(ocrText) {
     pair.rawNumber.length === 3 &&
     pair.number > 0 &&
     pair.number < pair.total &&
-    VINTAGE_SET_TOTALS.has(pair.total)
+    pair.total <= MAX_VINTAGE_SET_TOTAL
   );
   const distinctRepairs = new Map(repairs.map(pair => [pair.number + "/" + pair.total, pair]));
   if (distinctRepairs.size === 1) {
