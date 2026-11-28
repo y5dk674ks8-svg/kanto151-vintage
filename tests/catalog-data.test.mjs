@@ -74,7 +74,7 @@ test("Japanese Vending Series 1–3 supplemental Kanto records are included and 
   assert.equal(coverage.totalSourceVariantEntries, printings);
   assert.equal(coverage.externalJapaneseSetReference.supplementalSeededGroups.length, 3);
   assert.equal(coverage.externalJapaneseSetReference.remainingUnseededGroups.length, 7);
-  for (const setId of ["vending1", "vending2", "vending3"]) {
+  for (const setId of ["vending1", "vending2", "vending3", "neo-premium-file-2", "cd-promo-1999", "southern-islands", "unnumbered-promos-1998"]) {
     const records = readSet("ja", setId);
     assert.ok(records.length > 0);
     assert.ok(records.every(card =>
@@ -85,4 +85,15 @@ test("Japanese Vending Series 1–3 supplemental Kanto records are included and 
       card.printings.every(printing => printing.verificationStatus === "unverified")
     ));
   }
+});
+
+test("supplemental promo seed preserves year precision and the CD Promo count discrepancy", () => {
+  const cd = coverage.supplementalJapaneseSets.find(set => set.setId === "cd-promo-1999");
+  const neo = coverage.supplementalJapaneseSets.find(set => set.setId === "neo-premium-file-2");
+  const south = coverage.supplementalJapaneseSets.find(set => set.setId === "southern-islands");
+  assert.equal(cd.totalCardsInSource, 10);
+  assert.equal(cd.listedCardsInSource, 11);
+  assert.equal(cd.referenceGroupName, "CD Promo");
+  assert.equal(neo.releaseDatePrecision, "year");
+  assert.equal(south.releaseDatePrecision, "month");
 });
