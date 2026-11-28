@@ -1,8 +1,6 @@
 import { recognizeCardText } from "./ocr-adapter.mjs";
 
-const VINTAGE_SET_TOTALS = new Set([
-  62, 64, 82, 83, 90, 100, 102, 105, 110, 111, 113, 123, 130, 132, 147, 159, 165, 182
-]);
+const MAX_VINTAGE_SET_TOTAL = 250;
 
 export function parseCollectorNumber(ocrText) {
   const text = String(ocrText ?? "").replace(/[|Il]/g, "/");
@@ -15,7 +13,7 @@ export function parseCollectorNumber(ocrText) {
     pair.number > 0 &&
     pair.number <= 250 &&
     pair.total > pair.number &&
-    VINTAGE_SET_TOTALS.has(pair.total)
+    pair.total <= MAX_VINTAGE_SET_TOTAL
   );
   if (valid.length) {
     const distinct = new Map(valid.map(pair => [pair.number + "/" + pair.total, pair]));
