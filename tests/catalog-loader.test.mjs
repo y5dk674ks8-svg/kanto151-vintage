@@ -10,7 +10,9 @@ import {
 
 test("normalizes Latin and Japanese card names without destroying Japanese text", () => {
   assert.equal(normalizeCardText("Mr. Mime"), "mrmime");
+  assert.equal(normalizeCardText("Pokémon"), "pokemon");
   assert.equal(normalizeCardText("フシギダネ"), "フシギダネ");
+  assert.equal(normalizeCardText("フシギダネ"), normalizeCardText("フシギダネ"));
 });
 
 test("normalizes collector numbers but preserves non-numeric identifiers", () => {
