@@ -34,14 +34,14 @@
   const input=document.createElement('canvas');input.width=Math.round(sourceCanvas.width*scale);input.height=Math.round(sourceCanvas.height*scale);
   input.getContext('2d').drawImage(sourceCanvas,0,0,input.width,input.height);
   const src=cv.imread(input),gray=new cv.Mat();
-  let best=null,srcPts=null,dstPts=null,transform=null,warped=null;
+  let best=null,largeYellowComponent=false,srcPts=null,dstPts=null,transform=null,warped=null;
   const imageArea=src.cols*src.rows;
   // Prefer the actual yellow card border over a transparent sleeve edge.
   // On a neutral/white background the yellow border is a much stronger,
   // more specific signal than Canny edges, which otherwise select the sleeve.
   const hsv=new cv.Mat(),yellowMask=new cv.Mat(),yellowClosed=new cv.Mat();
-  const yellowLow=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(10,65,65,0));
-  const yellowHigh=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(45,255,255,0));
+  const yellowLow=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(8,35,55,0));
+  const yellowHigh=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(48,255,255,0));
   const yellowKernelSize=Math.max(5,(Math.round(Math.min(src.cols,src.rows)*.012)|1));
   const yellowKernel=cv.getStructuringElement(cv.MORPH_RECT,new cv.Size(yellowKernelSize,yellowKernelSize));
   const yellowContours=new cv.MatVector(),yellowHierarchy=new cv.Mat();
@@ -56,9 +56,12 @@
        rect.x<2||rect.y<2||rect.x+rect.width>src.cols-2||rect.y+rect.height>src.rows-2){
      contour.delete();continue;
     }
+    // A large, card-shaped yellow component means the card itself is visible.
+    // Never let the transparent sleeve's stronger Canny edge replace it.
+    largeYellowComponent=true;
     const perimeter=cv.arcLength(contour,true);
     let accepted=null;
-    for(const eps of [.008,.012,.018,.025,.035]){
+    for(const eps of [.008,.012,.018,.025,.035,.05,.07,.09]){
      const approx=new cv.Mat();
      cv.approxPolyDP(contour,approx,perimeter*eps,true);
      if(approx.rows===4&&cv.isContourConvex(approx)){accepted=approx;break}
@@ -86,10 +89,12 @@
   }finally{
    [hsv,yellowMask,yellowClosed,yellowLow,yellowHigh,yellowKernel,yellowContours,yellowHierarchy].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
   }
-  // If the yellow border cannot be isolated (e.g. a non-yellow card or busy
-  // background), retain the existing geometric edge detector as a fallback.
-  // Several edge scales/thresholds are needed for sleeves, holographic glare and cards
-  // that overlap neighboring cards. The former single Canny pass missed the Machamp test photo.
+  // If a substantial yellow card-shaped component was found but could not be
+  // validated, fail closed. Canny would otherwise happily select a larger sleeve edge.
+  if(!best&&largeYellowComponent){
+   return {found:false,reason:'Gele kaartcontour gevonden maar geometrisch niet betrouwbaar genoeg; sleeve-contour bewust niet gebruikt.'};
+  }
+  // Non-yellow cards may still use the geometric edge detector fallback.
   const passes=[
    {blur:3,low:30,high:90,kernel:3,eps:[.015,.025,.04,.05]},
    {blur:5,low:30,high:90,kernel:3,eps:[.015,.025,.04,.05]},
