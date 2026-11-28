@@ -1,224 +1,425 @@
 {
-  "source": "https://japanesepokemoncards.net/vintage",
-  "sourceDescription": "Independent secondary checklist of 27 Japanese vintage set groups and 1,777 cards, covering 1996–2002. Use as a discovery checklist, not as an authoritative primary source.",
   "retrievedAt": "2026-11-28",
-  "caveat": "Set totals differ across sources and may include different card definitions. Each entry must be verified against primary product checklists and card-level records before it is treated as complete.",
-  "sets": [
+  "purpose": "Discovery register for Japanese Pokémon TCG products released 1996–2002. It is not a canonical checklist; each candidate group must be reconciled against primary product checklists and card-level records.",
+  "sources": [
+    {
+      "id": "japanesepokemoncards-vintage",
+      "url": "https://japanesepokemoncards.net/vintage",
+      "scope": "27 listed vintage set groups, 1,777 cards, 1996–2002; excludes trophy cards and most one-off promos according to its FAQ.",
+      "confidence": "secondary-discovery"
+    },
+    {
+      "id": "japanese-poke-cards",
+      "url": "https://japanesepokecards.com/sets/",
+      "scope": "All Japanese sets plus promo and deck groups; card counts are source-defined and may include variants or special cards.",
+      "confidence": "secondary-discovery"
+    },
+    {
+      "id": "tcgdex",
+      "url": "https://api.tcgdex.net/v2/ja/sets",
+      "scope": "Current Japanese TCGdex set index; its card data and set index have known coverage gaps.",
+      "confidence": "structured-api-seed"
+    }
+  ],
+  "caveats": [
+    "Sources disagree on card counts for multiple sets (for example Gym Challenge, Neo Genesis, Neo Discovery, VS and Vending Series 3). Keep the source-specific count; do not overwrite it with a guessed consensus.",
+    "TCGdex set index does not expose release dates on its brief records; release dates are obtained from individual set detail records.",
+    "The current date-filtered TCGdex audit includes 17 Japanese sets. It does not include the separate vending, premium-file, deck and promo groups listed below.",
+    "Topsun and Carddass are collectible Pokémon cards but are not Pokémon TCG sets; keep them out of the TCG catalog unless a separate non-TCG scope is explicitly enabled.",
+    "The target is Kanto Pokémon card records, not a claim that all cards in a set are Kanto cards."
+  ],
+  "coreVintageGroups": [
     {
       "englishName": "Expansion Pack",
       "japaneseName": "拡張パック",
-      "year": "1996",
-      "referenceCardCount": 102,
+      "year": 1996,
+      "counts": {
+        "vintageChecklist": 102,
+        "tcgdexSourceSet": 102
+      },
       "tcgdexSetId": "PMCG1",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
-      "englishName": "Pokémon Jungle",
+      "englishName": "Jungle",
       "japaneseName": "ポケモンジャングル",
-      "year": "1997",
-      "referenceCardCount": 48,
+      "year": 1997,
+      "counts": {
+        "vintageChecklist": 48,
+        "tcgdexSourceSet": 48
+      },
       "tcgdexSetId": "PMCG2",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
-      "englishName": "Mystery of the Fossils",
+      "englishName": "Fossil",
       "japaneseName": "化石の秘密",
-      "year": "1997",
-      "referenceCardCount": 48,
+      "year": 1997,
+      "counts": {
+        "vintageChecklist": 48,
+        "tcgdexSourceSet": 48
+      },
       "tcgdexSetId": "PMCG3",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Team Rocket",
       "japaneseName": "ロケット団",
-      "year": "1997",
-      "referenceCardCount": 65,
+      "year": 1997,
+      "counts": {
+        "vintageChecklist": 65,
+        "tcgdexSourceSet": 65
+      },
       "tcgdexSetId": "PMCG4",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
-      "englishName": "Gym Heroes",
+      "englishName": "Gym Heroes / Leaders' Stadium",
       "japaneseName": "リーダーズスタジアム",
-      "year": "1998",
-      "referenceCardCount": 96,
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 96,
+        "tcgdexSourceSet": 96
+      },
       "tcgdexSetId": "PMCG5",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
-      "englishName": "Gym Challenge",
+      "englishName": "Gym Challenge / Challenge from the Darkness",
       "japaneseName": "闇からの挑戦",
-      "year": "1999",
-      "referenceCardCount": 99,
+      "year": 1999,
+      "counts": {
+        "vintageChecklist": 99,
+        "tcgdexSourceSet": 98
+      },
       "tcgdexSetId": "PMCG6",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-discrepancy-review-required"
     },
     {
       "englishName": "City Gym Decks",
       "japaneseName": "リーダーズスタジアム デッキ",
-      "year": "1998",
-      "referenceCardCount": 123,
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 123,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Neo Genesis",
       "japaneseName": "金、銀、新世界へ...",
-      "year": "2000",
-      "referenceCardCount": 102,
+      "year": 2000,
+      "counts": {
+        "vintageChecklist": 102,
+        "tcgdexSourceSet": 96
+      },
       "tcgdexSetId": "neo1",
-      "tcgdexAuditStatus": "present-count-differs"
+      "auditStatus": "count-discrepancy-review-required"
     },
     {
       "englishName": "Neo Discovery",
       "japaneseName": "遺跡をこえて...",
-      "year": "2000",
-      "referenceCardCount": 59,
+      "year": 2000,
+      "counts": {
+        "vintageChecklist": 59,
+        "tcgdexSourceSet": 57
+      },
       "tcgdexSetId": "neo2",
-      "tcgdexAuditStatus": "present-count-differs"
+      "auditStatus": "count-discrepancy-review-required"
     },
     {
       "englishName": "Neo Revelation",
       "japaneseName": "めざめる伝説",
-      "year": "2000",
-      "referenceCardCount": 57,
+      "year": 2000,
+      "counts": {
+        "vintageChecklist": 57,
+        "tcgdexSourceSet": 57
+      },
       "tcgdexSetId": "neo3",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Neo Destiny",
       "japaneseName": "闇、そして光へ...",
-      "year": "2001",
-      "referenceCardCount": 113,
+      "year": 2001,
+      "counts": {
+        "vintageChecklist": 113,
+        "tcgdexSourceSet": 113
+      },
       "tcgdexSetId": "neo4",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Neo Premium File 1",
       "japaneseName": "ネオ プレミアムファイル1",
-      "year": "1999",
-      "referenceCardCount": 9,
+      "year": 1999,
+      "counts": {
+        "vintageChecklist": 9,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Neo Premium File 2",
       "japaneseName": "ネオ プレミアムファイル2",
-      "year": "2000",
-      "referenceCardCount": 9,
+      "year": 2000,
+      "counts": {
+        "vintageChecklist": 9,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Neo Premium File 3",
       "japaneseName": "ネオ プレミアムファイル3",
-      "year": "2000",
-      "referenceCardCount": 9,
+      "year": 2000,
+      "counts": {
+        "vintageChecklist": 9,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Vending Series 1",
-      "japaneseName": "ポケモンカードになったワケ 第1弾",
-      "year": "1998",
-      "referenceCardCount": 36,
+      "japaneseName": "拡張シート 第1弾",
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 36,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Vending Series 2",
-      "japaneseName": "ポケモンカードになったワケ 第2弾",
-      "year": "1998",
-      "referenceCardCount": 36,
+      "japaneseName": "拡張シート 第2弾",
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 36,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Vending Series 3",
-      "japaneseName": "ポケモンカードになったワケ 第3弾",
-      "year": "1998",
-      "referenceCardCount": 52,
+      "japaneseName": "拡張シート 第3弾",
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 52,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "CD Promo",
       "japaneseName": "CDプロモ",
-      "year": "1999",
-      "referenceCardCount": 10,
+      "year": 1999,
+      "counts": {
+        "vintageChecklist": 10,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Southern Islands",
       "japaneseName": "サザンアイランド",
-      "year": "1999",
-      "referenceCardCount": 18,
+      "year": 1999,
+      "counts": {
+        "vintageChecklist": 18,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Unnumbered Promos (1998)",
       "japaneseName": "番号なしプロモ",
-      "year": "1998",
-      "referenceCardCount": 1,
+      "year": 1998,
+      "counts": {
+        "vintageChecklist": 1,
+        "tcgdexSourceSet": null
+      },
       "tcgdexSetId": null,
-      "tcgdexAuditStatus": "missing-from-current-TCGdex-set-audit"
+      "auditStatus": "not-in-current-date-filtered-set-audit"
     },
     {
       "englishName": "Pokémon Card VS",
       "japaneseName": "ポケモンカード★VS",
-      "year": "2001",
-      "referenceCardCount": 145,
+      "year": 2001,
+      "counts": {
+        "vintageChecklist": 145,
+        "tcgdexSourceSet": 143
+      },
       "tcgdexSetId": "VS1",
-      "tcgdexAuditStatus": "present-count-differs"
+      "auditStatus": "count-discrepancy-review-required"
     },
     {
       "englishName": "Pokémon Web",
       "japaneseName": "ポケモンカード★web",
-      "year": "2001",
-      "referenceCardCount": 48,
+      "year": 2001,
+      "counts": {
+        "vintageChecklist": 48,
+        "tcgdexSourceSet": 48
+      },
       "tcgdexSetId": "web1",
-      "tcgdexAuditStatus": "present-count-differs"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
-      "englishName": "Expedition",
+      "englishName": "Base Expansion Pack / Expedition",
       "japaneseName": "基本拡張パック",
-      "year": "2001",
-      "referenceCardCount": 128,
+      "year": 2001,
+      "counts": {
+        "vintageChecklist": 128,
+        "tcgdexSourceSet": 128
+      },
       "tcgdexSetId": "E1",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "The Town on No Map",
       "japaneseName": "地図にない町",
-      "year": "2002",
-      "referenceCardCount": 92,
+      "year": 2002,
+      "counts": {
+        "vintageChecklist": 92,
+        "tcgdexSourceSet": 92
+      },
       "tcgdexSetId": "E2",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Wind from the Sea",
       "japaneseName": "海からの風",
-      "year": "2002",
-      "referenceCardCount": 90,
+      "year": 2002,
+      "counts": {
+        "vintageChecklist": 90,
+        "tcgdexSourceSet": 90
+      },
       "tcgdexSetId": "E3",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Split Earth",
       "japaneseName": "裂けた大地",
-      "year": "2002",
-      "referenceCardCount": 91,
+      "year": 2002,
+      "counts": {
+        "vintageChecklist": 91,
+        "tcgdexSourceSet": 91
+      },
       "tcgdexSetId": "E4",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
     },
     {
       "englishName": "Mysterious Mountains",
       "japaneseName": "神秘なる山",
-      "year": "2002",
-      "referenceCardCount": 91,
+      "year": 2002,
+      "counts": {
+        "vintageChecklist": 91,
+        "tcgdexSourceSet": 91
+      },
       "tcgdexSetId": "E5",
-      "tcgdexAuditStatus": "present"
+      "auditStatus": "count-agrees-not-printing-verified"
+    }
+  ],
+  "additionalPromotionalAndDeckGroups": [
+    {
+      "name": "Intro Pack (Bulbasaur)",
+      "year": 1999,
+      "source": "japanese-poke-cards",
+      "sourceCount": 41,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Intro Pack (Squirtle)",
+      "year": 1999,
+      "source": "japanese-poke-cards",
+      "sourceCount": 41,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "T Promos",
+      "year": 2002,
+      "source": "japanese-poke-cards",
+      "sourceCount": 24,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "P Promos",
+      "year": 2001,
+      "source": "japanese-poke-cards",
+      "sourceCount": 47,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "J Promos",
+      "year": 2001,
+      "source": "japanese-poke-cards",
+      "sourceCount": 2,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Unnumbered Promos",
+      "year": 1996,
+      "source": "japanese-poke-cards",
+      "sourceCount": 299,
+      "tcgdexStatus": "not-yet-audited",
+      "note": "Broad catch-all source group; must be de-duplicated and filtered to TCG products."
+    },
+    {
+      "name": "Vending Machine Series 1 (Blue)",
+      "year": 1998,
+      "source": "japanese-poke-cards",
+      "sourceCount": 36,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Vending Machine Series 2 (Red)",
+      "year": 1998,
+      "source": "japanese-poke-cards",
+      "sourceCount": 36,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Vending Machine Series 3 (Green)",
+      "year": 1998,
+      "source": "japanese-poke-cards",
+      "sourceCount": 53,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Neo Premium File 1",
+      "year": 1999,
+      "source": "japanese-poke-cards",
+      "sourceCount": 9,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Neo Premium File 2",
+      "year": 2000,
+      "source": "japanese-poke-cards",
+      "sourceCount": 9,
+      "tcgdexStatus": "not-yet-audited"
+    },
+    {
+      "name": "Neo Premium File 3",
+      "year": 2000,
+      "source": "japanese-poke-cards",
+      "sourceCount": 9,
+      "tcgdexStatus": "not-yet-audited"
+    }
+  ],
+  "excludedNonTcgCandidates": [
+    {
+      "name": "Topsun",
+      "year": 1997,
+      "source": "japanese-poke-cards",
+      "reason": "Non-TCG collectible cards; separate product family."
     }
   ]
 }
