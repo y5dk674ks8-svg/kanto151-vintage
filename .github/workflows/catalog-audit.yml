@@ -9,12 +9,11 @@ on:
       - "src/catalog-loader.mjs"
       - "src/recognition-pipeline.mjs"
       - "src/ocr-adapter.mjs"
-      - "src/recognition-pipeline.mjs"
+      - "src/card-vision.js"
       - "tests/catalog-loader.test.mjs"
       - "tests/recognition-pipeline.test.mjs"
       - "tests/catalog-data.test.mjs"
       - "tests/app-shell.test.mjs"
-      - "tests/recognition-pipeline.test.mjs"
       - "index.html"
       - "sw.js"
       - ".github/workflows/catalog-audit.yml"
@@ -35,15 +34,13 @@ jobs:
           ref: catalog-first-rebuild
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Test catalog loader and candidate ranking
         run: node --test tests/catalog-loader.test.mjs
       - name: Test recognition pipeline
         run: node --test tests/recognition-pipeline.test.mjs
       - name: Test scanner app shell
         run: node --test tests/app-shell.test.mjs
-      - name: Test OCR number parsing and recognition pipeline
-        run: node --test tests/recognition-pipeline.test.mjs
       - name: Run multilingual catalog audit
         run: node tools/catalog-audit.mjs
       - name: Validate generated catalog data
