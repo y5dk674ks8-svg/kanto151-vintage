@@ -75,7 +75,7 @@ GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto
 - Five matched Japanese groups have source-count differences requiring checklist-level reconciliation.
 - 278 Japanese card-title fields do not contain the canonical species name. Every record still has a canonical species alias, and both card titles and species aliases are used for ranking.
 
-The latest scanner integration run [#46159183213](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159183213) has passed all five test suites (30 tests); the refreshed catalog audit is still running.
+The latest scanner integration run [#46159183213](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159183213) has passed all five test suites (33 tests); the refreshed catalog audit is still running.
 
 This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files, image permissions and historical card-name differences remain open work.
 
