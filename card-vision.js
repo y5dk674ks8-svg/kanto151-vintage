@@ -36,6 +36,58 @@
   const src=cv.imread(input),gray=new cv.Mat();
   let best=null,srcPts=null,dstPts=null,transform=null,warped=null;
   const imageArea=src.cols*src.rows;
+  // Prefer the actual yellow card border over a transparent sleeve edge.
+  // On a neutral/white background the yellow border is a much stronger,
+  // more specific signal than Canny edges, which otherwise select the sleeve.
+  const hsv=new cv.Mat(),yellowMask=new cv.Mat(),yellowClosed=new cv.Mat();
+  const yellowLow=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(10,65,65,0));
+  const yellowHigh=new cv.Mat(1,1,cv.CV_8UC3,new cv.Scalar(45,255,255,0));
+  const yellowKernelSize=Math.max(5,(Math.round(Math.min(src.cols,src.rows)*.012)|1));
+  const yellowKernel=cv.getStructuringElement(cv.MORPH_RECT,new cv.Size(yellowKernelSize,yellowKernelSize));
+  const yellowContours=new cv.MatVector(),yellowHierarchy=new cv.Mat();
+  try{
+   cv.cvtColor(src,hsv,cv.COLOR_RGBA2HSV);
+   cv.inRange(hsv,yellowLow,yellowHigh,yellowMask);
+   cv.morphologyEx(yellowMask,yellowClosed,cv.MORPH_CLOSE,yellowKernel,new cv.Point(-1,-1),2);
+   cv.findContours(yellowClosed,yellowContours,yellowHierarchy,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+   for(let i=0;i<yellowContours.size();i++){
+    const contour=yellowContours.get(i),area=cv.contourArea(contour),rect=cv.boundingRect(contour);
+    if(area<imageArea*.08||area>imageArea*.90||rect.width<src.cols*.34||rect.height<src.rows*.38||
+       rect.x<2||rect.y<2||rect.x+rect.width>src.cols-2||rect.y+rect.height>src.rows-2){
+     contour.delete();continue;
+    }
+    const perimeter=cv.arcLength(contour,true);
+    let accepted=null;
+    for(const eps of [.008,.012,.018,.025,.035]){
+     const approx=new cv.Mat();
+     cv.approxPolyDP(contour,approx,perimeter*eps,true);
+     if(approx.rows===4&&cv.isContourConvex(approx)){accepted=approx;break}
+     approx.delete();
+    }
+    if(!accepted){contour.delete();continue}
+    const data=accepted.data32S,points=[];
+    for(let p=0;p<4;p++)points.push({x:data[p*2],y:data[p*2+1]});
+    const ordered=orderPoints(points);
+    const top=Math.hypot(ordered[1].x-ordered[0].x,ordered[1].y-ordered[0].y);
+    const bottom=Math.hypot(ordered[2].x-ordered[3].x,ordered[2].y-ordered[3].y);
+    const left=Math.hypot(ordered[3].x-ordered[0].x,ordered[3].y-ordered[0].y);
+    const right=Math.hypot(ordered[2].x-ordered[1].x,ordered[2].y-ordered[1].y);
+    const ratio=((top+bottom)/2)/Math.max(1,(left+right)/2);
+    const minSide=Math.min(top,bottom,left,right);
+    const rectangularity=area/Math.max(1,rect.width*rect.height);
+    if(ratio<.58||ratio>.84||minSide<Math.min(src.cols,src.rows)*.09||rectangularity<.55){
+     accepted.delete();contour.delete();continue;
+    }
+    const ratioFit=Math.exp(-Math.abs(Math.log(ratio/.714))*7);
+    const score=area*ratioFit*rectangularity;
+    if(!best||score>best.score)best={points:ordered,area,ratio,score,rectangularity,method:'yellow-border-hsv'};
+    accepted.delete();contour.delete();
+   }
+  }finally{
+   [hsv,yellowMask,yellowClosed,yellowLow,yellowHigh,yellowKernel,yellowContours,yellowHierarchy].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
+  }
+  // If the yellow border cannot be isolated (e.g. a non-yellow card or busy
+  // background), retain the existing geometric edge detector as a fallback.
   // Several edge scales/thresholds are needed for sleeves, holographic glare and cards
   // that overlap neighboring cards. The former single Canny pass missed the Machamp test photo.
   const passes=[
@@ -47,7 +99,8 @@
   ];
   try{
    cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
-   for(const pass of passes){
+   if(!best){
+  for(const pass of passes){
     const blurred=new cv.Mat(),edges=new cv.Mat(),closed=new cv.Mat();
     const kernel=cv.getStructuringElement(cv.MORPH_RECT,new cv.Size(pass.kernel,pass.kernel));
     const contours=new cv.MatVector(),hierarchy=new cv.Mat();
@@ -101,6 +154,7 @@
      [blurred,edges,closed,kernel,contours,hierarchy].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
     }
    }
+  }
    if(!best)return {found:false,reason:'Geen betrouwbare kaartcontour gevonden na meerdere detectiepogingen.'};
    const points=best.points,W=744,H=1039;
    srcPts=cv.matFromArray(4,1,cv.CV_32FC2,points.flatMap(p=>[p.x,p.y]));
@@ -124,7 +178,7 @@
    cv.warpPerspective(fullSrc,numberWarp,numberTransform,new cv.Size(numberW,numberH),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());
    const numberOutput=document.createElement('canvas');numberOutput.width=numberW;numberOutput.height=numberH;cv.imshow(numberOutput,numberWarp);
    [fullSrc,fullPts,numberDst,numberTransform,numberWarp].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
-   return {found:true,canvas:output,numberCanvas:numberOutput,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:'multi-pass-contour-ratio-validated'};
+   return {found:true,canvas:output,numberCanvas:numberOutput,confidence:Math.min(1,best.area/imageArea*2),ratio:best.ratio,rectangularity:best.rectangularity,points:points.map(p=>({x:p.x/scale,y:p.y/scale})),method:best.method||'multi-pass-contour-ratio-validated'};
   }finally{
    [src,gray,srcPts,dstPts,transform,warped].forEach(m=>{if(m&&m.delete)try{m.delete()}catch(e){}});
   }
