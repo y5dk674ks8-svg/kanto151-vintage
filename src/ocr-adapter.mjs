@@ -76,7 +76,7 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
     throw new Error("Geen geldige, rechtgezette kaartafbeelding ontvangen.");
   }
   const nameWorker = await getWorker(language);
-  const nameCrop = cropRegion(cardCanvas, [0.07, 0.05, 0.60, 0.115], 3);
+  // Keep the crop tight around the printed name. Including the HP/type area\n  // makes OCR merge unrelated symbols into short names (e.g. Diglett).\n  const nameCrop = cropRegion(cardCanvas, [0.07, 0.055, 0.46, 0.115], 4);
   let name;
   try {
     const params = language === "ja"
@@ -97,11 +97,11 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
   let number = { text: "", confidence: null };
   try {
     const numberWorker = await getWorker("en");
-    const numberCrop = cropRegion(numberCanvas, [0.84, 0.93, 0.995, 0.98], 3);
+    // The collector number sits on the bottom copyright line. The old crop\n    // stopped too high and clipped the lower half of 47/102 on Base Set cards.\n    const numberCrop = cropRegion(numberCanvas, [0.84, 0.945, 0.995, 0.995], 4);
     try {
       number = await recognize(numberWorker, numberCrop, {
         tessedit_char_whitelist: "0123456789/",
-        tessedit_pageseg_mode: "10",
+        tessedit_pageseg_mode: "7",
         preserve_interword_spaces: "0"
       }, "Kaartnummer herkennen");
     } finally {
