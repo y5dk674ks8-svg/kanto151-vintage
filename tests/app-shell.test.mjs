@@ -87,6 +87,7 @@ test("scanner visually ranks English candidates without pretending Japanese imag
 test("user-confirmed scans can save only local visual fingerprints", () => {
   assert.match(script, /id="savevisualref" type="checkbox"/);
   assert.doesNotMatch(script, /id="savevisualref" type="checkbox" checked/);
+  assert.match(script, /recordId:record\.recordId/);
   assert.match(script, /storeUserReference\(c\.recordId,variantId,window\.lastScanVisualCanvas\)/);
   assert.match(visual, /export async function storeUserReference/);
   assert.match(visual, /writeCachedFeature\(key, entries\.slice\(-8\)\)/);
@@ -102,4 +103,10 @@ test("locally learned visual references can rank Japanese cards on later scans",
   assert.match(script, /hasUserReference\(candidate\.record\?\.recordId\)/);
   assert.match(visual, /export async function hasUserReference/);
   assert.match(visual, /visualSource: "personal"/);
+});
+
+test("personal visual matches retain the matched printing identity", () => {
+  assert.match(script, /visualPrintingIds:visual\?\.visualPrintingIds/);
+  assert.match(script, /const matchedPrinting=x\.visualPrintingIds/);
+  assert.match(script, /const ja=enriched\.filter\(x=>x\.language==='ja'\)\.sort\(byVisualThenText\)/);
 });
