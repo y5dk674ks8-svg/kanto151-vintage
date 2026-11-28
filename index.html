@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-24"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-27"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261127-16"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-26';
+const KANTO_BUILD='2026.11.28-27';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -166,38 +166,64 @@ async function getOfflineOcrWorker(){
 let photoFile=null;
 let scanDexGuess=null, scanNumberGuess=null, scanTotalGuess=null;
 async function findScannedCandidates(dex,cardNo,totalNo){
- document.getElementById('scanstatus').textContent='Vintage kaartcatalogus doorzoeken op Pokémon, kaartnummer én settotaal…';
+ document.getElementById('scanstatus').textContent='Alle TCGdex-sets uit 1996–2002 doorzoeken…';
  try{
   const all=await api('https://api.tcgdex.net/v2/en/sets');
-  const known=QUICK_SETS.en.map(x=>x.toLowerCase());
-  const sets=all.filter(x=>known.includes((x.name||'').toLowerCase()));
-  const details=await Promise.all(sets.map(async x=>{try{return await api('https://api.tcgdex.net/v2/en/sets/'+encodeURIComponent(x.id))}catch(e){return null}}));
+  const vintageBrief=all.filter(s=>s&&s.id);
+  const details=[];
+  for(let i=0;i<vintageBrief.length;i+=8){
+   const batch=await Promise.all(vintageBrief.slice(i,i+8).map(async s=>{
+    try{return await api('https://api.tcgdex.net/v2/en/sets/'+encodeURIComponent(s.id))}
+    catch(e){return null}
+   }));
+   details.push(...batch.filter(s=>{
+    if(!s)return false;
+    const year=Number((s.releaseDate||'').slice(0,4));
+    return year>=1996&&year<=2002;
+   }));
+  }
   const pokemon=NAMES[dex-1].toLowerCase();
+  const wantedNo=String(cardNo||'').replace(/^0+/,'')||'0';
   let matches=[];
-  details.filter(Boolean).forEach(set=>{
+  details.forEach(set=>{
    (set.cards||[]).forEach(card=>{
     const nm=(card.name||'').toLowerCase();
-    if(nm.includes(pokemon)){
-     const num=String(card.localId||'').replace(/^0+/,'')||'0';
-     const printedTotal=Number(set.cardCount?.official||set.cardCount?.total||0);
-     const numberMatch=cardNo?num===String(cardNo).replace(/^0+/,''):false;
-     const totalMatch=totalNo?printedTotal===Number(totalNo):true;
-     matches.push({setId:set.id,setName:set.name,releaseDate:set.releaseDate,cardId:card.id,cardName:card.name,localId:card.localId,image:card.image||'',printedTotal,numberMatch,totalMatch});
+    const num=String(card.localId||'').replace(/^0+/,'')||'0';
+    if(nm.includes(pokemon)&&num===wantedNo){
+     const official=Number(set.cardCount?.official||0);
+     const total=Number(set.cardCount?.total||0);
+     const printedTotal=official||total||null;
+     const totalMatch=totalNo?([official,total].filter(Boolean).includes(Number(totalNo))):null;
+     matches.push({
+      setId:set.id,setName:set.name,releaseDate:set.releaseDate,
+      cardId:card.id,cardName:card.name,localId:card.localId,
+      image:card.image||'',printedTotal,totalMatch,
+      officialTotal:official||null,catalogueTotal:total||null
+     });
     }
    });
   });
-  if(cardNo)matches=matches.filter(x=>x.numberMatch&&(!totalNo||x.totalMatch));
-  else matches=[];
-  matches.sort((a,b)=>(a.releaseDate||'').localeCompare(b.releaseDate||''));
+  matches.sort((a,b)=>{
+   if(totalNo){
+    const am=a.totalMatch===true?0:a.totalMatch===false?1:2;
+    const bm=b.totalMatch===true?0:b.totalMatch===false?1:2;
+    if(am!==bm)return am-bm;
+   }
+   return (a.releaseDate||'').localeCompare(b.releaseDate||'');
+  });
   const box=document.getElementById('scanresult');
   if(!matches.length){
-   document.getElementById('scanstatus').textContent=cardNo?(totalNo?'Geen exacte match voor '+cardNo+'/'+totalNo+'. Controleer beide getallen.':'Geen exacte kaartnummer-match. Controleer het nummer.'):'Kaartnummer niet herkend; vul het volledige nummer in.';
-   box.innerHTML='<div class="panel"><b>Geen exacte match gevonden</b><p class="muted">Vul het volledige nummer in zoals het op de kaart staat, inclusief het getal na de slash (bijvoorbeeld 4/102). Dat laatste getal helpt de juiste set te onderscheiden.</p><label>Volledig kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc(cardNo?(cardNo+(totalNo?'/'+totalNo:'')):'')+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
+   document.getElementById('scanstatus').textContent='Geen kaart gevonden op Pokémonnaam en kaartnummer.';
+   box.innerHTML='<div class="panel"><b>Geen match gevonden</b><p class="muted">Alle catalogussets uit 1996–2002 zijn doorzocht. Controleer de Pokémonnaam en het kaartnummer.</p><label>Volledig kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc(cardNo+(totalNo?'/'+totalNo:''))+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
    return;
   }
-  document.getElementById('scanstatus').textContent=matches.length+' exacte kaart(en) gevonden op Pokémon, nummer'+(totalNo?' en settotaal':'')+'.';
-  box.innerHTML='<div class="panel"><b>Exacte kaartmatch</b><p class="muted">'+matches.length+' overeenkomst(en) voor '+esc(NAMES[dex-1])+' · nummer '+esc(cardNo+(totalNo?'/'+totalNo:''))+'. Controleer de setafbeelding.</p>'+matches.slice(0,20).map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+'/'+esc(x.printedTotal||'onbekend')+' · '+esc(x.releaseDate||'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
- }catch(e){document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>'}
+  const confirmed=totalNo?matches.filter(x=>x.totalMatch===true).length:0;
+  document.getElementById('scanstatus').textContent=matches.length+' kandidaat-kaart(en) gevonden in alle vintage sets'+(totalNo?' · '+confirmed+' met overeenkomend settotaal':'')+'.';
+  box.innerHTML='<div class="panel"><b>Kaartkandidaten</b><p class="muted">'+matches.length+' match(es) op Pokémonnaam en kaartnummer '+esc(cardNo)+(totalNo?'/'+esc(totalNo):'')+'. Settotaal is een extra aanwijzing, geen harde uitsluitingsregel: databases kunnen official/total verschillend vastleggen. Controleer de kaartafbeelding voordat je kiest.</p>'+matches.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small><small>'+(totalNo?(x.totalMatch===true?'Settotaal komt overeen':x.totalMatch===false?'Settotaal wijkt af':'Settotaal onbekend'):'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
+ }catch(e){
+  document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;
+  document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>';
+ }
 }
 function runFreeMatch(){
  const dex=Number(document.getElementById('scandex')?.value||scanDexGuess||0);
