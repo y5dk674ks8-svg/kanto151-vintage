@@ -45,6 +45,11 @@
       "items": { "type": "integer", "minimum": 1, "maximum": 151 },
       "uniqueItems": true
     },
+    "cameoDexIds": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 151 },
+      "uniqueItems": true
+    },
     "set": {
       "type": "object",
       "required": ["setId", "name", "releaseDate"],
@@ -98,7 +103,13 @@
             },
             "additionalProperties": false
           },
-          "sourceVariants": { "type": ["object", "null"] },
+          "sourceVariants": {
+            "oneOf": [
+              { "type": "object" },
+              { "type": "array" },
+              { "type": "null" }
+            ]
+          },
           "sourceDetailedVariants": { "type": ["array", "null"] },
           "verificationStatus": {
             "type": "string",
