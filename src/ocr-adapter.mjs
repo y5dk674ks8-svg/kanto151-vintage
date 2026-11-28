@@ -97,11 +97,11 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
   let number = { text: "", confidence: null };
   try {
     const numberWorker = await getWorker("en");
-    // The collector number sits on the bottom copyright line. The old crop\n    // stopped too high and clipped the lower half of 47/102 on Base Set cards.\n    const numberCrop = cropRegion(numberCanvas, [0.84, 0.945, 0.995, 0.995], 4);
+    // The collector number sits on the bottom copyright line. The old crop\n    // stopped too high and clipped the lower half of 47/102 on Base Set cards.\n    const numberCrop = cropRegion(numberCanvas, [0.73, 0.94, 0.97, 0.995], 4);
     try {
       number = await recognize(numberWorker, numberCrop, {
         tessedit_char_whitelist: "0123456789/",
-        tessedit_pageseg_mode: "7",
+        tessedit_pageseg_mode: "6",
         preserve_interword_spaces: "0"
       }, "Kaartnummer herkennen");
     } finally {
