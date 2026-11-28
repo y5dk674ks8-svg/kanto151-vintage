@@ -414,7 +414,7 @@ async function scanPhoto(file){
    // Evolution-source labels are often split across OCR lines/crops (e.g. "Evolves fromMac ... achoke").
    // Normalize all OCR text and exclude a Pokémon name found immediately after "evolvesfrom".
    const compactOcr=low.replace(/[^a-z]/g,'');
-   const hasEvolutionLabel=/evolves\\s*from/.test(low)||compactOcr.includes('evolvesfrom');
+   const hasEvolutionLabel=/evolves\s*from/.test(low)||compactOcr.includes('evolvesfrom');
    const evolutionSourceNames=new Set();
    const evoAt=compactOcr.indexOf('evolvesfrom');
    if(evoAt>=0){
