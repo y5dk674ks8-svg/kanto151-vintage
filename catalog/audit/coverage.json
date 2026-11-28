@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T15:11:44.836Z",
+  "retrievedAt": "2026-11-28T15:12:26.015Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -831,7 +831,9 @@
       }
     ],
     "referenceSetGroups": 27,
-    "additionalPromotionalAndDeckGroups": 12,
+    "supplementaryPromotionalAndDeckReferences": 12,
+    "additionalDistinctGroups": 6,
+    "overlapsCoreVintageGroups": 6,
     "presentInTcgdexSetAudit": 17,
     "missingFromTcgdexSetAudit": [
       {
