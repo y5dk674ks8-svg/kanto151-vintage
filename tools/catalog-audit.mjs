@@ -50,6 +50,8 @@ function csvCell(value) {
 }
 
 await fs.mkdir(path.join(OUT, "audit", "raw"), { recursive: true });
+const pokemonNameReference = JSON.parse(await fs.readFile(path.join(OUT, "pokemon-name-reference.json"), "utf8"));
+const pokemonNamesByDex = new Map(pokemonNameReference.entries.map(entry => [entry.dexId, entry]));
 const retrievedAt = new Date().toISOString();
 const normalized = [];
 const coverage = {
@@ -168,6 +170,10 @@ for (const language of LANGUAGES) {
           rarity: card.rarity ?? null
         },
         pokemonDexIds: dexIds,
+        pokemonNames: dexIds.map(dexId => {
+          const names = pokemonNamesByDex.get(dexId);
+          return names ? { dexId, en: names.en, ja: names.ja } : null;
+        }).filter(Boolean),
         set: {
           setId: set.id,
           name: set.name,
@@ -302,6 +308,14 @@ const duplicatePrintingIds = normalized.flatMap(card => {
   const ids = card.printings.map(printing => printing.printingId);
   return ids.length - new Set(ids).size ? [card.recordId] : [];
 });
+const japaneseNameAliasGaps = normalized.filter(card =>
+  card.language === "ja" &&
+  card.cardIdentity.category === "Pokemon" &&
+  !card.pokemonNames.some(names => {
+    const sourceName = String(card.cardIdentity.name ?? "").normalize("NFC");
+    return sourceName.includes(names.ja) || sourceName.toLocaleLowerCase().includes(names.en.toLocaleLowerCase());
+  })
+).map(card => card.recordId);
 const allPrintings = normalized.flatMap(card => card.printings);
 const firstEditionStampMismatches = allPrintings.filter(printing =>
   Array.isArray(printing.sourceDetailedVariants?.stamp) &&
@@ -323,6 +337,8 @@ coverage.validation = {
   duplicateRecordIds: recordIds.length - new Set(recordIds).size,
   recordsWithNoKantoDexId: normalized.filter(card => !card.pokemonDexIds.length).length,
   recordsWithNoPrintingEntry: normalized.filter(card => !card.printings.length).length,
+  recordsWithNoPokemonNameAlias: normalized.filter(card => !card.pokemonNames.length).length,
+  japanesePokemonNamesWithoutCanonicalSpeciesMatch: japaneseNameAliasGaps,
   printingEntryCount: allPrintings.length,
   recordsWithDuplicatePrintingIds: duplicatePrintingIds,
   firstEditionStampMismatches,
@@ -330,6 +346,24 @@ coverage.validation = {
   noRarityMisclassified,
   allKantoDexIdsRepresented: coverage.missingKantoDexIds.length === 0
 };
+coverage.pokemonNameReference = {
+  source: pokemonNameReference.source,
+  sourceUrl: pokemonNameReference.sourceUrl,
+  sourceCommit: pokemonNameReference.sourceCommit,
+  entries: pokemonNameReference.entries.length,
+  scope: pokemonNameReference.scope
+};
+for (const recordId of japaneseNameAliasGaps) {
+  const card = normalized.find(item => item.recordId === recordId);
+  gaps.push({
+    language: "ja",
+    type: "card-name-does-not-contain-canonical-pokemon-name",
+    setId: card?.set.setId,
+    cardId: card?.source.sourceCardId,
+    cardName: card?.cardIdentity.name,
+    canonicalPokemonNames: card?.pokemonNames.map(names => names.ja).join("; ")
+  });
+}
 
 const setGroups = new Map();
 for (const card of normalized) {
