@@ -69,3 +69,9 @@ test("manual retry keeps English and Japanese OCR names separate", () => {
   assert.match(script, /window\.scanNameTextByLanguage\?\.en/);
   assert.match(script, /window\.scanNameTextByLanguage\?\.ja/);
 });
+
+test("candidate list displays canonical species names alongside the source card name", () => {
+  assert.match(script, /const speciesNames=/);
+  assert.match(script, /Pokémon: /);
+  assert.match(script, /c\\.pokemonNames/);
+});
