@@ -30,8 +30,13 @@ self.addEventListener("fetch", event => {
     try {
       const response = await fetch(request);
       if (response && response.ok) {
-        const cache = await caches.open(CACHE);
-        await cache.put(request, response.clone());
+        try {
+          const cache = await caches.open(CACHE);
+          await cache.put(request, response.clone());
+        } catch (cacheError) {
+          // Storage quota or private-browsing restrictions must never turn a
+          // successful network response into a failed application request.
+        }
       }
       return response;
     } catch (error) {
