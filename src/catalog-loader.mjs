@@ -117,16 +117,22 @@ export class KantoCatalog {
 
   async loadIndex() {
     if (this.index) return this.index;
-    const cached = await cacheGet("index");
-    if (cached) {
-      this.index = cached;
-      return cached;
+    const cached = await cacheGet("index").catch(() => null);
+    try {
+      // Refresh the tiny manifest on every new app session so a deployed catalog
+      // update cannot be hidden forever by an old IndexedDB/service-worker cache.
+      const response = await this.fetchImpl(this.baseUrl + "index.json", { cache: "no-cache" });
+      if (!response.ok) throw new Error("Catalogusindex kon niet worden geladen: HTTP " + response.status);
+      this.index = await response.json();
+      await cachePut("index", this.index).catch(() => undefined);
+      return this.index;
+    } catch (error) {
+      if (cached) {
+        this.index = cached;
+        return cached;
+      }
+      throw error;
     }
-    const response = await this.fetchImpl(this.baseUrl + "index.json");
-    if (!response.ok) throw new Error("Catalogusindex kon niet worden geladen: HTTP " + response.status);
-    this.index = await response.json();
-    await cachePut("index", this.index);
-    return this.index;
   }
 
   async loadSet(language, setId) {
@@ -135,16 +141,25 @@ export class KantoCatalog {
     const index = await this.loadIndex();
     const entry = (index.languages?.[language] ?? []).find(item => item.setId === setId);
     if (!entry) throw new Error("Set niet gevonden in catalogusindex: " + key);
-    const cached = await cacheGet(key);
-    if (cached) {
-      this.loadedSets.set(key, cached);
-      return cached;
+    const version = index.generatedAt ?? "unversioned";
+    const cached = await cacheGet(key).catch(() => null);
+    if (cached?.version === version && Array.isArray(cached.records)) {
+      this.loadedSets.set(key, cached.records);
+      return cached.records;
     }
-    const response = await this.fetchImpl(this.baseUrl + entry.path);
-    if (!response.ok) throw new Error("Setbestand kon niet worden geladen: " + entry.path + " (HTTP " + response.status + ")");
+    const response = await this.fetchImpl(this.baseUrl + entry.path, { cache: "no-cache" });
+    if (!response.ok) {
+      // An old cached set is better than no offline result, but never silently
+      // use it when the network is available and a newer index is known.
+      if (cached?.records && Array.isArray(cached.records)) {
+        this.loadedSets.set(key, cached.records);
+        return cached.records;
+      }
+      throw new Error("Setbestand kon niet worden geladen: " + entry.path + " (HTTP " + response.status + ")");
+    }
     const records = await response.json();
     this.loadedSets.set(key, records);
-    await cachePut(key, records);
+    await cachePut(key, { version, records }).catch(() => undefined);
     return records;
   }
 
