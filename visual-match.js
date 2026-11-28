@@ -1,10 +1,10 @@
 /* Kanto 151 visual card-art matcher. Compares the photographed artwork with TCGdex reference images. */
 (function(){
  'use strict';
- const featureCache=new Map(),STORAGE_KEY='kanto151_visual_features_v1';let stored={};
+ const featureCache=new Map(),STORAGE_KEY='kanto151_visual_features_v2';let stored={};
  try{stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch(e){}
  function loadImage(url){
-  return new Promise((resolve,reject)=>{const img=new Image();img.crossOrigin='anonymous';img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Referentieafbeelding niet bereikbaar: '+url));img.src=url+'/high.webp'});
+  return new Promise((resolve,reject)=>{const img=new Image();img.crossOrigin='anonymous';img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Referentieafbeelding niet bereikbaar: '+url));img.src=url+'/low.webp'});
  }
  function crop(source,b){
   const c=document.createElement('canvas');c.width=128;c.height=128;
@@ -35,12 +35,12 @@
  function similarity(a,b){let diff=0;for(let i=0;i<a.hist.length;i++)diff+=Math.abs(a.hist[i]-b.hist[i]);const ph=1-hamming(a.hash,b.hash)/64,hs=Math.max(0,1-diff/2);return Math.max(0,Math.min(1,.78*ph+.22*hs))}
  async function refFeature(base){
   if(featureCache.has(base))return featureCache.get(base);if(stored[base]){featureCache.set(base,stored[base]);return stored[base]}
-  const task=(async()=>{const img=await loadImage(base);const art=crop(img,[.19,.20,.82,.49]);const f=feature(art);featureCache.set(base,f);stored[base]=f;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(stored))}catch(e){}art.width=0;art.height=0;return f})();
+  const task=(async()=>{const img=await loadImage(base);const art=crop(img,[.18,.20,.82,.61]);const f=feature(art);featureCache.set(base,f);stored[base]=f;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(stored))}catch(e){}art.width=0;art.height=0;return f})();
   featureCache.set(base,task);try{return await task}catch(e){featureCache.delete(base);throw e}
  }
  async function rank(cardCanvas,candidates,onProgress){
   if(!cardCanvas||!candidates?.length)return {matches:candidates||[],compared:0,failed:0};
-  const art=crop(cardCanvas,[.19,.20,.82,.49]),query=feature(art);art.width=0;art.height=0;
+  const art=crop(cardCanvas,[.18,.20,.82,.61]),query=feature(art);art.width=0;art.height=0;
   const results=new Array(candidates.length);let cursor=0,done=0,failed=0;
   async function run(){while(cursor<candidates.length){const i=cursor++,c=candidates[i];try{if(!c.image)throw Error('Geen referentieafbeelding');const f=await refFeature(c.image);results[i]={...c,visualScore:similarity(query,f),visualMatch:true}}catch(e){failed++;results[i]={...c,visualMatch:false,visualError:e.message}}done++;if(onProgress)onProgress(done,candidates.length)}}
   await Promise.all(Array.from({length:Math.min(4,candidates.length)},run));
