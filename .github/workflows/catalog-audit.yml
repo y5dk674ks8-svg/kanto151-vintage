@@ -6,6 +6,9 @@ on:
     branches: [catalog-first-rebuild]
     paths:
       - "tools/catalog-audit.mjs"
+      - "catalog/pokemon-name-reference.json"
+      - "catalog/card-record.schema.json"
+      - "catalog/audit/japanese-vintage-set-reference.json"
       - "src/catalog-loader.mjs"
       - "src/recognition-pipeline.mjs"
       - "src/ocr-adapter.mjs"
