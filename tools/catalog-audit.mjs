@@ -338,6 +338,7 @@ coverage.languages.ja.combinedCatalogSetGroups = coverage.languages.ja.setsInDat
 coverage.languages.ja.combinedSourceCardCountInScope = coverage.languages.ja.sourceCardsInDateScopeSets + coverage.languages.ja.supplementalSourceCardCount;
 coverage.languages.ja.combinedCatalogKantoCardRecords = coverage.languages.ja.kantoCardRecords + vendingSeed.cards.length;
 coverage.languages.ja.combinedKantoRecordsMissingImage = coverage.languages.ja.kantoRecordsMissingImage + vendingSeed.cards.length;
+coverage.languages.ja.combinedSourceVariantEntries = coverage.languages.ja.sourceVariantEntries + vendingSeed.cards.length;
 const vendingGroupNames = new Set(vendingSeed.sets.map(set => set.name));
 coverage.externalJapaneseSetReference.supplementalSeededGroups = referenceMissing
   .filter(set => vendingGroupNames.has(set.englishName))
