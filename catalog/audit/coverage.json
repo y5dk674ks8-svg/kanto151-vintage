@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T14:30:53.184Z",
+  "retrievedAt": "2026-11-28T14:53:51.666Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -21,6 +21,7 @@
       "sourceCardsInDateScopeSets": 1426,
       "kantoCardRecords": 882,
       "kantoRecordsMissingImage": 7,
+      "nonKantoPokemonRecordsInDateScopeSets": 283,
       "selectedSets": [
         {
           "setId": "miscp",
@@ -345,6 +346,7 @@
       "sourceCardsInDateScopeSets": 1462,
       "kantoCardRecords": 786,
       "kantoRecordsMissingImage": 786,
+      "nonKantoPokemonRecordsInDateScopeSets": 404,
       "selectedSets": [
         {
           "setId": "PMCG1",
@@ -799,5 +801,8 @@
     151
   ],
   "missingKantoDexIds": [],
-  "gapCount": 1480
+  "gapCount": 793,
+  "gapTypes": {
+    "missing-image": 793
+  }
 }
