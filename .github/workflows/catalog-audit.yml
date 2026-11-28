@@ -13,10 +13,12 @@ on:
       - "src/recognition-pipeline.mjs"
       - "src/ocr-adapter.mjs"
       - "src/card-vision.js"
+      - "src/visual-match.mjs"
       - "tests/catalog-loader.test.mjs"
       - "tests/recognition-pipeline.test.mjs"
       - "tests/catalog-data.test.mjs"
       - "tests/app-shell.test.mjs"
+      - "tests/visual-match.test.mjs"
       - "index.html"
       - "sw.js"
       - ".github/workflows/catalog-audit.yml"
@@ -44,6 +46,8 @@ jobs:
         run: node --test tests/recognition-pipeline.test.mjs
       - name: Test scanner app shell
         run: node --test tests/app-shell.test.mjs
+      - name: Test visual feature ranking
+        run: node --test tests/visual-match.test.mjs
       - name: Run multilingual catalog audit
         run: node tools/catalog-audit.mjs
       - name: Validate generated catalog data
