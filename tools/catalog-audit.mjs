@@ -129,7 +129,18 @@ for (const language of LANGUAGES) {
         gaps.push({ language, type: "missing-image", setId: set.id, cardId: card.id, cardName: card.name });
       }
       const variants = card.variants ?? null;
-      const detailedVariants = card.variants_detailed ?? null;
+      const detailedVariants = card.variants_detailed ?? (Array.isArray(variants) ? variants : null);
+      const variantArray = Array.isArray(variants) ? variants : (Array.isArray(detailedVariants) ? detailedVariants : []);
+      const hasFirstEdition = Array.isArray(variants)
+        ? variants.some(v => Array.isArray(v.stamp) && v.stamp.includes("1st-edition"))
+        : variants?.firstEdition === true;
+      const hasHolo = Array.isArray(variants)
+        ? variants.some(v => v.type === "holo")
+        : variants?.holo === true;
+      const hasNormal = Array.isArray(variants)
+        ? variants.some(v => v.type === "normal")
+        : variants?.normal === true;
+      const hasShadowless = variantArray.some(v => v.subtype === "shadowless");
       if (!variants && !detailedVariants) {
         gaps.push({ language, type: "variant-data-absent", setId: set.id, cardId: card.id, cardName: card.name });
       }
