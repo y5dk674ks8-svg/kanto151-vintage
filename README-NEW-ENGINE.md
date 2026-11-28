@@ -11,46 +11,46 @@ This branch is an isolated rebuild track. It is based on the existing `main` bra
 
 ## Scope
 
-Recognize both camera photographs of physical cards and uploaded card images.
+Recognize camera photographs and uploaded images of English and Japanese Pokémon TCG cards from 1996–2002, including Kanto Pokémon (001–151). Preserve source card identity separately from physical printing identity. Only distinguish printings when source data or verified manual evidence supports the distinction.
 
-Initial catalog scope: English and Japanese Pokémon TCG cards released from 1996 through 2002, covering every relevant set and promo found in the source audit, and every Kanto Pokédex Pokémon (001–151). Include printings and variants as separate records only when the source data or a verified manual supplement can distinguish them.
-
-Do not claim that a printing variant is identified if the photo or catalog cannot distinguish it.
+The current data is a seed catalog, not a complete historical checklist or a verified census of every physical printing.
 
 ## Current status
 
-- [x] Legacy repositories and branches located.
-- [x] Preservation branch created.
-- [x] Isolated rebuild branch created from production main.
-- [x] Run the first reproducible English/Japanese TCGdex source audit.
-- [x] Build a normalized seed catalog split into per-set files.
-- [x] Add unique-record, Kanto coverage, source-variant and image-gap metrics.
-- [x] Cross-check Japanese vintage coverage against 27 core set groups and 12 additional deck/promo groups.
-- [x] Add a metadata-based candidate ranker and local catalog loader.
-- [x] Add IndexedDB caching for catalog index and per-set records.
-- [x] Add automated tests for text normalization, Japanese kana, number parsing, candidate ranking, catalog integrity and variant mapping.
-- [x] Review the preserved OpenCV card detector and legacy visual matcher for reuse.
-- [ ] Reconcile the 10 core Japanese set groups missing from TCGdex against primary checklists.
+- [x] Preserve the legacy application and work on an isolated rebuild branch.
+- [x] Run reproducible English/Japanese TCGdex source audits.
+- [x] Build a normalized catalog split into per-set files.
+- [x] Add source provenance, variant records, image-gap reporting and integrity metrics.
+- [x] Add canonical English/Japanese species names for all 151 Kanto Pokémon.
+- [x] Use canonical species aliases in OCR candidate ranking without overwriting original TCGdex card names.
+- [x] Compare the Japanese catalog against an independent vintage checklist and report missing groups/count disagreements.
+- [x] Add a local catalog loader, fuzzy ranking and version-aware IndexedDB caching.
+- [x] Vendor OpenCV.js, Tesseract.js, WASM runtime and English/Japanese OCR models into the repository.
+- [x] Integrate card localization, perspective correction, bilingual OCR and local candidate retrieval.
+- [x] Connect camera and upload flows to the local scanner pipeline.
+- [x] Keep candidate selection human-confirmed; the scanner never auto-registers a card.
+- [x] Cache fetched same-origin scanner assets and catalog files for subsequent offline use.
+- [x] Add automated tests for catalog ranking, Japanese name aliases, OCR number parsing, app integration, data integrity and variant mapping.
+- [ ] Verify camera capture, OCR quality and offline use on a real iPhone.
+- [ ] Reconcile the 10 Japanese vintage groups absent from the current TCGdex audit against primary checklists.
 - [ ] Add verified Japanese deck, vending, premium-file and promo records.
 - [ ] Resolve image-source permissions and fill image gaps.
-- [ ] Port card localization and integrate OCR into the new scanner UI.
-- [ ] Port visual ranking after image coverage and permissions are resolved.
-- [ ] Add OCR and visual ranking as independent signals.
-- [ ] Establish a labeled test set and measure precision/recall.
-- [ ] Integrate camera and upload flows.
-
+- [ ] Add visual card-image matching after usable, permitted reference images are available.
+- [ ] Establish a labeled real-card test set and measure precision/recall.
+- [ ] Manually verify physical printing distinctions and card-specific variants.
 
 ## Latest verified audit snapshot — 2026-11-28
 
-GitHub Actions run: [#46157621131](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46157621131) — successful. Both test suites passed (10 tests total).
+GitHub Actions run: [#46158644732](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158644732) — successful. All 25 automated tests passed.
 
-- 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
-- All 151 Kanto Pokédex IDs are represented in both languages.
-- 3,072 source detailed-variant entries after removing 38 exact duplicate source entries.
-- No duplicate record IDs or duplicate printing IDs.
+- **1,668** TCGdex Kanto card records: 882 English and 786 Japanese.
+- All **151/151** Kanto Pokédex IDs are represented in both languages.
+- **3,072** detailed source-variant entries remain after removing 38 exact duplicate source entries.
+- No duplicate record IDs or printing IDs.
 - Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
-- 793 records have no TCGdex image URL: 7 English and 786 Japanese.
-- Independent Japanese reference: 27 core vintage set groups plus 12 additional promotional/deck groups. The date-filtered TCGdex audit currently includes 17 core groups; 10 core groups are absent.
-- Five matched Japanese groups have source-count differences requiring checklist-level reconciliation.
+- **793** records have no TCGdex image URL: 7 English and 786 Japanese.
+- **278** Japanese source card names do not contain the canonical Japanese or English species name associated with their dex ID. The original source name is preserved; canonical aliases are added for OCR ranking and shown alongside it.
+- Independent Japanese checklist: 27 core vintage groups. The current date-filtered TCGdex audit maps 17; 10 are absent. Five matched groups have source-count disagreements.
+- The supplementary promo/deck reference contains 12 entries: 6 overlap with the 27 core groups and 6 are distinct additional groups.
 
-This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files and image permissions remain open work.
+This is a successful **seed-catalog and scanner-pipeline milestone**, not a complete vintage catalog or a validated printing census. The largest remaining blockers are Japanese promo/deck coverage, image rights and image availability, and real-device accuracy testing.
