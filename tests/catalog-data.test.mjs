@@ -54,4 +54,6 @@ test("catalog audit reports the Japanese vintage reference omissions and count c
   assert.equal(coverage.externalJapaneseSetReference.additionalDistinctGroups, 5);
   assert.equal(coverage.externalJapaneseSetReference.overlapsCoreVintageGroups, 7);
   assert.ok(coverage.externalJapaneseSetReference.sourceCountDiffers.length > 0);
+  assert.equal(coverage.gapTypes["set-fetch-failed"], undefined);
+  assert.ok(Array.isArray(coverage.sourceFetchWarnings));
 });
