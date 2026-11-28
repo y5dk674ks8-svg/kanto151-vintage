@@ -55,13 +55,23 @@ test("catalog audit reports the Japanese vintage reference omissions and count c
   assert.equal(coverage.externalJapaneseSetReference.overlapsCoreVintageGroups, 7);
   assert.ok(coverage.externalJapaneseSetReference.sourceCountDiffers.length > 0);
   assert.equal(coverage.gapTypes["set-fetch-failed"], undefined);
+  assert.equal(coverage.gapTypes["card-fetch-failed"], undefined);
   assert.ok(Array.isArray(coverage.sourceFetchWarnings));
+  assert.equal(coverage.sourceFetchWarningCount, coverage.sourceFetchWarnings.length);
 });
 
 test("Japanese Vending Series 1–3 supplemental Kanto records are included and explicitly unverified", () => {
   assert.equal(coverage.languages.ja.supplementalKantoCardRecords, 100);
   assert.equal(coverage.languages.ja.combinedCatalogKantoCardRecords, 886);
   assert.equal(coverage.supplementalJapaneseSets.length, 3);
+  const index = JSON.parse(fs.readFileSync("catalog/index.json", "utf8"));
+  const indexRecordCount = [...index.languages.en, ...index.languages.ja].reduce((sum, set) => sum + set.recordCount, 0);
+  assert.equal(coverage.totalNormalizedRecords, indexRecordCount);
+  const printings = [...index.languages.en, ...index.languages.ja].reduce((sum, set) => {
+    const records = readSet(set.language || (index.languages.en.includes(set) ? "en" : "ja"), set.setId);
+    return sum + records.reduce((n, card) => n + card.printings.length, 0);
+  }, 0);
+  assert.equal(coverage.totalSourceVariantEntries, printings);
   assert.equal(coverage.externalJapaneseSetReference.supplementalSeededGroups.length, 3);
   assert.equal(coverage.externalJapaneseSetReference.remainingUnseededGroups.length, 7);
   for (const setId of ["vending1", "vending2", "vending3"]) {
