@@ -46,8 +46,10 @@ The TCGdex seed catalog currently has no image URL for the 786 Japanese Kanto ca
 - The visual feature ranker has been ported into `src/visual-match.mjs`.
 - The new ranker caches derived feature descriptors in IndexedDB rather than serializing an ever-growing object to localStorage.
 - The scanner applies visual ranking only to English candidates with a TCGdex reference image.
-- Japanese candidates remain text-ranked because the current seed catalog has no Japanese reference images.
-- The raw user photo remains local; only public reference images are downloaded for client-side comparison.
+- Japanese candidates remain text-ranked until the user confirms a card for the first time, because the current seed catalog has no Japanese reference images.
+- After a confirmed registration, the user can opt in to saving a local visual fingerprint for that card and selected printing. Only derived feature descriptors are stored in IndexedDB; the raw photo is never saved or uploaded.
+- On later scans, those user-created fingerprints can visually rank Japanese cards as well as English cards.
+- Public TCGdex reference images are downloaded for client-side comparison where available.
 
 ## Decision
 
