@@ -10,6 +10,10 @@ on:
       - "tests/catalog-loader.test.mjs"
       - ".github/workflows/catalog-audit.yml"
 
+concurrency:
+  group: catalog-audit-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
