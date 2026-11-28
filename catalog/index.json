@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-28T15:23:45.869Z",
+  "generatedAt": "2026-11-28T15:27:00.378Z",
   "schema": "../card-record.schema.json",
   "languages": {
     "en": [
@@ -70,7 +70,7 @@
         "setId": "neo1",
         "setName": "Neo Genesis",
         "releaseDate": "2000-12-16",
-        "recordCount": 10,
+        "recordCount": 9,
         "path": "cards/en/neo1.json"
       },
       {
@@ -153,11 +153,32 @@
         "path": "cards/ja/PMCG4.json"
       },
       {
+        "setId": "vending1",
+        "setName": "Vending Series 1",
+        "releaseDate": "1998-03-23",
+        "recordCount": 34,
+        "path": "cards/ja/vending1.json"
+      },
+      {
+        "setId": "vending2",
+        "setName": "Vending Series 2",
+        "releaseDate": "1998-06-17",
+        "recordCount": 32,
+        "path": "cards/ja/vending2.json"
+      },
+      {
         "setId": "PMCG5",
         "setName": "リーダーズスタジアム",
         "releaseDate": "1998-10-24",
         "recordCount": 66,
         "path": "cards/ja/PMCG5.json"
+      },
+      {
+        "setId": "vending3",
+        "setName": "Vending Series 3",
+        "releaseDate": "1998-11-24",
+        "recordCount": 34,
+        "path": "cards/ja/vending3.json"
       },
       {
         "setId": "PMCG6",
