@@ -35,7 +35,7 @@ The current data is a seed catalog, not a complete historical checklist or a ver
 
 ## Latest verified snapshot — 2026-11-28
 
-GitHub Actions run: [#46159988454](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159988454) — successful. **All 34 automated tests passed.**
+GitHub Actions run: [#46160175292](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46160175292) — successful. **All 34 automated tests passed.**
 
 | Metric | Result |
 |---|---:|
