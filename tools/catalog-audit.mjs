@@ -66,6 +66,7 @@ const coverage = {
   ]
 };
 const gaps = [];
+const sourceFetchWarnings = [];
 let duplicateSourceVariantEntriesRemoved = 0;
 
 for (const language of LANGUAGES) {
@@ -79,7 +80,7 @@ for (const language of LANGUAGES) {
       const detail = await requestJson(`${BASE}/${language}/sets/${encodeURIComponent(brief.id)}`);
       return detail;
     } catch (error) {
-      gaps.push({ language, type: "set-fetch-failed", setId: brief.id, detail: String(error) });
+      sourceFetchWarnings.push({ language, setId: brief.id, setName: brief.name, detail: String(error) });
       return null;
     }
   });
@@ -272,6 +273,7 @@ for (const language of LANGUAGES) {
 }
 coverage.uniqueKantoDexIds = [...new Set(normalized.flatMap(card => card.pokemonDexIds))].sort((a, b) => a - b);
 coverage.missingKantoDexIds = Array.from({ length: 151 }, (_, i) => i + 1).filter(id => !coverage.uniqueKantoDexIds.includes(id));
+coverage.sourceFetchWarnings = sourceFetchWarnings;
 coverage.gapCount = gaps.length;
 coverage.gapTypes = gaps.reduce((counts, gap) => {
   counts[gap.type] = (counts[gap.type] || 0) + 1;
