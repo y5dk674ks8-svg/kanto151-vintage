@@ -62,7 +62,7 @@ The English visual matcher is experimental: it uses remote TCGdex reference-imag
 This is a successful **seed-catalog and scanner-pipeline milestone**, not a complete vintage catalog or a validated printing census. The largest remaining blockers are Japanese promo/deck coverage, image rights and image availability, and real-device accuracy testing.
 ## Latest verified seed-catalog snapshot — 2026-11-28
 
-GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158593772) — successful. The next scanner integration run also passed all unit and app-shell tests before its audit step.
+GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158593772) — successful.
 
 - 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
 - All 151 Kanto Pokédex IDs are represented in both languages.
@@ -70,15 +70,19 @@ GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto
 - No duplicate card-record IDs or duplicate printing IDs.
 - Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
 - 793 records have no TCGdex image URL: 7 English and 786 Japanese.
-- The Japanese discovery manifest has 27 core vintage set groups and 12 supplementary deck/promo source entries. Six supplementary entries overlap core groups; six are additional distinct discovery groups.
+- Japanese discovery references list 27 core vintage set groups and 12 supplementary deck/promo source entries. Six supplementary entries overlap core groups; six are additional discovery groups.
 - TCGdex currently represents 17 of the 27 core Japanese groups. Ten are absent from its current date-scope audit.
-- Five matched Japanese groups have source-count differences that need checklist-level reconciliation.
-- 278 Japanese source card-name fields do not contain the canonical species name. Every record still has a canonical species alias; both source card names and species aliases are used for candidate ranking.
+- Five matched Japanese groups have source-count differences requiring checklist-level reconciliation.
+- 278 Japanese card-title fields do not contain the canonical species name. Every record still has a canonical species alias, and both card titles and species aliases are used for ranking.
 
-This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files, image permissions and card-specific Japanese spelling differences remain open work.
+The latest scanner integration run [#46159183213](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46159183213) has passed all five test suites (30 tests); the refreshed catalog audit is still running.
+
+This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files, image permissions and historical card-name differences remain open work.
 
 ## Scanner implementation
 
-The rebuild now uses local OpenCV and Tesseract assets. User photos are processed in the browser; the scanner does not upload them. The first scan downloads and caches the catalog chunks, OCR runtime/models and derived English reference-image features. Japanese reference images remain a known limitation.
+The rebuild uses local OpenCV and Tesseract assets. User photos are processed in the browser; the scanner does not upload them. The first scan downloads and caches catalog chunks, OCR runtime/models and derived English reference-image features.
 
-Visual and text scores are ranking signals, not probabilities. The scanner always asks the user to inspect and choose a candidate; automatic confirmation remains disabled.
+For Japanese cards without a public reference image, the user can opt in to saving a local visual fingerprint after confirming a card. Only derived feature descriptors are stored in IndexedDB, not the raw photo. Later scans can use those fingerprints to rank Japanese candidates.
+
+Text and visual scores are ranking signals, not probabilities. The scanner always asks the user to inspect and choose a candidate; automatic confirmation remains disabled.
