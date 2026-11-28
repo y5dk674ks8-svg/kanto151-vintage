@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T14:56:38.116Z",
+  "retrievedAt": "2026-11-28T15:01:20.446Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -338,7 +338,7 @@
         151
       ],
       "missingKantoDexIds": [],
-      "sourceVariantEntries": 1876
+      "sourceVariantEntries": 1874
     },
     "ja": {
       "totalSetsInSourceIndex": 204,
@@ -640,7 +640,7 @@
         151
       ],
       "missingKantoDexIds": [],
-      "sourceVariantEntries": 1234
+      "sourceVariantEntries": 1198
     }
   },
   "knownLimitations": [
@@ -649,7 +649,7 @@
     "A missing image or variant is recorded as a gap; it is not inferred."
   ],
   "totalNormalizedRecords": 1668,
-  "totalSourceVariantEntries": 3110,
+  "totalSourceVariantEntries": 3072,
   "uniqueKantoDexIds": [
     1,
     2,
@@ -809,111 +809,158 @@
     "missing-image": 793
   },
   "externalJapaneseSetReference": {
-    "source": "https://japanesepokemoncards.net/vintage",
+    "sources": [
+      {
+        "id": "japanesepokemoncards-vintage",
+        "url": "https://japanesepokemoncards.net/vintage",
+        "scope": "27 listed vintage set groups, 1,777 cards, 1996–2002; excludes trophy cards and most one-off promos according to its FAQ.",
+        "confidence": "secondary-discovery"
+      },
+      {
+        "id": "japanese-poke-cards",
+        "url": "https://japanesepokecards.com/sets/",
+        "scope": "All Japanese sets plus promo and deck groups; card counts are source-defined and may include variants or special cards.",
+        "confidence": "secondary-discovery"
+      },
+      {
+        "id": "tcgdex",
+        "url": "https://api.tcgdex.net/v2/ja/sets",
+        "scope": "Current Japanese TCGdex set index; its card data and set index have known coverage gaps.",
+        "confidence": "structured-api-seed"
+      }
+    ],
     "referenceSetGroups": 27,
+    "additionalPromotionalAndDeckGroups": 12,
     "presentInTcgdexSetAudit": 17,
     "missingFromTcgdexSetAudit": [
       {
         "name": "City Gym Decks",
         "japaneseName": "リーダーズスタジアム デッキ",
-        "year": "1998",
-        "referenceCardCount": 123
+        "year": 1998,
+        "vintageChecklistCount": 123,
+        "tcgdexSetId": null
       },
       {
         "name": "Neo Premium File 1",
         "japaneseName": "ネオ プレミアムファイル1",
-        "year": "1999",
-        "referenceCardCount": 9
+        "year": 1999,
+        "vintageChecklistCount": 9,
+        "tcgdexSetId": null
       },
       {
         "name": "Neo Premium File 2",
         "japaneseName": "ネオ プレミアムファイル2",
-        "year": "2000",
-        "referenceCardCount": 9
+        "year": 2000,
+        "vintageChecklistCount": 9,
+        "tcgdexSetId": null
       },
       {
         "name": "Neo Premium File 3",
         "japaneseName": "ネオ プレミアムファイル3",
-        "year": "2000",
-        "referenceCardCount": 9
+        "year": 2000,
+        "vintageChecklistCount": 9,
+        "tcgdexSetId": null
       },
       {
         "name": "Vending Series 1",
-        "japaneseName": "ポケモンカードになったワケ 第1弾",
-        "year": "1998",
-        "referenceCardCount": 36
+        "japaneseName": "拡張シート 第1弾",
+        "year": 1998,
+        "vintageChecklistCount": 36,
+        "tcgdexSetId": null
       },
       {
         "name": "Vending Series 2",
-        "japaneseName": "ポケモンカードになったワケ 第2弾",
-        "year": "1998",
-        "referenceCardCount": 36
+        "japaneseName": "拡張シート 第2弾",
+        "year": 1998,
+        "vintageChecklistCount": 36,
+        "tcgdexSetId": null
       },
       {
         "name": "Vending Series 3",
-        "japaneseName": "ポケモンカードになったワケ 第3弾",
-        "year": "1998",
-        "referenceCardCount": 52
+        "japaneseName": "拡張シート 第3弾",
+        "year": 1998,
+        "vintageChecklistCount": 52,
+        "tcgdexSetId": null
       },
       {
         "name": "CD Promo",
         "japaneseName": "CDプロモ",
-        "year": "1999",
-        "referenceCardCount": 10
+        "year": 1999,
+        "vintageChecklistCount": 10,
+        "tcgdexSetId": null
       },
       {
         "name": "Southern Islands",
         "japaneseName": "サザンアイランド",
-        "year": "1999",
-        "referenceCardCount": 18
+        "year": 1999,
+        "vintageChecklistCount": 18,
+        "tcgdexSetId": null
       },
       {
         "name": "Unnumbered Promos (1998)",
         "japaneseName": "番号なしプロモ",
-        "year": "1998",
-        "referenceCardCount": 1
+        "year": 1998,
+        "vintageChecklistCount": 1,
+        "tcgdexSetId": null
       }
     ],
     "sourceCountDiffers": [
       {
-        "name": "Gym Challenge",
+        "name": "Gym Challenge / Challenge from the Darkness",
         "tcgdexSetId": "PMCG6",
-        "referenceCardCount": 99,
-        "tcgdexCardCount": 98
+        "vintageChecklistCount": 99,
+        "tcgdexSourceSetCount": 98,
+        "independentTcgdexIndexCount": 98
       },
       {
         "name": "Neo Genesis",
         "tcgdexSetId": "neo1",
-        "referenceCardCount": 102,
-        "tcgdexCardCount": 96
+        "vintageChecklistCount": 102,
+        "tcgdexSourceSetCount": 96,
+        "independentTcgdexIndexCount": 96
       },
       {
         "name": "Neo Discovery",
         "tcgdexSetId": "neo2",
-        "referenceCardCount": 59,
-        "tcgdexCardCount": 57
+        "vintageChecklistCount": 59,
+        "tcgdexSourceSetCount": 57,
+        "independentTcgdexIndexCount": 57
       },
       {
         "name": "Pokémon Card VS",
         "tcgdexSetId": "VS1",
-        "referenceCardCount": 145,
-        "tcgdexCardCount": 143
+        "vintageChecklistCount": 145,
+        "tcgdexSourceSetCount": 143,
+        "independentTcgdexIndexCount": 143
       },
       {
         "name": "Pokémon Web",
         "tcgdexSetId": "web1",
-        "referenceCardCount": 48,
-        "tcgdexCardCount": 47
+        "vintageChecklistCount": 48,
+        "tcgdexSourceSetCount": 47,
+        "independentTcgdexIndexCount": 48
       }
     ],
-    "caveat": "Set totals differ across sources and may include different card definitions. Each entry must be verified against primary product checklists and card-level records before it is treated as complete."
+    "caveats": [
+      "Sources disagree on card counts for multiple sets (for example Gym Challenge, Neo Genesis, Neo Discovery, VS and Vending Series 3). Keep the source-specific count; do not overwrite it with a guessed consensus.",
+      "TCGdex set index does not expose release dates on its brief records; release dates are obtained from individual set detail records.",
+      "The current date-filtered TCGdex audit includes 17 Japanese sets. It does not include the separate vending, premium-file, deck and promo groups listed below.",
+      "Topsun and Carddass are collectible Pokémon cards but are not Pokémon TCG sets; keep them out of the TCG catalog unless a separate non-TCG scope is explicitly enabled.",
+      "The target is Kanto Pokémon card records, not a claim that all cards in a set are Kanto cards."
+    ]
   },
   "validation": {
     "recordCount": 1668,
+    "duplicateSourceVariantEntriesRemoved": 38,
     "uniqueRecordIds": 1668,
     "duplicateRecordIds": 0,
     "recordsWithNoKantoDexId": 0,
     "recordsWithNoPrintingEntry": 0,
+    "printingEntryCount": 3072,
+    "recordsWithDuplicatePrintingIds": [],
+    "firstEditionStampMismatches": 0,
+    "unlimitedMisclassified": 0,
+    "noRarityMisclassified": 0,
     "allKantoDexIdsRepresented": true
   }
 }
