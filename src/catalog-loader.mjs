@@ -85,7 +85,17 @@ export function rankCatalogCandidates(records, query = {}) {
   return records.map(record => {
     const dexMatch = queryDex !== null && record.pokemonDexIds?.includes(queryDex);
     const numberMatch = Boolean(queryNumber) && normalizeCollectorNumber(record.collectorNumber?.raw) === queryNumber;
-    const nameScore = queryName ? textSimilarity(queryName, record.cardIdentity?.name) : 0;
+    const cardNameScore = queryName ? textSimilarity(queryName, record.cardIdentity?.name) : 0;
+    const canonicalNameScore = queryName
+      ? Math.max(0, ...(record.pokemonNames ?? []).flatMap(names => [
+          textSimilarity(queryName, names.en),
+          textSimilarity(queryName, names.ja)
+        ]))
+      : 0;
+    const nameScore = Math.max(cardNameScore, canonicalNameScore);
+    const nameEvidence = canonicalNameScore > cardNameScore
+      ? "Canonieke Pokémonnaam komt overeen"
+      : "Kaartnaam komt overeen";
     const setScore = querySet && (
       normalizeCardText(record.set?.name).includes(querySet) ||
       normalizeCardText(record.set?.setId) === querySet
@@ -98,8 +108,8 @@ export function rankCatalogCandidates(records, query = {}) {
     const evidence = [];
     if (dexMatch) evidence.push("Pokédexnummer komt overeen");
     if (numberMatch) evidence.push("Kaartnummer komt overeen");
-    if (nameScore >= 0.8) evidence.push("Kaartnaam komt sterk overeen");
-    else if (nameScore >= 0.45) evidence.push("Kaartnaam komt gedeeltelijk overeen");
+    if (nameScore >= 0.8) evidence.push(nameEvidence + " (sterk)");
+    else if (nameScore >= 0.45) evidence.push(nameEvidence + " (gedeeltelijk)");
     if (setScore) evidence.push("Set komt overeen");
     return { record, score, evidence };
   }).filter(candidate => candidate.score > 0)
