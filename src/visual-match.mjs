@@ -79,7 +79,15 @@ function crop(source, bounds) {
 
 function hash(context) {
   const size = 32, low = 8;
-  const pixels = context.getImageData(0, 0, size, size).data;
+  let sourceContext = context;
+  let reduced = null;
+  if (context.canvas.width !== size || context.canvas.height !== size) {
+    reduced = document.createElement("canvas");
+    reduced.width = reduced.height = size;
+    sourceContext = reduced.getContext("2d", { willReadFrequently: true });
+    sourceContext.drawImage(context.canvas, 0, 0, size, size);
+  }
+  const pixels = sourceContext.getImageData(0, 0, size, size).data;
   const gray = new Float64Array(size * size);
   const horizontal = new Float64Array(size * size);
   const output = new Float64Array(low * low);
@@ -108,7 +116,9 @@ function hash(context) {
   const median = sorted[Math.floor(sorted.length / 2)];
   let bits = 0n;
   for (let i = 0; i < 64; i++) if (output[i + 1] > median) bits |= 1n << BigInt(i);
-  return bits.toString(16).padStart(16, "0");
+  const result = bits.toString(16).padStart(16, "0");
+  if (reduced) reduced.width = reduced.height = 0;
+  return result;
 }
 
 function histogram(context) {
