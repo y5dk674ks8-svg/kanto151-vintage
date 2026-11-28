@@ -4,7 +4,7 @@ const MAX_VINTAGE_SET_TOTAL = 250;
 
 export function parseCollectorNumber(ocrText) {
   const text = String(ocrText ?? "").replace(/[|Il]/g, "/");
-  const matches = [...text.matchAll(/(?:^|\D)(\d{1,3})\s*\/\s*(\d{1,3})(?:$|\D)/g)];
+  const matches = [...text.matchAll(/(?<!\d)(\d{1,3})\s*\/\s*(\d{1,3})(?!\d)/g)];
   const valid = matches.map(match => ({
     rawNumber: match[1],
     number: Number(match[1]),
