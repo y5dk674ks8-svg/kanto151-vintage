@@ -110,7 +110,13 @@
               { "type": "null" }
             ]
           },
-          "sourceDetailedVariants": { "type": ["array", "null"] },
+          "sourceDetailedVariants": {
+            "oneOf": [
+              { "type": "object" },
+              { "type": "array" },
+              { "type": "null" }
+            ]
+          },
           "verificationStatus": {
             "type": "string",
             "enum": ["source-confirmed", "manual-confirmed", "unverified", "unknown"]
