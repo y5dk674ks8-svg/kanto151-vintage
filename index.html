@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-52"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-53"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261128-47"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-52';
+const KANTO_BUILD='2026.11.28-53';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -359,14 +359,14 @@ async function scanPhoto(file){
     scanDiagAdd('Naam OCR samengevoegd','Eén uitsnede\\n'+(ocrText||'[leeg]'));
     const numberSource=numberCanvas||cardCanvas;
     const numberCrop=makeOcrRegion(numberSource,.86,.93,.94,.98,3);
-    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:'7'});
+    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:'10'});
     const x0=Math.floor(numberSource.width*.86),y0=Math.floor(numberSource.height*.93);
     const x1=Math.floor(numberSource.width*.94),y1=Math.floor(numberSource.height*.98);
     const overlay=document.createElement('canvas');overlay.width=numberSource.width;overlay.height=numberSource.height;
     overlay.getContext('2d').drawImage(numberSource,0,0);
     const oc=overlay.getContext('2d');oc.strokeStyle='#ff1744';oc.lineWidth=4;oc.strokeRect(x0,y0,x1-x0,y1-y0);
     scanDiagAdd('Kaartnummer zoekgebied','Rechtgezette nummerbron uit originele foto: '+numberSource.width+' × '+numberSource.height+' px\\nZoekvak: x='+x0+'–'+x1+' px · y='+y0+'–'+y1+' px\\nBreedte: '+(x1-x0)+' px · hoogte: '+(y1-y0)+' px\\nRood kader toont exact het OCR-gebied.',{image:diagnosticImage(overlay,900)});
-    scanDiagAdd('OCR-instellingen kaartnummer','Eén geïsoleerde cijferuitsnede · x=.86–.94, y=.93–.98 · 3× · PSM 7');
+    scanDiagAdd('OCR-instellingen kaartnummer','Eén geïsoleerde cijferuitsnede · x=.86–.94, y=.93–.98 · 3× · PSM 10');
     const numberResult=await recognizeRegion(worker,numberCrop,'Kaartnummer herkennen · footer',45000);
     const numberText=numberResult.data.text||'';
     const numberTexts=[numberText];
