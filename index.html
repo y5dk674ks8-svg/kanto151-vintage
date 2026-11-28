@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-28"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-30"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -66,10 +66,10 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
-<script src="./card-vision.js?v=20261127-16"></script>
+<script src="./card-vision.js?v=20261128-30"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-29';
+const KANTO_BUILD='2026.11.28-30';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -245,6 +245,12 @@ function retryScanMatch(){
 async function scanChooseCard(setId,cardId){show('catalog');await openSet(setId,'en');await chooseCard(cardId)}
 function scanTimeout(promise,ms,label){let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label)),ms)})]).finally(()=>clearTimeout(timer))}
 async function discardOcrWorker(){const w=offlineOcrWorker;offlineOcrWorker=null;if(w){try{await w.terminate()}catch(e){console.warn('OCR worker terminate:',e)}}}
+function diagnosticImage(source,maxEdge=900){
+ const scale=Math.min(1,maxEdge/Math.max(source.width,source.height));
+ const c=document.createElement('canvas');c.width=Math.max(1,Math.round(source.width*scale));c.height=Math.max(1,Math.round(source.height*scale));
+ c.getContext('2d').drawImage(source,0,0,c.width,c.height);
+ const url=c.toDataURL('image/jpeg',.55);c.width=0;c.height=0;return url;
+}
 function makeOcrRegion(source,x0,y0,x1,y1,upscale){
  const sx=Math.max(0,Math.floor(source.width*x0)),sy=Math.max(0,Math.floor(source.height*y0));
  const sw=Math.min(source.width-sx,Math.floor(source.width*(x1-x0))),sh=Math.min(source.height-sy,Math.floor(source.height*(y1-y0)));
@@ -269,7 +275,7 @@ function copyScanDiagnostics(){
 async function recognizeRegion(worker,canvas,label,timeout=45000){
  const status=document.getElementById('scanstatus');status.textContent=label+' OCR start ('+canvas.width+' × '+canvas.height+')…';
  const started=performance.now();
- scanDiagAdd('OCR invoer · '+label,'Naar Tesseract gestuurd. Afmetingen: '+canvas.width+' × '+canvas.height,{image:canvas.toDataURL('image/jpeg',.72)});
+ scanDiagAdd('OCR invoer · '+label,'Naar Tesseract gestuurd. Afmetingen: '+canvas.width+' × '+canvas.height,{image:diagnosticImage(canvas,900)});
  try{
   const result=await scanTimeout(worker.recognize(canvas),timeout,label+' duurde langer dan '+Math.round(timeout/1000)+' seconden.');
   const raw=result.data.text||'';
@@ -298,11 +304,12 @@ async function scanPhoto(file){
   else await new Promise((resolve,reject)=>{photo.onload=resolve;photo.onerror=()=>reject(Error('De gekozen foto kon niet worden geladen.'))});
   if(!photo.naturalWidth||!photo.naturalHeight)throw Error('De gekozen foto heeft geen geldige afmetingen.');
   const canvas=document.createElement('canvas');
-  canvas.width=photo.naturalWidth;canvas.height=photo.naturalHeight;
+  const processingScale=Math.min(1,1800/Math.max(photo.naturalWidth,photo.naturalHeight));
+  canvas.width=Math.max(1,Math.round(photo.naturalWidth*processingScale));canvas.height=Math.max(1,Math.round(photo.naturalHeight*processingScale));
   const photoContext=canvas.getContext('2d',{willReadFrequently:true});
   if(!photoContext)throw Error('De foto kan niet op het canvas worden voorbereid.');
   photoContext.drawImage(photo,0,0,canvas.width,canvas.height);
-  scanDiagAdd('Originele foto','Afmetingen: '+canvas.width+' × '+canvas.height,{image:canvas.toDataURL('image/jpeg',.72)});
+  scanDiagAdd('Originele foto','Origineel: '+photo.naturalWidth+' × '+photo.naturalHeight+' · verwerking: '+canvas.width+' × '+canvas.height,{image:diagnosticImage(canvas,1000)});
   document.getElementById('scanstatus').textContent='Foto geladen. OCR-worker initialiseren…';
   const worker=await scanTimeout(getOfflineOcrWorker(),60000,'OCR-worker start niet binnen 60 seconden.');
   let cardCanvas=canvas,cardDetected=false,detectionDebug=null;
@@ -311,17 +318,17 @@ async function scanPhoto(file){
     const detected=await scanTimeout(KantoCardVision.detect(canvas),45000,'Kaartdetectie duurde langer dan 45 seconden.');
     if(detected.found){
      cardCanvas=detected.canvas;cardDetected=true;
-     const debugCanvas=document.createElement('canvas');debugCanvas.width=canvas.width;debugCanvas.height=canvas.height;
-     const debugCtx=debugCanvas.getContext('2d');debugCtx.drawImage(canvas,0,0);
+     const debugCanvas=document.createElement('canvas');const debugScale=Math.min(1,1200/Math.max(canvas.width,canvas.height));debugCanvas.width=Math.round(canvas.width*debugScale);debugCanvas.height=Math.round(canvas.height*debugScale);
+     const debugCtx=debugCanvas.getContext('2d');debugCtx.drawImage(canvas,0,0,debugCanvas.width,debugCanvas.height);
      if(detected.points&&detected.points.length===4){
-      debugCtx.strokeStyle='#00e676';debugCtx.lineWidth=Math.max(4,canvas.width*.006);debugCtx.beginPath();
-      detected.points.forEach((p,i)=>{if(i===0)debugCtx.moveTo(p.x,p.y);else debugCtx.lineTo(p.x,p.y)});
+      debugCtx.strokeStyle='#00e676';debugCtx.lineWidth=Math.max(3,debugCanvas.width*.006);debugCtx.beginPath();
+      detected.points.forEach((p,i)=>{if(i===0)debugCtx.moveTo(p.x*debugScale,p.y*debugScale);else debugCtx.lineTo(p.x*debugScale,p.y*debugScale)});
       debugCtx.closePath();debugCtx.stroke();
-      detected.points.forEach((p,i)=>{debugCtx.fillStyle='#ff1744';debugCtx.beginPath();debugCtx.arc(p.x,p.y,Math.max(7,canvas.width*.012),0,Math.PI*2);debugCtx.fill();debugCtx.fillStyle='#fff';debugCtx.font='bold '+Math.max(18,canvas.width*.035)+'px sans-serif';debugCtx.fillText(String(i+1),p.x+8,p.y-8)});
+      detected.points.forEach((p,i)=>{debugCtx.fillStyle='#ff1744';debugCtx.beginPath();debugCtx.arc(p.x*debugScale,p.y*debugScale,Math.max(5,debugCanvas.width*.012),0,Math.PI*2);debugCtx.fill();debugCtx.fillStyle='#fff';debugCtx.font='bold '+Math.max(14,debugCanvas.width*.035)+'px sans-serif';debugCtx.fillText(String(i+1),p.x*debugScale+6,p.y*debugScale-6)});
      }
-     detectionDebug={image:debugCanvas.toDataURL('image/jpeg',.82),ratio:detected.ratio,rectangularity:detected.rectangularity,points:detected.points||[]};
+     detectionDebug={image:diagnosticImage(debugCanvas,1200),ratio:detected.ratio,rectangularity:detected.rectangularity,points:detected.points||[]};
      scanDiagAdd('Kaartdetectie','Ratio: '+detected.ratio+' · rechthoekigheid: '+detected.rectangularity+' · hoekpunten: '+JSON.stringify(detected.points||[]),{image:detectionDebug.image});
-     scanDiagAdd('Kaart rechtgezet','OCR-bron: '+cardCanvas.width+' × '+cardCanvas.height,{image:cardCanvas.toDataURL('image/jpeg',.82)});
+     scanDiagAdd('Kaart rechtgezet','OCR-bron: '+cardCanvas.width+' × '+cardCanvas.height,{image:diagnosticImage(cardCanvas,900)});
      document.getElementById('scanstatus').textContent='Kaartcontour gevonden. Hoekpunten controleren…';
     }
     else{document.getElementById('scanstatus').textContent='Kaartcontour niet zeker gevonden. Ruime foto-uitsneden als reserve gebruiken…'}
@@ -330,16 +337,19 @@ async function scanPhoto(file){
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
    const nameCrops=cardDetected
     ?[
-      // The title baseline on vintage cards starts above y=.095. The former crop began halfway through capital letters.
-      // This crop includes the complete Pokémon name line while excluding most of the Basic label and HP.
-      makeOcrRegion(cardCanvas,.075,.065,.67,.12,8),
-      // Wider top-header fallback, processed as a raw text line (PSM 13).
-      makeOcrRegion(cardCanvas,.04,.03,.85,.15,7),
-      makeOcrRegion(cardCanvas,.10,.045,.82,.18,8),
-      makeOcrRegion(cardCanvas,.07,.025,.92,.19,6),
-      makeOcrRegion(cardCanvas,.03,.015,.96,.22,5)
+      // Create one crop at a time: keeping every enlarged canvas alive can exhaust iPhone Safari memory.
+      ()=>makeOcrRegion(cardCanvas,.075,.065,.67,.12,7),
+      ()=>makeOcrRegion(cardCanvas,.04,.03,.85,.15,6),
+      ()=>makeOcrRegion(cardCanvas,.10,.045,.82,.18,6),
+      ()=>makeOcrRegion(cardCanvas,.07,.025,.92,.19,5),
+      ()=>makeOcrRegion(cardCanvas,.03,.015,.96,.22,4)
      ]
-    :[makeOcrRegion(canvas,.08,.06,.92,.22,6),makeOcrRegion(canvas,.10,.08,.90,.24,5),makeOcrRegion(canvas,.06,.04,.94,.28,4),makeOcrRegion(canvas,.06,.08,.94,.43,3)];
+    :[
+      ()=>makeOcrRegion(canvas,.08,.06,.92,.22,5),
+      ()=>makeOcrRegion(canvas,.10,.08,.90,.24,4),
+      ()=>makeOcrRegion(canvas,.06,.04,.94,.28,3),
+      ()=>makeOcrRegion(canvas,.06,.08,.94,.43,2)
+     ];
    const nameTexts=[];
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:'7',preserve_interword_spaces:'1'});
    scanDiagAdd('OCR-instellingen naam','Eerste uitsneden: alleen de Pokémonnaamregel, zonder Basic Pokémon-label of HP. PSM 7; brede reserve-uitsneden PSM 6.');
@@ -347,7 +357,7 @@ async function scanPhoto(file){
     const namePsm=cardDetected?(i===0?'7':i===1?'13':'6'):(i===0?'11':i===1?'6':'11');
     if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',tessedit_pageseg_mode:namePsm,preserve_interword_spaces:'1'});
     scanDiagAdd('Naamuitsnede-instelling','Uitsnede '+(i+1)+' · PSM '+namePsm);
-    const crop=nameCrops[i];
+    const crop=nameCrops[i]();
     const variants=[crop];
     if(cardDetected&&i<2){
      const enhanced=document.createElement('canvas');enhanced.width=crop.width;enhanced.height=crop.height;
@@ -359,22 +369,27 @@ async function scanPhoto(file){
      nameTexts.push(r.data.text||'');
      if(NAMES.some(n=>(r.data.text||'').toLowerCase().includes(n.toLowerCase())))break;
     }
+    if(variants.length>1){variants[1].width=0;variants[1].height=0}
+    crop.width=0;crop.height=0;
     if(NAMES.some(n=>nameTexts.some(t=>t.toLowerCase().includes(n.toLowerCase()))))break;
    }
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
    scanDiagAdd('Naam OCR samengevoegd','Aantal uitsneden: '+nameTexts.length+'\n'+(nameTexts.join(' | ')||'[leeg]'));
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberCrops=cardDetected
-    ?[makeOcrRegion(cardCanvas,.885,.955,.998,.990,16),makeOcrRegion(cardCanvas,.85,.945,.999,.997,12)]
+    // Previous x=.85/.885 crops clipped the first digit on common vintage footer layouts.
+    ?[makeOcrRegion(cardCanvas,.76,.94,.985,.99,10),makeOcrRegion(cardCanvas,.78,.93,.985,.99,10)]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    const numberTexts=[];
    scanDiagAdd('OCR-instellingen kaartnummer','Whitelist cijfers en slash · PSM 7 en 6 als tweede poging');
    for(let i=0;i<numberCrops.length;i++){
-    if(cardDetected&&worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:i===0?'7':'6'});
+    if(cardDetected&&worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'0123456789/',tessedit_pageseg_mode:i===0?'11':'6'});
     const r=await recognizeRegion(worker,numberCrops[i],'Kaartnummer herkennen · cijfermodus '+(i+1)+'/'+numberCrops.length,45000);
     numberTexts.push(r.data.text||'');
-    if(numberTexts[i].match(/\b\d{1,3}\s*[\/|]\s*\d{1,3}\b/))break;
+    const candidate=numberTexts[i].match(/\b(\d{1,3})\s*\/\s*(\d{1,3})\b/);
+    if(candidate&&Number(candidate[1])>0&&Number(candidate[1])<=250&&Number(candidate[2])>Number(candidate[1])&&Number(candidate[2])<=300)break;
    }
+   numberCrops.forEach(c=>{c.width=0;c.height=0});
    const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
    let number=null,totalNumber=null;
    const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|Il]\s*(\d{1,3})\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
