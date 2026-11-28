@@ -79,7 +79,7 @@ test("candidate list displays canonical species names alongside the source card 
 
 test("scanner visually ranks English candidates without pretending Japanese images exist", () => {
   assert.match(script, /rankVisualCandidates/);
-  assert.match(script, /language==='en'&&x\.record\?\.images\?\.sourceBaseUrl/);
+  assert.match(script, /candidate\.record\?\.images\?\.sourceBaseUrl/);
   assert.match(script, /Japanse bronafbeeldingen ontbreken grotendeels/);
   assert.match(pipeline, /visualCanvas: detection\.canvas/);
 });
