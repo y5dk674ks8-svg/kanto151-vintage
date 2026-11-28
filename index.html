@@ -255,7 +255,8 @@ function makeOcrRegion(source,x0,y0,x1,y1,upscale){
  const sx=Math.max(0,Math.floor(source.width*x0)),sy=Math.max(0,Math.floor(source.height*y0));
  const sw=Math.min(source.width-sx,Math.floor(source.width*(x1-x0))),sh=Math.min(source.height-sy,Math.floor(source.height*(y1-y0)));
  if(sw<20||sh<20)throw Error('Kaartuitsnede is te klein.');
- const c=document.createElement('canvas');c.width=sw*upscale;c.height=sh*upscale;
+ const effectiveScale=Math.min(upscale,3200/Math.max(sw,sh));
+ const c=document.createElement('canvas');c.width=Math.max(1,Math.round(sw*effectiveScale));c.height=Math.max(1,Math.round(sh*effectiveScale));
  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(source,sx,sy,sw,sh,0,0,c.width,c.height);
  return c;
 }
