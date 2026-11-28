@@ -2,7 +2,7 @@
 <html lang="nl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#172554"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-50"><title>Kanto 151 Vintage</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="kanto-build" content="2026.11.28-51"><title>Kanto 151 Vintage</title>
 <style>
 :root{--navy:#172554;--blue:#2454a6;--green:#16834a;--ink:#172033;--muted:#6b7280;--bg:#f3f6fb;--line:#e3e8f0}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:85px}
@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261128-47"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-50';
+const KANTO_BUILD='2026.11.28-51';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -393,12 +393,12 @@ async function scanPhoto(file){
    ocrText=nameTexts.join('\n--- tweede uitsnede ---\n');
    const numberSource=cardDetected?(numberCanvas||cardCanvas):canvas;
    const numberCrops=cardDetected
-    // Footer crop narrowed and shifted right/down: tests on IMG_0235 show the prior crop clipped the printed 63/64 line. The new crop isolates the complete number.
-    ?[makeOcrRegion(numberSource,.85,.925,.98,.975,8)]
+    // Footer crop refined against IMG_0235: x=.86–.995, y=.93–.98 isolates the printed 63/64 without the adjacent set text or rarity dot.
+    ?[makeOcrRegion(numberSource,.86,.93,.995,.98,8)]
     :[makeOcrRegion(canvas,.04,.70,.99,.99,2),makeOcrRegion(canvas,.34,.76,.99,.99,3)];
    if(cardDetected){
-    const x0=Math.floor(numberSource.width*.80),y0=Math.floor(numberSource.height*.915);
-    const x1=Math.floor(numberSource.width*.96),y1=Math.floor(numberSource.height*.965);
+    const x0=Math.floor(numberSource.width*.86),y0=Math.floor(numberSource.height*.93);
+    const x1=Math.floor(numberSource.width*.995),y1=Math.floor(numberSource.height*.98);
     const overlay=document.createElement('canvas');overlay.width=numberSource.width;overlay.height=numberSource.height;
     overlay.getContext('2d').drawImage(numberSource,0,0);
     const oc=overlay.getContext('2d');oc.strokeStyle='#ff1744';oc.lineWidth=4;oc.strokeRect(x0,y0,x1-x0,y1-y0);
@@ -406,7 +406,7 @@ async function scanPhoto(file){
    }
    const numberTexts=[];
    const numberTextsByCrop=[];
-   scanDiagAdd('OCR-instellingen kaartnummer','Footeruitsnede omvat nu de volledige cijferregel · PSM 7, 10, 6 en 8');
+   scanDiagAdd('OCR-instellingen kaartnummer','Footeruitsnede x=.86–.995, y=.93–.98 · PSM 7, 10, 6 en 8');
    for(let i=0;i<numberCrops.length;i++){
     const crop=numberCrops[i];
     const cropTexts=[];
