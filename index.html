@@ -66,7 +66,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 </section>
 </main>
 <nav class="bottom"><button id="nav-home" class="active" onclick="show('home')">⌂<br>Overzicht</button><button id="nav-collection" onclick="show('collection')">▦<br>Pokédex</button><button id="nav-scanner" onclick="show('scanner')">◎<br>Scannen</button><button id="nav-inventory" onclick="show('inventory')">▤<br>Mijn kaarten</button><button id="nav-settings" onclick="show('settings')">⚙<br>Meer</button></nav>
-<script src="./card-vision.js?v=20261128-56"></script>
+<script src="./card-vision.js?v=20261128-57"></script>
 <script>
 // KANTO_BUILD_20261127_11
 const KANTO_BUILD='2026.11.28-56';
@@ -330,7 +330,7 @@ async function scanPhoto(file){
       detected.points.forEach((p,i)=>{debugCtx.fillStyle='#ff1744';debugCtx.beginPath();debugCtx.arc(p.x*debugScale,p.y*debugScale,Math.max(5,debugCanvas.width*.012),0,Math.PI*2);debugCtx.fill();debugCtx.fillStyle='#fff';debugCtx.font='bold '+Math.max(14,debugCanvas.width*.035)+'px sans-serif';debugCtx.fillText(String(i+1),p.x*debugScale+6,p.y*debugScale-6)});
      }
      detectionDebug={image:diagnosticImage(debugCanvas,1200),ratio:detected.ratio,rectangularity:detected.rectangularity,points:detected.points||[]};
-     scanDiagAdd('Kaartdetectie','Ratio: '+detected.ratio+' · rechthoekigheid: '+detected.rectangularity+' · hoekpunten: '+JSON.stringify(detected.points||[]),{image:detectionDebug.image});
+     scanDiagAdd('Kaartdetectie','Methode: '+(detected.method||'onbekend')+' · ratio: '+detected.ratio+' · rechthoekigheid: '+detected.rectangularity+' · hoekpunten: '+JSON.stringify(detected.points||[]),{image:detectionDebug.image});
      scanDiagAdd('Kaart rechtgezet','OCR-bron: '+cardCanvas.width+' × '+cardCanvas.height,{image:diagnosticImage(cardCanvas,900)});
      document.getElementById('scanstatus').textContent='Kaartcontour gevonden. Hoekpunten controleren…';
     }
