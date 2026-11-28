@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T15:09:51.827Z",
+  "retrievedAt": "2026-11-28T15:10:57.216Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -804,9 +804,10 @@
     151
   ],
   "missingKantoDexIds": [],
-  "gapCount": 793,
+  "gapCount": 1071,
   "gapTypes": {
-    "missing-image": 793
+    "missing-image": 793,
+    "card-name-does-not-contain-canonical-pokemon-name": 278
   },
   "externalJapaneseSetReference": {
     "sources": [
@@ -957,6 +958,7 @@
     "recordsWithNoKantoDexId": 0,
     "recordsWithNoPrintingEntry": 0,
     "recordsWithNoPokemonNameAlias": 0,
+    "japanesePokemonNameAliasGapCount": 278,
     "japanesePokemonNamesWithoutCanonicalSpeciesMatch": [
       "ja:PMCG1-019",
       "ja:PMCG3-014",
