@@ -262,7 +262,38 @@ coverage.gapTypes = gaps.reduce((counts, gap) => {
   return counts;
 }, {});
 
-await fs.writeFile(path.join(OUT, "cards.json"), JSON.stringify(normalized, null, 2));
+const setGroups = new Map();
+for (const card of normalized) {
+  const key = `${card.language}/${safeId(card.set.setId)}`;
+  if (!setGroups.has(key)) setGroups.set(key, []);
+  setGroups.get(key).push(card);
+}
+const catalogIndex = {
+  generatedAt: retrievedAt,
+  schema: "../card-record.schema.json",
+  languages: {}
+};
+for (const language of LANGUAGES) {
+  catalogIndex.languages[language] = [];
+  const prefix = path.join(OUT, "cards", language);
+  await fs.mkdir(prefix, { recursive: true });
+}
+for (const [key, records] of setGroups) {
+  const [language, setId] = key.split("/");
+  const relativePath = `cards/${language}/${setId}.json`;
+  await fs.writeFile(path.join(OUT, relativePath), JSON.stringify(records));
+  catalogIndex.languages[language].push({
+    setId: records[0].set.setId,
+    setName: records[0].set.name,
+    releaseDate: records[0].set.releaseDate,
+    recordCount: records.length,
+    path: relativePath
+  });
+}
+for (const language of LANGUAGES) {
+  catalogIndex.languages[language].sort((a, b) => String(a.releaseDate).localeCompare(String(b.releaseDate)));
+}
+await fs.writeFile(path.join(OUT, "index.json"), JSON.stringify(catalogIndex, null, 2));
 await fs.writeFile(path.join(OUT, "audit", "coverage.json"), JSON.stringify(coverage, null, 2));
 const columns = ["language", "type", "setId", "setName", "cardId", "cardName", "detail"];
 const csv = [columns.join(","), ...gaps.map(g => columns.map(key => csvCell(g[key] ?? "")).join(","))].join("\n");
