@@ -280,8 +280,8 @@ async function scanPhoto(file){
    // Reset the numeric-only whitelist from the previous scan before reading the Pokémon name.
    if(worker.setParameters)await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -',tessedit_pageseg_mode:'6'});
    const nameCrops=cardDetected
-    ?[makeOcrRegion(cardCanvas,.16,.035,.74,.13,8),makeOcrRegion(cardCanvas,.10,.035,.90,.15,6)]
-    :[makeOcrRegion(canvas,.08,.10,.92,.40,2)];
+    ?[makeOcrRegion(cardCanvas,.07,.025,.92,.19,7),makeOcrRegion(cardCanvas,.09,.035,.82,.17,9),makeOcrRegion(cardCanvas,.03,.015,.96,.22,5)]
+    :[makeOcrRegion(canvas,.06,.08,.94,.43,3),makeOcrRegion(canvas,.04,.05,.96,.48,2)];
    const nameTexts=[];
    for(let i=0;i<nameCrops.length;i++){
     const r=await recognizeRegion(worker,nameCrops[i],'Pokémonnaam herkennen · uitsnede '+(i+1)+'/'+nameCrops.length,45000);
@@ -301,8 +301,15 @@ async function scanPhoto(file){
    }
    const numberText=numberTexts.join('\n--- tweede uitsnede ---\n');
    let number=null,totalNumber=null;
-   const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|]\s*(\d{1,3})\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
-   if(pairs.length){const unique=[...new Map(pairs.map(x=>[x.num+'/'+x.total,x])).values()];if(unique.length===1){number=String(unique[0].num);totalNumber=String(unique[0].total)}}
+   const pairs=[...numberText.matchAll(/\b(\d{1,3})\s*[\/|Il]\s*(\d{1,3})\b/g)].map(m=>({num:Number(m[1]),total:Number(m[2])})).filter(x=>x.num>0&&x.num<=250&&x.total>x.num&&x.total<=300);
+   const digits=(numberText.match(/\d/g)||[]).join('');
+   const splitCandidates=[];
+   const addSplits=raw=>{for(let i=1;i<raw.length;i++){const num=Number(raw.slice(0,i)),total=Number(raw.slice(i));if(num>0&&num<=250&&total>num&&total<=300)splitCandidates.push({num,total})}};
+   addSplits(digits);
+   // Tesseract sometimes reads the printed slash as the digit "1" (67/130 -> 671130).
+   for(let i=0;i<digits.length;i++)if(digits[i]==='1')addSplits(digits.slice(0,i)+digits.slice(i+1));
+   const unique=[...new Map([...pairs,...splitCandidates].map(x=>[x.num+'/'+x.total,x])).values()];
+   if(unique.length===1){number=String(unique[0].num);totalNumber=String(unique[0].total)}
    scanNumberGuess=number;scanTotalGuess=totalNumber;
    const low=ocrText.toLowerCase();
    // Ignore a Pokémon mentioned only as the evolution source, e.g. "Evolves from Charmeleon".
@@ -310,12 +317,31 @@ async function scanPhoto(file){
    NAMES.forEach(n=>{
     withoutEvolutionSource=withoutEvolutionSource.split('evolves from '+n.toLowerCase()).join('evolves from');
    });
-   const hits=NAMES.map((n,i)=>({n,i,pos:withoutEvolutionSource.indexOf(n.toLowerCase())}))
+   const exactHits=NAMES.map((n,i)=>({n,i,pos:withoutEvolutionSource.indexOf(n.toLowerCase())}))
     .filter(x=>x.pos>=0).sort((a,b)=>a.pos-b.pos);
-   scanDexGuess=hits.length?hits[0].i+1:null;
+   function editDistance(a,b){
+    const row=Array.from({length:b.length+1},(_,i)=>i);
+    for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const old=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=old}}
+    return row[b.length];
+   }
+   let fuzzyHits=[];
+   if(!exactHits.length){
+    const tokens=withoutEvolutionSource.replace(/[^a-z]+/g,' ').split(/\s+/).filter(t=>t.length>=5);
+    NAMES.forEach((name,i)=>{
+     const target=name.toLowerCase();
+     for(const token of tokens){
+      const distance=editDistance(token,target),limit=Math.max(1,Math.floor(target.length*.23));
+      if(distance<=limit)fuzzyHits.push({i,distance,ratio:distance/target.length,token});
+     }
+    });
+    fuzzyHits.sort((a,b)=>a.distance-b.distance||a.ratio-b.ratio);
+   }
+   const bestFuzzy=fuzzyHits[0],secondFuzzy=fuzzyHits.find(x=>x.i!==bestFuzzy?.i);
+   scanDexGuess=exactHits.length?exactHits[0].i+1:
+    (bestFuzzy&&(!secondFuzzy||secondFuzzy.distance>bestFuzzy.distance)?bestFuzzy.i+1:null);
    const normalizedPreview=cardDetected?'<div class="panel"><b>Gevonden kaarthoeken</b><p class="muted">Groene lijn = gekozen contour. Rode punten = hoekvolgorde. Verhouding: '+Number(detectionDebug?.ratio||0).toFixed(3)+' · rechthoekigheid: '+Number(detectionDebug?.rectangularity||0).toFixed(2)+'</p><img alt="Gevonden kaarthoeken op de originele foto" src="'+detectionDebug.image+'" style="display:block;width:100%;height:auto;border-radius:10px;margin:8px auto"><b>Kaart rechtgezet</b><img alt="Automatisch rechtgezette Pokémonkaart" src="'+cardCanvas.toDataURL('image/jpeg',.88)+'" style="display:block;width:100%;max-width:420px;height:auto;border-radius:10px;margin:8px auto"></div>':'';
    document.getElementById('scanresult').innerHTML=normalizedPreview+'<div class="panel"><b>Uitgelezen gegevens</b><p class="muted" style="white-space:pre-wrap">Naamgebied: '+esc(ocrText.slice(0,180))+'\nNummergebied: '+esc(numberText.slice(0,100))+'</p><label>Herkenning Pokémon</label><select id="scandex"><option value="" '+(scanDexGuess===null?'selected':'')+'>Niet automatisch herkend — kies Pokémon</option>'+NAMES.map((n,i)=>'<option value="'+(i+1)+'" '+(scanDexGuess===i+1?'selected':'')+'>#'+String(i+1).padStart(3,'0')+' '+n+'</option>').join('')+'</select><label>Volledig kaartnummer</label><input id="scannumber" type="text" inputmode="text" value="'+esc(scanNumberGuess?(scanNumberGuess+(scanTotalGuess?'/'+scanTotalGuess:'')):'')+'" placeholder="Bijvoorbeeld 4/102"><p class="muted">Kaart automatisch gevonden: '+(cardDetected?'ja':'nee; ruime foto-uitsnede als reserve')+'. Controleer de herkenning voordat je zoekt.</p><button class="btn green" onclick="runFreeMatch()">Zoek kaart en set</button></div>';
-   scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Naam herkend. Het kaartnummer kon niet automatisch worden gelezen; vul alleen het getal vóór de slash in.';
+   scanNumberGuess?'Naam en kaartnummer uitgelezen. Controleer en zoek de kaart.':'Pokémonnaam of kaartnummer niet volledig herkend. Controleer beide velden handmatig.';
  }catch(e){document.getElementById('scanstatus').textContent='OCR kon niet worden gestart: '+e.message;document.getElementById('scanresult').innerHTML='<button class="btn" onclick="show(\'catalog\')">Open catalogus</button>';if(/duurde langer dan/.test(e.message))await discardOcrWorker()}
 }
 function setManualDex(n){document.getElementById('scandex').value=n}
