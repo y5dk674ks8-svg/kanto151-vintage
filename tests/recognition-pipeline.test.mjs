@@ -8,6 +8,15 @@ test("parses ordinary vintage collector numbers", () => {
   });
 });
 
+test("accepts collector-number totals from Japanese and English vintage sets", () => {
+  assert.deepEqual(parseCollectorNumber("12/48"), {
+    number: "12", total: "48", repaired: false
+  });
+  assert.deepEqual(parseCollectorNumber("24/96"), {
+    number: "24", total: "96", repaired: false
+  });
+});
+
 test("repairs only an impossible prefixed OCR numerator", () => {
   assert.deepEqual(parseCollectorNumber("563/64"), {
     number: "63", total: "64", repaired: true
