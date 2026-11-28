@@ -54,3 +54,25 @@ GitHub Actions run: [#46158644732](https://github.com/y5dk674ks8-svg/kanto151-vi
 - The supplementary promo/deck reference contains 12 entries: 6 overlap with the 27 core groups and 6 are distinct additional groups.
 
 This is a successful **seed-catalog and scanner-pipeline milestone**, not a complete vintage catalog or a validated printing census. The largest remaining blockers are Japanese promo/deck coverage, image rights and image availability, and real-device accuracy testing.
+## Latest verified seed-catalog snapshot — 2026-11-28
+
+GitHub Actions audit run: [#46158593772](https://github.com/y5dk674ks8-svg/kanto151-vintage/actions/runs/46158593772) — successful. The next scanner integration run also passed all unit and app-shell tests before its audit step.
+
+- 1,668 TCGdex Kanto card records: 882 English and 786 Japanese.
+- All 151 Kanto Pokédex IDs are represented in both languages.
+- 3,072 normalized source-variant entries after removing 38 exact duplicate source entries.
+- No duplicate card-record IDs or duplicate printing IDs.
+- Zero first-edition stamp mismatches, Unlimited misclassifications or No Rarity misclassifications.
+- 793 records have no TCGdex image URL: 7 English and 786 Japanese.
+- The Japanese discovery manifest has 27 core vintage set groups and 12 supplementary deck/promo source entries. Six supplementary entries overlap core groups; six are additional distinct discovery groups.
+- TCGdex currently represents 17 of the 27 core Japanese groups. Ten are absent from its current date-scope audit.
+- Five matched Japanese groups have source-count differences that need checklist-level reconciliation.
+- 278 Japanese source card-name fields do not contain the canonical species name. Every record still has a canonical species alias; both source card names and species aliases are used for candidate ranking.
+
+This is a successful **seed-catalog audit**, not a complete vintage checklist or validated printing census. Japanese promos, vending, decks, premium files, image permissions and card-specific Japanese spelling differences remain open work.
+
+## Scanner implementation
+
+The rebuild now uses local OpenCV and Tesseract assets. User photos are processed in the browser; the scanner does not upload them. The first scan downloads and caches the catalog chunks, OCR runtime/models and derived English reference-image features. Japanese reference images remain a known limitation.
+
+Visual and text scores are ranking signals, not probabilities. The scanner always asks the user to inspect and choose a candidate; automatic confirmation remains disabled.
