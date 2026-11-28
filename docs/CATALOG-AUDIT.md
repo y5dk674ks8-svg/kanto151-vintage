@@ -50,7 +50,7 @@ A missing TCGdex image URL does not prove that no image exists elsewhere. Japane
 
 ## Japanese name-data quality
 
-A spot check found Japanese TCGdex card-name fields that do not contain the canonical species name associated with the source dex ID. For example, the current `ja:neo1-001` seed record is named `奇妙な`, while dex ID 43 is Gloom / `クサイハナ`. This is treated as a source-name quality gap, not silently corrected. The scanner therefore ranks against both the original card name and the canonical species aliases.
+A spot check found Japanese TCGdex card-name fields that do not contain the canonical species name associated with the source dex ID. For example, the current `ja:neo1-001` seed record is named `奇妙な`, while dex ID 43 is Oddish / `ナゾノクサ`. This is treated as a source-name quality gap, not silently corrected. The scanner therefore ranks against both the original card name and the canonical species aliases.
 
 ## Variant handling
 
