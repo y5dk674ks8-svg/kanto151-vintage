@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T15:28:32.124Z",
+  "retrievedAt": "2026-11-28T15:30:06.951Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -657,8 +657,8 @@
     "TCGdex card-level variant fields do not guarantee complete historical printing coverage.",
     "A missing image or variant is recorded as a gap; it is not inferred."
   ],
-  "totalNormalizedRecords": 1668,
-  "totalSourceVariantEntries": 3072,
+  "totalNormalizedRecords": 1768,
+  "totalSourceVariantEntries": 3172,
   "uniqueKantoDexIds": [
     1,
     2,
@@ -1035,6 +1035,7 @@
       "status": "secondary-seed-unverified"
     }
   ],
+  "sourceFetchWarningCount": 0,
   "validation": {
     "recordCount": 1768,
     "duplicateSourceVariantEntriesRemoved": 38,
