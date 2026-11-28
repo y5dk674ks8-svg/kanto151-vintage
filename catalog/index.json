@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-28T15:27:00.378Z",
+  "generatedAt": "2026-11-28T15:28:32.124Z",
   "schema": "../card-record.schema.json",
   "languages": {
     "en": [
@@ -70,7 +70,7 @@
         "setId": "neo1",
         "setName": "Neo Genesis",
         "releaseDate": "2000-12-16",
-        "recordCount": 9,
+        "recordCount": 10,
         "path": "cards/en/neo1.json"
       },
       {
