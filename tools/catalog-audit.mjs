@@ -111,7 +111,7 @@ for (const language of LANGUAGES) {
       try {
         return await requestJson(`${BASE}/${language}/cards/${encodeURIComponent(brief.id)}`);
       } catch (error) {
-        gaps.push({ language, type: "card-fetch-failed", setId: set.id, cardId: brief.id, detail: String(error) });
+        sourceFetchWarnings.push({ language, type: "card-fetch-failed", setId: set.id, cardId: brief.id, detail: String(error) });
         return null;
       }
     });
@@ -262,7 +262,7 @@ normalized.sort((a, b) =>
   a.language.localeCompare(b.language) ||
   String(a.set.releaseDate).localeCompare(String(b.set.releaseDate)) ||
   a.set.setId.localeCompare(b.set.setId) ||
-  a.collectorNumber.raw.localeCompare(b.collectorNumber.raw, undefined, { numeric: true })
+  String(a.collectorNumber?.raw ?? "").localeCompare(String(b.collectorNumber?.raw ?? ""), undefined, { numeric: true })
 );
 
 coverage.totalNormalizedRecords = normalized.length;
@@ -347,6 +347,15 @@ coverage.externalJapaneseSetReference.remainingUnseededGroups = referenceMissing
   .filter(set => !vendingGroupNames.has(set.englishName))
   .map(set => ({ name: set.englishName, japaneseName: set.japaneseName }));
 
+normalized.sort((a, b) =>
+  a.language.localeCompare(b.language) ||
+  String(a.set.releaseDate).localeCompare(String(b.set.releaseDate)) ||
+  a.set.setId.localeCompare(b.set.setId) ||
+  String(a.collectorNumber?.raw ?? "").localeCompare(String(b.collectorNumber?.raw ?? ""), undefined, { numeric: true })
+);
+coverage.totalNormalizedRecords = normalized.length;
+coverage.totalSourceVariantEntries = normalized.reduce((sum, card) => sum + card.printings.length, 0);
+coverage.sourceFetchWarningCount = sourceFetchWarnings.length;
 const recordIds = normalized.map(card => card.recordId);
 const duplicatePrintingIds = normalized.flatMap(card => {
   const ids = card.printings.map(printing => printing.printingId);
