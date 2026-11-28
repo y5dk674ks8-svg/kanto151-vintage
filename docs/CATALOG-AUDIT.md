@@ -113,6 +113,6 @@ TCGdex assigns `1996-01-01` to the generic English `Miscellaneous Promos` bucket
 
 ## Completion rule
 
-The API audit is not complete merely because it returned successfully. It is complete only when the inventory is reproducible, omissions and source disagreements are explicit, variant claims are tested against per-variant evidence, and the image source and reuse rights are documented. Failed detail requests for sets whose scope cannot be established are kept in `coverage.sourceFetchWarnings`, not counted as vintage card-coverage gaps. This prevents transient API failures for modern sets from inflating the historical catalog gap count.
+The API audit is not complete merely because it returned successfully. It is complete only when the inventory is reproducible, omissions and source disagreements are explicit, variant claims are tested against per-variant evidence, and the image source and reuse rights are documented. Transient TCGdex set/card detail failures fall back to the last successful raw snapshot when one exists. Fallbacks and unresolved fetch failures are recorded in `coverage.sourceFetchWarnings`, not counted as missing vintage cards. This keeps the audit reproducible during API throttling without silently inventing records.
 
 The full historical catalog is not yet complete.
