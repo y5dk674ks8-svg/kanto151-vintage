@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-28T15:30:36.058Z",
+  "generatedAt": "2026-11-28T15:38:20.552Z",
   "schema": "../card-record.schema.json",
   "languages": {
     "en": [
@@ -7,6 +7,8 @@
         "setId": "miscp",
         "setName": "Miscellaneous Promos",
         "releaseDate": "1996-01-01",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 1,
         "path": "cards/en/miscp.json"
       },
@@ -14,6 +16,8 @@
         "setId": "base1",
         "setName": "Base Set",
         "releaseDate": "1999-01-09",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 69,
         "path": "cards/en/base1.json"
       },
@@ -21,6 +25,8 @@
         "setId": "base2",
         "setName": "Jungle",
         "releaseDate": "1999-06-16",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 63,
         "path": "cards/en/base2.json"
       },
@@ -28,6 +34,8 @@
         "setId": "basep",
         "setName": "Wizards Black Star Promos",
         "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 35,
         "path": "cards/en/basep.json"
       },
@@ -35,6 +43,8 @@
         "setId": "base3",
         "setName": "Fossil",
         "releaseDate": "1999-10-10",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 57,
         "path": "cards/en/base3.json"
       },
@@ -42,6 +52,8 @@
         "setId": "base4",
         "setName": "Base Set 2",
         "releaseDate": "2000-02-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 100,
         "path": "cards/en/base4.json"
       },
@@ -49,6 +61,8 @@
         "setId": "base5",
         "setName": "Team Rocket",
         "releaseDate": "2000-04-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 68,
         "path": "cards/en/base5.json"
       },
@@ -56,6 +70,8 @@
         "setId": "gym1",
         "setName": "Gym Heroes",
         "releaseDate": "2000-08-14",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 91,
         "path": "cards/en/gym1.json"
       },
@@ -63,6 +79,8 @@
         "setId": "gym2",
         "setName": "Gym Challenge",
         "releaseDate": "2000-10-16",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 95,
         "path": "cards/en/gym2.json"
       },
@@ -70,6 +88,8 @@
         "setId": "neo1",
         "setName": "Neo Genesis",
         "releaseDate": "2000-12-16",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 10,
         "path": "cards/en/neo1.json"
       },
@@ -77,6 +97,8 @@
         "setId": "neo2",
         "setName": "Neo Discovery",
         "releaseDate": "2001-06-01",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 19,
         "path": "cards/en/neo2.json"
       },
@@ -84,6 +106,8 @@
         "setId": "si1",
         "setName": "Southern Islands",
         "releaseDate": "2001-07-31",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 14,
         "path": "cards/en/si1.json"
       },
@@ -91,6 +115,8 @@
         "setId": "neo3",
         "setName": "Neo Revelation",
         "releaseDate": "2001-09-21",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 17,
         "path": "cards/en/neo3.json"
       },
@@ -98,6 +124,8 @@
         "setId": "neo4",
         "setName": "Neo Destiny",
         "releaseDate": "2002-02-28",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 39,
         "path": "cards/en/neo4.json"
       },
@@ -105,6 +133,8 @@
         "setId": "lc",
         "setName": "Legendary Collection",
         "releaseDate": "2002-05-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 99,
         "path": "cards/en/lc.json"
       },
@@ -112,6 +142,8 @@
         "setId": "ecard1",
         "setName": "Expedition Base Set",
         "releaseDate": "2002-09-15",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 99,
         "path": "cards/en/ecard1.json"
       },
@@ -119,6 +151,8 @@
         "setId": "bog",
         "setName": "Best of game",
         "releaseDate": "2002-12-01",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 6,
         "path": "cards/en/bog.json"
       }
@@ -128,6 +162,8 @@
         "setId": "PMCG1",
         "setName": "拡張パック",
         "releaseDate": "1996-10-20",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 70,
         "path": "cards/ja/PMCG1.json"
       },
@@ -135,6 +171,8 @@
         "setId": "PMCG2",
         "setName": "ポケモンジャングル",
         "releaseDate": "1997-03-05",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 47,
         "path": "cards/ja/PMCG2.json"
       },
@@ -142,6 +180,8 @@
         "setId": "PMCG3",
         "setName": "化石の秘密",
         "releaseDate": "1997-06-21",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 43,
         "path": "cards/ja/PMCG3.json"
       },
@@ -149,13 +189,26 @@
         "setId": "PMCG4",
         "setName": "ロケット団",
         "releaseDate": "1997-11-21",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 53,
         "path": "cards/ja/PMCG4.json"
+      },
+      {
+        "setId": "unnumbered-promos-1998",
+        "setName": "Unnumbered Promos (1998)",
+        "releaseDate": "1998-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1998; exact day not established.",
+        "recordCount": 1,
+        "path": "cards/ja/unnumbered-promos-1998.json"
       },
       {
         "setId": "vending1",
         "setName": "Vending Series 1",
         "releaseDate": "1998-03-23",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 34,
         "path": "cards/ja/vending1.json"
       },
@@ -163,6 +216,8 @@
         "setId": "vending2",
         "setName": "Vending Series 2",
         "releaseDate": "1998-06-17",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 32,
         "path": "cards/ja/vending2.json"
       },
@@ -170,6 +225,8 @@
         "setId": "PMCG5",
         "setName": "リーダーズスタジアム",
         "releaseDate": "1998-10-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 66,
         "path": "cards/ja/PMCG5.json"
       },
@@ -177,20 +234,53 @@
         "setId": "vending3",
         "setName": "Vending Series 3",
         "releaseDate": "1998-11-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 34,
         "path": "cards/ja/vending3.json"
+      },
+      {
+        "setId": "cd-promo-1999",
+        "setName": "CD Promo (1999)",
+        "releaseDate": "1999-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 1999; exact day not established.",
+        "recordCount": 9,
+        "path": "cards/ja/cd-promo-1999.json"
       },
       {
         "setId": "PMCG6",
         "setName": "闇からの挑戦",
         "releaseDate": "1999-06-25",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 75,
         "path": "cards/ja/PMCG6.json"
+      },
+      {
+        "setId": "southern-islands",
+        "setName": "Southern Islands",
+        "releaseDate": "1999-07-01",
+        "releaseDatePrecision": "month",
+        "releaseDateNote": "Source gives July 1999; day not established.",
+        "recordCount": 14,
+        "path": "cards/ja/southern-islands.json"
+      },
+      {
+        "setId": "neo-premium-file-2",
+        "setName": "Neo Premium File 2",
+        "releaseDate": "2000-01-01",
+        "releaseDatePrecision": "year",
+        "releaseDateNote": "Source gives year 2000; exact day not established.",
+        "recordCount": 2,
+        "path": "cards/ja/neo-premium-file-2.json"
       },
       {
         "setId": "neo1",
         "setName": "金、銀、新世界へ...",
         "releaseDate": "2000-02-04",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 10,
         "path": "cards/ja/neo1.json"
       },
@@ -198,6 +288,8 @@
         "setId": "neo2",
         "setName": "遺跡をこえて...",
         "releaseDate": "2000-07-07",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 17,
         "path": "cards/ja/neo2.json"
       },
@@ -205,6 +297,8 @@
         "setId": "neo3",
         "setName": "めざめる伝説",
         "releaseDate": "2000-11-23",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 17,
         "path": "cards/ja/neo3.json"
       },
@@ -212,6 +306,8 @@
         "setId": "neo4",
         "setName": "闇、そして光へ...",
         "releaseDate": "2001-04-20",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 39,
         "path": "cards/ja/neo4.json"
       },
@@ -219,6 +315,8 @@
         "setId": "VS1",
         "setName": "ポケモンカード★VS",
         "releaseDate": "2001-07-19",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 52,
         "path": "cards/ja/VS1.json"
       },
@@ -226,6 +324,8 @@
         "setId": "web1",
         "setName": "ポケモンカード★web",
         "releaseDate": "2001-10-20",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 40,
         "path": "cards/ja/web1.json"
       },
@@ -233,6 +333,8 @@
         "setId": "E1",
         "setName": "基本拡張パック",
         "releaseDate": "2001-12-01",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 87,
         "path": "cards/ja/E1.json"
       },
@@ -240,6 +342,8 @@
         "setId": "E2",
         "setName": "地図にない町",
         "releaseDate": "2002-03-08",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 36,
         "path": "cards/ja/E2.json"
       },
@@ -247,6 +351,8 @@
         "setId": "E3",
         "setName": "海からの風",
         "releaseDate": "2002-05-24",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 41,
         "path": "cards/ja/E3.json"
       },
@@ -254,6 +360,8 @@
         "setId": "E4",
         "setName": "裂けた大地",
         "releaseDate": "2002-08-23",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 44,
         "path": "cards/ja/E4.json"
       },
@@ -261,6 +369,8 @@
         "setId": "E5",
         "setName": "神秘なる山",
         "releaseDate": "2002-10-04",
+        "releaseDatePrecision": "day",
+        "releaseDateNote": null,
         "recordCount": 49,
         "path": "cards/ja/E5.json"
       }
