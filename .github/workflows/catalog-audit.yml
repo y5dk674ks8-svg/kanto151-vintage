@@ -8,6 +8,7 @@ on:
       - "tools/catalog-audit.mjs"
       - "src/catalog-loader.mjs"
       - "tests/catalog-loader.test.mjs"
+      - "tests/catalog-data.test.mjs"
       - ".github/workflows/catalog-audit.yml"
 
 concurrency:
