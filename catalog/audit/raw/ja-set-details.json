@@ -27941,94 +27941,10 @@
       "name": "剣と盾"
     }
   },
-  {
-    "cardCount": {
-      "firstEd": 0,
-      "holo": 0,
-      "normal": 0,
-      "official": 101,
-      "reverse": 0,
-      "total": 101
-    },
-    "cards": [],
-    "id": "CS4a",
-    "legal": {
-      "expanded": false,
-      "standard": false
-    },
-    "name": "トリプレットビート",
-    "releaseDate": "2024-04-26",
-    "serie": {
-      "id": "S",
-      "name": "剣と盾"
-    }
-  },
-  {
-    "cardCount": {
-      "firstEd": 0,
-      "holo": 0,
-      "normal": 0,
-      "official": 101,
-      "reverse": 0,
-      "total": 101
-    },
-    "cards": [],
-    "id": "CS2.5",
-    "legal": {
-      "expanded": false,
-      "standard": false
-    },
-    "name": "トリプレットビート",
-    "releaseDate": "2024-04-26",
-    "serie": {
-      "id": "S",
-      "name": "剣と盾"
-    }
-  },
-  {
-    "cardCount": {
-      "firstEd": 0,
-      "holo": 0,
-      "normal": 0,
-      "official": 101,
-      "reverse": 0,
-      "total": 101
-    },
-    "cards": [],
-    "id": "CS3D",
-    "legal": {
-      "expanded": false,
-      "standard": false
-    },
-    "name": "トリプレットビート",
-    "releaseDate": "2024-04-26",
-    "serie": {
-      "id": "S",
-      "name": "剣と盾"
-    }
-  },
-  {
-    "cardCount": {
-      "firstEd": 0,
-      "holo": 0,
-      "normal": 0,
-      "official": 101,
-      "reverse": 0,
-      "total": 101
-    },
-    "cards": [],
-    "id": "CS1a",
-    "legal": {
-      "expanded": false,
-      "standard": false
-    },
-    "name": "トリプレットビート",
-    "releaseDate": "2024-04-26",
-    "serie": {
-      "id": "S",
-      "name": "剣と盾"
-    }
-  },
+  null,
+  null,
+  null,
+  null,
   {
     "cardCount": {
       "firstEd": 0,

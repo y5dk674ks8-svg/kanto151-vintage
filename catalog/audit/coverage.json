@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T15:19:27.800Z",
+  "retrievedAt": "2026-11-28T15:21:05.878Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -804,9 +804,10 @@
     151
   ],
   "missingKantoDexIds": [],
-  "gapCount": 1071,
+  "gapCount": 1075,
   "gapTypes": {
     "missing-image": 793,
+    "set-fetch-failed": 4,
     "card-name-does-not-contain-canonical-pokemon-name": 278
   },
   "externalJapaneseSetReference": {
@@ -832,8 +833,8 @@
     ],
     "referenceSetGroups": 27,
     "supplementaryPromotionalAndDeckReferences": 12,
-    "additionalDistinctGroups": 6,
-    "overlapsCoreVintageGroups": 6,
+    "additionalDistinctGroups": 5,
+    "overlapsCoreVintageGroups": 7,
     "presentInTcgdexSetAudit": 17,
     "missingFromTcgdexSetAudit": [
       {
