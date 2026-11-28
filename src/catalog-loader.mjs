@@ -43,8 +43,9 @@ async function cachePut(key, value) {
 
 export function normalizeCardText(value) {
   return String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD")
+    .replace(/(\p{Script=Latin})\p{M}+/gu, "$1")
+    .normalize("NFC")
     .toLocaleLowerCase()
     .replace(/[^\p{L}\p{N}]/gu, "");
 }
