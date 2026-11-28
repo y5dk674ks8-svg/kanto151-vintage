@@ -98,6 +98,8 @@
             },
             "additionalProperties": false
           },
+          "sourceVariants": { "type": ["object", "null"] },
+          "sourceDetailedVariants": { "type": ["array", "null"] },
           "verificationStatus": {
             "type": "string",
             "enum": ["source-confirmed", "manual-confirmed", "unverified", "unknown"]
