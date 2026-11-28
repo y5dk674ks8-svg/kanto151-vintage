@@ -454,8 +454,7 @@
         "provider": "japanesepokemoncards.net",
         "sourceCardId": "cd-promo-1999:3",
         "sourceUrl": "https://japanesepokemoncards.net/cd-promo-1999",
-        "retrievedAt": "2026-11-28T15:34:00.000Z",
-        "evidenceDescription": "The source checklist lists Cool Porygon with no Pokédex number; the Porygon (137) association is inferred from the card title and remains unverified."
+        "retrievedAt": "2026-11-28T15:34:00.000Z"
       },
       "cardIdentity": {
         "name": "ポリゴン",
@@ -511,7 +510,7 @@
           "evidence": [
             {
               "kind": "secondary-checklist",
-              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established.",
+              "description": "Listed as Rare in CD Promo (1999). Source reports 10 total cards and 0 holos; no collector number has been established. The source lists no Pokédex number for Cool Porygon; dex ID 137 is inferred from the card title and remains unverified.",
               "url": "https://japanesepokemoncards.net/cd-promo-1999"
             }
           ]
