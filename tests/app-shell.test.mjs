@@ -10,6 +10,7 @@ const script = scriptMatch[1];
 const pipeline = fs.readFileSync("src/recognition-pipeline.mjs", "utf8");
 const ocr = fs.readFileSync("src/ocr-adapter.mjs", "utf8");
 const vision = fs.readFileSync("src/card-vision.js", "utf8");
+const serviceWorker = fs.readFileSync("sw.js", "utf8");
 
 test("application script parses without syntax errors", () => {
   assert.doesNotThrow(() => new vm.Script(script, { filename: "index.html inline script" }));
@@ -43,4 +44,10 @@ test("OCR assets are loaded locally and no OCR CDN is used", () => {
 test("candidate choice retains the language and set/card identifiers", () => {
   assert.match(script, /scanChooseCard\(setId,cardId,lang='en'\)/);
   assert.match(script, /scanChooseCard\(\\'/);
+});
+
+test("service worker caches same-origin scanner assets and catalog files", () => {
+  assert.match(serviceWorker, /cache\.put\(request, response\.clone\(\)\)/);
+  assert.match(serviceWorker, /url\.origin !== self\.location\.origin/);
+  assert.match(serviceWorker, /Offline: dit onderdeel is nog niet lokaal opgeslagen/);
 });
