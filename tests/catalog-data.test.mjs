@@ -20,6 +20,8 @@ test("generated record and printing identities are unique", () => {
   assert.deepEqual(coverage.validation.recordsWithDuplicatePrintingIds, []);
   assert.equal(coverage.validation.recordsWithNoKantoDexId, 0);
   assert.equal(coverage.validation.recordsWithNoPrintingEntry, 0);
+  assert.equal(coverage.validation.recordsWithNoPokemonNameAlias, 0);
+  assert.equal(coverage.pokemonNameReference.entries, 151);
   assert.equal(coverage.validation.firstEditionStampMismatches, 0);
   assert.equal(coverage.validation.unlimitedMisclassified, 0);
   assert.equal(coverage.validation.noRarityMisclassified, 0);
