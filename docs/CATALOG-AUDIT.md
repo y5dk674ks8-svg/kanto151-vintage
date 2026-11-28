@@ -87,4 +87,10 @@ A spot check found Japanese TCGdex card-name fields that do not contain the cano
 
 ## Completion rule
 
+### Date-quality warning
+
+TCGdex assigns `1996-01-01` to the generic English `Miscellaneous Promos` bucket (`miscp`). Its currently included Kanto record is Ancient Mew, whose English theatrical promo release was in 2000; the generic set date must not be read as the card's actual release date. See [Bulbapedia's Ancient Mew release information](https://bulbapedia.bulbagarden.net/wiki/Ancient_Mew_%28The_Power_of_One_promo%29). Treat generic promo-bucket dates as provisional until checked at card level.
+
+## Completion rule
+
 The API audit is not complete merely because it returned successfully. It is complete only when the inventory is reproducible, omissions and source disagreements are explicit, variant claims are tested against per-variant evidence, and the image source and reuse rights are documented. The full historical catalog is not yet complete.
