@@ -416,7 +416,7 @@ async function scanPhoto(file){
      // Variant 3: mild unsharp mask on the grayscale crop; preserve the original as a fallback.
      const sharp=document.createElement('canvas');sharp.width=crop.width;sharp.height=crop.height;
      const sc=sharp.getContext('2d',{willReadFrequently:true});sc.drawImage(gray,0,0);
-     const w=sharp.width,h=sharp.height,src=sc.getImageData(0,0,w,h),dst=sc.createImageData(w,h);
+     const w=sharp.width,h=sharp.height,src=sc.getImageData(0,0,w,h),dst=sc.createImageData(w,h);dst.data.set(src.data);
      for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
       const i=(y*w+x)*4;
       for(let ch=0;ch<3;ch++){
