@@ -243,6 +243,25 @@ async function referenceFeature(baseUrl) {
 }
 
 /**
+ * Stores derived features from a user-confirmed card photo. The raw photo is
+ * never persisted; only small feature descriptors remain on this device.
+ */
+export async function storeUserReference(recordId, printingId, cardCanvas) {
+  if (!recordId || !cardCanvas) return false;
+  const key = "user:" + recordId;
+  const features = queryFeatures(cardCanvas);
+  const existing = await readCachedFeature(key).catch(() => []);
+  const entries = Array.isArray(existing) ? existing.filter(entry => entry.printingId !== (printingId || null)) : [];
+  entries.push({
+    printingId: printingId || null,
+    features,
+    savedAt: new Date().toISOString()
+  });
+  await writeCachedFeature(key, entries.slice(-8));
+  return true;
+}
+
+/**
  * Ranks only records with a reference image. The score is a similarity ranking,
  * never a probability or an automatic card confirmation.
  */
@@ -258,9 +277,25 @@ export async function rankVisualCandidates(cardCanvas, candidates, onProgress = 
       const candidate = candidates[index];
       const baseUrl = candidate.record?.images?.sourceBaseUrl ?? candidate.images?.sourceBaseUrl ?? null;
       try {
-        if (!baseUrl) throw new Error("Geen referentieafbeelding");
-        const reference = await referenceFeature(baseUrl);
-        results[index] = { ...candidate, visualScore: Math.max(...queries.map(query => compareSimilarity(query, reference))), visualMatch: true };
+        const recordId = candidate.record?.recordId ?? null;
+        const personal = recordId ? await readCachedFeature("user:" + recordId).catch(() => []) : [];
+        if (Array.isArray(personal) && personal.length) {
+          let best = -1, matchedPrintingIds = [];
+          for (const entry of personal) {
+            const score = Math.max(...queries.flatMap(query => entry.features.map(reference => compareSimilarity(query, reference))));
+            if (score > best) {
+              best = score;
+              matchedPrintingIds = [entry.printingId].filter(Boolean);
+            } else if (score === best && entry.printingId) {
+              matchedPrintingIds.push(entry.printingId);
+            }
+          }
+          results[index] = { ...candidate, visualScore: best, visualMatch: true, visualSource: "personal", visualPrintingIds: matchedPrintingIds };
+        } else {
+          if (!baseUrl) throw new Error("Geen referentieafbeelding");
+          const reference = await referenceFeature(baseUrl);
+          results[index] = { ...candidate, visualScore: Math.max(...queries.map(query => compareSimilarity(query, reference))), visualMatch: true, visualSource: "tcgdex" };
+        }
       } catch (error) {
         failed++;
         results[index] = { ...candidate, visualMatch: false, visualError: error.message };
