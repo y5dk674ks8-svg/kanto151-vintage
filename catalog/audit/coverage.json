@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-28T15:21:43.334Z",
+  "retrievedAt": "2026-11-28T15:22:22.872Z",
   "source": "TCGdex REST API v2",
   "scope": {
     "languages": [
@@ -804,6 +804,7 @@
     151
   ],
   "missingKantoDexIds": [],
+  "sourceFetchWarnings": [],
   "gapCount": 1071,
   "gapTypes": {
     "missing-image": 793,
