@@ -11,6 +11,7 @@ const pipeline = fs.readFileSync("src/recognition-pipeline.mjs", "utf8");
 const ocr = fs.readFileSync("src/ocr-adapter.mjs", "utf8");
 const vision = fs.readFileSync("src/card-vision.js", "utf8");
 const serviceWorker = fs.readFileSync("sw.js", "utf8");
+const visual = fs.readFileSync("src/visual-match.mjs", "utf8");
 
 test("application script parses without syntax errors", () => {
   assert.doesNotThrow(() => new vm.Script(script, { filename: "index.html inline script" }));
@@ -81,4 +82,12 @@ test("scanner visually ranks English candidates without pretending Japanese imag
   assert.match(script, /language==='en'&&x\.record\?\.images\?\.sourceBaseUrl/);
   assert.match(script, /Japanse referentieafbeeldingen ontbreken grotendeels/);
   assert.match(pipeline, /visualCanvas: detection\.canvas/);
+});
+
+test("user-confirmed scans can save only local visual fingerprints", () => {
+  assert.match(script, /id="savevisualref" type="checkbox" checked/);
+  assert.match(script, /storeUserReference\(c\.recordId,variantId,window\.lastScanVisualCanvas\)/);
+  assert.match(visual, /export async function storeUserReference/);
+  assert.match(visual, /writeCachedFeature\(key, entries\.slice\(-8\)\)/);
+  assert.doesNotMatch(visual, /localStorage/);
 });
