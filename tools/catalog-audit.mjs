@@ -190,7 +190,7 @@ for (const language of LANGUAGES) {
             shadowless: v.subtype === "shadowless" ? true : null,
             finish: v.type === "holo" ? "holo" : v.type === "reverse" ? "reverse" : v.type === "normal" ? "normal" : (hasHolo ? "holo" : hasNormal ? "normal" : null),
             promoStamp: Array.isArray(v.stamp) ? v.stamp.filter(stamp => !/1st[ -]?edition/i.test(stamp)).join("; ") || null : null,
-            other: v.subtype && !["shadowless", "unlimited"].includes(v.subtype) ? v.subtype : null
+            other: v.subtype && !["shadowless", "unlimited", "no-rarity"].includes(v.subtype) ? v.subtype : null
           },
           sourceVariants: variants,
           sourceDetailedVariants: v,
