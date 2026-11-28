@@ -157,6 +157,7 @@ export async function recognizeCardText(cardCanvas, language = "en", numberCanva
     nameConfidence: name.confidence,
     numberText: number.text,
     numberConfidence: number.confidence,
+    numberPasses: number.passes,
     numberError: number.error ?? null
   };
 }
