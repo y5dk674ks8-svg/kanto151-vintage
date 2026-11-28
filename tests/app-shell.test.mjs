@@ -91,3 +91,8 @@ test("user-confirmed scans can save only local visual fingerprints", () => {
   assert.match(visual, /writeCachedFeature\(key, entries\.slice\(-8\)\)/);
   assert.doesNotMatch(visual, /localStorage/);
 });
+
+test("registration requires an explicit Pokémon choice when the source record is ambiguous", () => {
+  assert.match(script, /Selecteer de juiste Pokémon/);
+  assert.match(script, /Selecteer eerst de juiste Pokémon/);
+});
