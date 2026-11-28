@@ -1,6 +1,6 @@
 # Generated catalog audit
 
-Retrieved: 2026-11-28T15:18:48.145Z
+Retrieved: 2026-11-28T15:19:27.800Z
 
 Source: TCGdex REST API v2.
 
