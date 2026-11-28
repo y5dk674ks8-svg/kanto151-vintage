@@ -111,7 +111,7 @@
    // Use the original decoded photograph for the number image. The detector runs on a smaller working copy, but its corner coordinates are mapped back to the original pixels before perspective correction.
    const numberBase=fullResolutionCanvas||sourceCanvas;
    const sx=numberBase.width/sourceCanvas.width,sy=numberBase.height/sourceCanvas.height;
-   const fullPoints=points.map(p=>({x:p.x*sx,y:p.y*sy}));
+   const fullPoints=points.map(p=>({x:(p.x/scale)*sx,y:(p.y/scale)*sy}));
    const topFull=Math.hypot(fullPoints[1].x-fullPoints[0].x,fullPoints[1].y-fullPoints[0].y);
    const bottomFull=Math.hypot(fullPoints[2].x-fullPoints[3].x,fullPoints[2].y-fullPoints[3].y);
    const leftFull=Math.hypot(fullPoints[3].x-fullPoints[0].x,fullPoints[3].y-fullPoints[0].y);
