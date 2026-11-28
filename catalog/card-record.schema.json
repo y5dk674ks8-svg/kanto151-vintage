@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanto151.local/schemas/card-record.schema.json",
+  "title": "Kanto 151 Catalog Card Record",
+  "type": "object",
+  "required": [
+    "recordId",
+    "language",
+    "source",
+    "cardIdentity",
+    "pokemonDexIds",
+    "set",
+    "collectorNumber",
+    "images",
+    "printings",
+    "audit"
+  ],
+  "properties": {
+    "recordId": { "type": "string", "minLength": 1 },
+    "language": { "type": "string", "enum": ["en", "ja"] },
+    "source": {
+      "type": "object",
+      "required": ["provider", "sourceCardId"],
+      "properties": {
+        "provider": { "type": "string" },
+        "sourceCardId": { "type": "string" },
+        "sourceUrl": { "type": "string" },
+        "retrievedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "cardIdentity": {
+      "type": "object",
+      "required": ["name", "category"],
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "illustrator": { "type": ["string", "null"] },
+        "rarity": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "pokemonDexIds": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 151 },
+      "uniqueItems": true
+    },
+    "set": {
+      "type": "object",
+      "required": ["setId", "name", "releaseDate"],
+      "properties": {
+        "setId": { "type": "string" },
+        "name": { "type": "string" },
+        "releaseDate": { "type": ["string", "null"], "format": "date" },
+        "series": { "type": ["string", "null"] },
+        "isPromo": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "collectorNumber": {
+      "type": "object",
+      "required": ["raw"],
+      "properties": {
+        "raw": { "type": "string" },
+        "normalized": { "type": ["string", "null"] },
+        "total": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "images": {
+      "type": "object",
+      "properties": {
+        "sourceBaseUrl": { "type": ["string", "null"] },
+        "lowUrl": { "type": ["string", "null"] },
+        "highUrl": { "type": ["string", "null"] },
+        "localPath": { "type": ["string", "null"] },
+        "sha256": { "type": ["string", "null"] },
+        "available": { "type": "boolean" }
+      },
+      "required": ["available"],
+      "additionalProperties": false
+    },
+    "printings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["printingId", "variant", "verificationStatus", "evidence"],
+        "properties": {
+          "printingId": { "type": "string" },
+          "variant": {
+            "type": "object",
+            "properties": {
+              "edition": { "type": ["string", "null"] },
+              "shadowless": { "type": ["boolean", "null"] },
+              "finish": { "type": ["string", "null"] },
+              "promoStamp": { "type": ["string", "null"] },
+              "other": { "type": ["string", "null"] }
+            },
+            "additionalProperties": false
+          },
+          "verificationStatus": {
+            "type": "string",
+            "enum": ["source-confirmed", "manual-confirmed", "unverified", "unknown"]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "description"],
+              "properties": {
+                "kind": { "type": "string" },
+                "description": { "type": "string" },
+                "url": { "type": ["string", "null"] }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "audit": {
+      "type": "object",
+      "required": ["recordStatus", "issues"],
+      "properties": {
+        "recordStatus": {
+          "type": "string",
+          "enum": ["complete", "partial", "missing-image", "needs-review"]
+        },
+        "issues": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
