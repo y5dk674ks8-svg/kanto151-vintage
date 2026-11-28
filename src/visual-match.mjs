@@ -242,6 +242,12 @@ async function referenceFeature(baseUrl) {
   }
 }
 
+export async function hasUserReference(recordId) {
+  if (!recordId) return false;
+  const entries = await readCachedFeature("user:" + recordId).catch(() => []);
+  return Array.isArray(entries) && entries.length > 0;
+}
+
 /**
  * Stores derived features from a user-confirmed card photo. The raw photo is
  * never persisted; only small feature descriptors remain on this device.
