@@ -338,6 +338,7 @@ coverage.validation = {
   recordsWithNoKantoDexId: normalized.filter(card => !card.pokemonDexIds.length).length,
   recordsWithNoPrintingEntry: normalized.filter(card => !card.printings.length).length,
   recordsWithNoPokemonNameAlias: normalized.filter(card => !card.pokemonNames.length).length,
+  japanesePokemonNameAliasGapCount: japaneseNameAliasGaps.length,
   japanesePokemonNamesWithoutCanonicalSpeciesMatch: japaneseNameAliasGaps,
   printingEntryCount: allPrintings.length,
   recordsWithDuplicatePrintingIds: duplicatePrintingIds,
@@ -364,6 +365,11 @@ for (const recordId of japaneseNameAliasGaps) {
     canonicalPokemonNames: card?.pokemonNames.map(names => names.ja).join("; ")
   });
 }
+coverage.gapCount = gaps.length;
+coverage.gapTypes = gaps.reduce((counts, gap) => {
+  counts[gap.type] = (counts[gap.type] || 0) + 1;
+  return counts;
+}, {});
 
 const setGroups = new Map();
 for (const card of normalized) {
@@ -398,7 +404,7 @@ for (const language of LANGUAGES) {
 }
 await fs.writeFile(path.join(OUT, "index.json"), JSON.stringify(catalogIndex, null, 2));
 await fs.writeFile(path.join(OUT, "audit", "coverage.json"), JSON.stringify(coverage, null, 2));
-const columns = ["language", "type", "setId", "setName", "cardId", "cardName", "detail"];
+const columns = ["language", "type", "setId", "setName", "cardId", "cardName", "canonicalPokemonNames", "detail"];
 const csv = [columns.join(","), ...gaps.map(g => columns.map(key => csvCell(g[key] ?? "")).join(","))].join("\n");
 await fs.writeFile(path.join(OUT, "audit", "gaps.csv"), csv);
 await fs.writeFile(path.join(OUT, "audit", "README.md"),
