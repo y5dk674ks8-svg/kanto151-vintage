@@ -186,7 +186,7 @@ for (const language of LANGUAGES) {
         printings: variantArray.length ? variantArray.map((v, index) => ({
           printingId: `${language}:${card.id}:${v.variantId ?? index + 1}`,
           variant: {
-            edition: (Array.isArray(v.stamp) && v.stamp.some(stamp => /1st[ -]?edition/i.test(stamp))) || (!Array.isArray(variants) && variants?.firstEdition === true) ? "1st Edition" : (v.subtype === "unlimited" ? "Unlimited" : null),
+            edition: (Array.isArray(v.stamp) && v.stamp.some(stamp => /1st[ -]?edition/i.test(stamp))) ? "1st Edition" : (v.subtype === "unlimited" ? "Unlimited" : (v.subtype === "no-rarity" ? "No Rarity" : null)),
             shadowless: v.subtype === "shadowless" ? true : null,
             finish: v.type === "holo" ? "holo" : v.type === "reverse" ? "reverse" : v.type === "normal" ? "normal" : (hasHolo ? "holo" : hasNormal ? "normal" : null),
             promoStamp: Array.isArray(v.stamp) ? v.stamp.filter(stamp => !/1st[ -]?edition/i.test(stamp)).join("; ") || null : null,
