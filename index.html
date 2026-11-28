@@ -69,7 +69,7 @@ input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:1
 <script src="./card-vision.js?v=20261127-16"></script>
 <script>
 // KANTO_BUILD_20261127_11
-const KANTO_BUILD='2026.11.28-28';
+const KANTO_BUILD='2026.11.28-29';
 (function showBuild(){const el=document.createElement('div');el.id='buildstamp';el.textContent='Appversie '+KANTO_BUILD;el.style.cssText='text-align:center;color:#94a3b8;font-size:10px;padding:4px';document.body.appendChild(el)})();
 (async function hardRefreshIfRequested(){
  const p=new URLSearchParams(location.search);
@@ -213,13 +213,13 @@ async function findScannedCandidates(dex,cardNo,totalNo){
   });
   const box=document.getElementById('scanresult');
   if(!matches.length){
-   document.getElementById('scanstatus').textContent='Geen kaart gevonden op Pokémonnaam en kaartnummer.';
-   box.innerHTML='<div class="panel"><b>Geen match gevonden</b><p class="muted">Alle catalogussets uit 1996–2002 zijn doorzocht. Controleer de Pokémonnaam en het kaartnummer.</p><label>Volledig kaartnummer</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc(cardNo+(totalNo?'/'+totalNo:''))+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
+   document.getElementById('scanstatus').textContent='Geen kaartkandidaten gevonden.';
+   box.innerHTML='<div class="panel"><b>Geen match gevonden</b><p class="muted">Alle catalogussets uit 1996–2002 zijn doorzocht. Controleer de Pokémonnaam of voer het kaartnummer handmatig in.</p><label>Kaartnummer (optioneel)</label><input id="retrycardnumber" inputmode="numeric" placeholder="Bijvoorbeeld 4/102" value="'+esc(cardNo+(totalNo?'/'+totalNo:''))+'"><div class="actions"><button class="btn green" onclick="retryScanMatch()">Zoek opnieuw</button></div></div>';
    return;
   }
   const confirmed=totalNo?matches.filter(x=>x.totalMatch===true).length:0;
-  document.getElementById('scanstatus').textContent=matches.length+' kandidaat-kaart(en) gevonden in alle vintage sets'+(totalNo?' · '+confirmed+' met overeenkomend settotaal':'')+'.';
-  box.innerHTML='<div class="panel"><b>Kaartkandidaten</b><p class="muted">'+matches.length+' match(es) op Pokémonnaam en kaartnummer '+esc(cardNo)+(totalNo?'/'+esc(totalNo):'')+'. Settotaal is een extra aanwijzing, geen harde uitsluitingsregel: databases kunnen official/total verschillend vastleggen. Controleer de kaartafbeelding voordat je kiest.</p>'+matches.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small><small>'+(totalNo?(x.totalMatch===true?'Settotaal komt overeen':x.totalMatch===false?'Settotaal wijkt af':'Settotaal onbekend'):'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
+  document.getElementById('scanstatus').textContent=matches.length+' kandidaat-kaart(en) gevonden in alle vintage sets'+(cardNo?' · gefilterd op kaartnummer '+esc(cardNo):' · alleen op Pokémonnaam; vergelijk de afbeeldingen')+(totalNo?' · '+confirmed+' met overeenkomend settotaal':'')+'.';
+  box.innerHTML='<div class="panel"><b>Kaartkandidaten</b><p class="muted">'+matches.length+' kandidaat(en)'+(cardNo?' op Pokémonnaam en kaartnummer '+esc(cardNo):' op Pokémonnaam omdat het kaartnummer niet betrouwbaar is uitgelezen')+(totalNo?'/'+esc(totalNo):'')+'. Settotaal is een extra aanwijzing, geen harde uitsluitingsregel: databases kunnen official/total verschillend vastleggen. Controleer de kaartafbeelding voordat je kiest.</p>'+matches.map(x=>'<div class="cardentry">'+(x.image?'<img src="'+esc(x.image)+'/low.webp" loading="lazy">':'')+'<div style="flex:1"><b>'+esc(x.cardName)+'</b><small>'+esc(x.setName)+' · '+esc(x.localId)+' · '+esc(x.releaseDate||'')+'</small><small>'+(totalNo?(x.totalMatch===true?'Settotaal komt overeen':x.totalMatch===false?'Settotaal wijkt af':'Settotaal onbekend'):'')+'</small></div><button class="btn" onclick="scanChooseCard(\''+esc(x.setId)+'\',\''+esc(x.cardId)+'\')">Kies</button></div>').join('')+'</div>';
  }catch(e){
   document.getElementById('scanstatus').textContent='Catalogus niet bereikbaar: '+e.message;
   document.getElementById('scanresult').innerHTML='<button class="btn" onclick="continueScanToCatalog()">Open vintage catalogus</button>';
@@ -333,7 +333,7 @@ async function scanPhoto(file){
       // This crop includes the complete Pokémon name line while excluding most of the Basic label and HP.
       makeOcrRegion(cardCanvas,.075,.065,.67,.12,8),
       // Wider top-header fallback, processed as a raw text line (PSM 13).
-      makeOcrRegion(cardCanvas,.07,.055,.76,.135,6),
+      makeOcrRegion(cardCanvas,.04,.03,.85,.15,7),
       makeOcrRegion(cardCanvas,.10,.045,.82,.18,8),
       makeOcrRegion(cardCanvas,.07,.025,.92,.19,6),
       makeOcrRegion(cardCanvas,.03,.015,.96,.22,5)
