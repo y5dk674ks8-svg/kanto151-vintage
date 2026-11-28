@@ -140,7 +140,7 @@ async function applyVisualRanking(matches,queryCanvas){
  }
  if(!candidates.length)return matches;
  try{
-  document.getElementById('scanstatus').textContent='Engelse kaartafbeeldingen visueel vergelijken…';
+  document.getElementById('scanstatus').textContent='Visuele referenties vergelijken…';
   const ranked=await rankVisualCandidates(queryCanvas,candidates,(done,total)=>{
    document.getElementById('scanstatus').textContent='Visueel vergelijken '+done+'/'+total+'…';
   });
