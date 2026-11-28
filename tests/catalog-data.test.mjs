@@ -57,3 +57,22 @@ test("catalog audit reports the Japanese vintage reference omissions and count c
   assert.equal(coverage.gapTypes["set-fetch-failed"], undefined);
   assert.ok(Array.isArray(coverage.sourceFetchWarnings));
 });
+
+test("Japanese Vending Series 1–3 supplemental Kanto records are included and explicitly unverified", () => {
+  assert.equal(coverage.languages.ja.supplementalKantoCardRecords, 100);
+  assert.equal(coverage.languages.ja.combinedCatalogKantoCardRecords, 886);
+  assert.equal(coverage.supplementalJapaneseSets.length, 3);
+  assert.equal(coverage.externalJapaneseSetReference.supplementalSeededGroups.length, 3);
+  assert.equal(coverage.externalJapaneseSetReference.remainingUnseededGroups.length, 7);
+  for (const setId of ["vending1", "vending2", "vending3"]) {
+    const records = readSet("ja", setId);
+    assert.ok(records.length > 0);
+    assert.ok(records.every(card =>
+      card.language === "ja" &&
+      card.pokemonNames.length > 0 &&
+      card.collectorNumber.raw === null &&
+      card.source.provider === "japanesepokemoncards.net" &&
+      card.printings.every(printing => printing.verificationStatus === "unverified")
+    ));
+  }
+});
