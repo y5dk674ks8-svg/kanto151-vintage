@@ -51,7 +51,7 @@ export function parseCollectorNumber(ocrText) {
 export async function recognizeCardPhoto({
   sourceCanvas,
   fullResolutionCanvas = sourceCanvas,
-  language = "en",
+  language = "auto",
   catalog,
   onStage = null
 }) {
@@ -72,25 +72,35 @@ export async function recognizeCardPhoto({
     };
   }
 
-  onStage?.("Kaartnaam en kaartnummer uitlezen");
-  const ocr = await recognizeCardText(
-    detection.canvas,
-    language,
-    detection.numberCanvas ?? detection.canvas
-  );
-  const parsedNumber = parseCollectorNumber(ocr.numberText);
-  const query = {
-    name: ocr.nameText,
-    collectorNumber: parsedNumber?.number ?? ""
-  };
+  const languages = language === "auto" ? ["en", "ja"] : [language];
+  const results = [];
+  for (const currentLanguage of languages) {
+    onStage?.(currentLanguage === "ja" ? "Japanse kaarttekst uitlezen" : "Engelse kaarttekst uitlezen");
+    const ocr = await recognizeCardText(
+      detection.canvas,
+      currentLanguage,
+      detection.numberCanvas ?? detection.canvas
+    );
+    const parsedNumber = parseCollectorNumber(ocr.numberText);
+    const query = {
+      name: ocr.nameText,
+      collectorNumber: parsedNumber?.number ?? ""
+    };
 
-  onStage?.("Lokale kaartcatalogus doorzoeken");
-  let candidates = await catalog.search(language, query, { limit: 30 });
-  let numberFallbackUsed = false;
-  if (!candidates.length && query.collectorNumber) {
-    candidates = await catalog.search(language, { name: query.name }, { limit: 30 });
-    numberFallbackUsed = true;
+    onStage?.("Lokale " + (currentLanguage === "ja" ? "Japanse" : "Engelse") + " catalogus doorzoeken");
+    let candidates = await catalog.search(currentLanguage, query, { limit: 30 });
+    let numberFallbackUsed = false;
+    if (!candidates.length && query.collectorNumber) {
+      candidates = await catalog.search(currentLanguage, { name: query.name }, { limit: 30 });
+      numberFallbackUsed = true;
+    }
+    results.push({ language: currentLanguage, ocr, parsedNumber, candidates, numberFallbackUsed });
   }
+
+  const candidates = results.flatMap(result => result.candidates.map(candidate => ({
+    ...candidate,
+    language: result.language
+  }))).sort((a, b) => b.score - a.score || a.record.recordId.localeCompare(b.record.recordId));
 
   return {
     status: candidates.length ? "candidate-review" : "no-candidates",
@@ -99,10 +109,8 @@ export async function recognizeCardPhoto({
       ratio: detection.ratio ?? null,
       method: detection.method ?? null
     },
-    ocr,
-    parsedNumber,
-    numberFallbackUsed,
-    candidates,
+    results,
+    candidates: candidates.slice(0, 30),
     autoConfirmed: false
   };
 }
