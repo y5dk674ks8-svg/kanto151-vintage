@@ -35,6 +35,10 @@ https://japanesepokemoncards.net/vintage
 TCGdex status page:
 https://tcgdex.dev/status
 
+## Local visual references and privacy
+
+The scanner can optionally store a compact visual feature descriptor after the user confirms a card and its printing. This is an explicit opt-in. The original camera photo is not stored; only derived visual features and the selected catalog/printing IDs are written to local IndexedDB on the device. These user references can help rank later scans, including Japanese cards for which TCGdex has no reference images. They are not uploaded or synchronized by this scanner.
+
 ## Implementation policy
 
 - Never silently substitute an English card image for a Japanese printing.
@@ -42,6 +46,8 @@ https://tcgdex.dev/status
 - Keep card identity and physical printing identity separate.
 - Preserve source URLs, retrieval date, image hash and rights/provenance notes for every image.
 - Do not bulk mirror third-party card scans until permission/licence is confirmed.
+- Treat remote TCGdex reference images as experimental ranking inputs only; their upstream image rights are not established by the TCGdex card-data licence.
+- Keep the user's visual-reference feature opt-in and store only local descriptors, never the raw camera photo.
 - Build recognition support for Japanese cards in two stages: metadata and candidate retrieval first; image-based matching only where a permitted reference image or user-supplied scan exists.
 - Keep image availability separate from catalog-record availability in all UI and metrics.
 
