@@ -40,6 +40,15 @@ The combined score currently weights spatial tiles and footer strongly. This is 
 
 The TCGdex seed catalog currently has no image URL for the 786 Japanese Kanto card records in scope. The old visual matcher cannot identify those cards visually without a permitted reference image. Do not silently substitute English scans or download third-party scans without permission. See [IMAGE-AND-SOURCE-AUDIT.md](IMAGE-AND-SOURCE-AUDIT.md).
 
+## Current implementation
+
+- The OpenCV detector has been copied into `src/card-vision.js` and is loaded from the locally vendored OpenCV runtime.
+- The visual feature ranker has been ported into `src/visual-match.mjs`.
+- The new ranker caches derived feature descriptors in IndexedDB rather than serializing an ever-growing object to localStorage.
+- The scanner applies visual ranking only to English candidates with a TCGdex reference image.
+- Japanese candidates remain text-ranked because the current seed catalog has no Japanese reference images.
+- The raw user photo remains local; only public reference images are downloaded for client-side comparison.
+
 ## Decision
 
-Reuse the preserved OpenCV detector as the first card-localization baseline. Port the visual feature ranker only after the reference-image source and variant mapping are resolved. Keep automatic confirmation disabled until measured false-accept rates meet an explicit threshold.
+Use OCR and visual similarity as independent candidate-ranking signals. Visual scores are not probabilities and are never used for automatic confirmation. The current matcher has unit tests for its perceptual-hash and descriptor-ranking math, but it still needs a labelled benchmark with sleeve, glare, angle, lighting and near-identical reprint cases before its weights can be tuned or trusted.
